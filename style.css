@@ -514,8 +514,9 @@ details.transparency-block[open] summary::before {
 .modal-window {
   background: #ffffff;
   border: 2px solid var(--border);
-  width: 100%;
-  max-width: 900px;
+  width: 900px;
+  max-width: calc(100vw - 32px);
+  height: 640px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -593,7 +594,8 @@ details.transparency-block[open] summary::before {
   padding: 16px;
   overflow-y: auto;
   overflow-x: hidden;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   box-sizing: border-box;
   width: 100%;
 }
@@ -844,14 +846,20 @@ footer {
   .modal-overlay {
     padding: 6px;
     align-items: center;
+    justify-content: center;
   }
 
   .modal-window {
-    max-height: 94vh;
-    width: 100%;
-    max-width: calc(100vw - 12px);
+    width: 100% !important;
+    max-width: calc(100vw - 12px) !important;
+    height: calc(100vh - 12px) !important;
+    height: calc(100dvh - 12px) !important;
+    max-height: calc(100vh - 12px) !important;
+    max-height: calc(100dvh - 12px) !important;
     margin: 0 auto;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
   }
 
@@ -859,6 +867,7 @@ footer {
     padding: 8px 10px;
     gap: 6px;
     min-width: 0;
+    flex-shrink: 0;
   }
 
   .modal-header-bar h2 {
@@ -876,6 +885,7 @@ footer {
     white-space: nowrap;
     border-bottom: 1px solid var(--border);
     max-width: 100%;
+    flex-shrink: 0;
   }
 
   .m-tab {
@@ -889,6 +899,9 @@ footer {
     max-width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
   .callout {
@@ -913,7 +926,7 @@ footer {
   }
 
   .code-box {
-    max-height: 250px;
+    max-height: calc(100dvh - 180px);
     padding: 10px;
     font-size: 10px;
     max-width: 100%;
