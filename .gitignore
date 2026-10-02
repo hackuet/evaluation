@@ -1,0 +1,36 @@
+# Video Submissions & Media (strictly not uploaded to repo)
+*.mp4
+*.webm
+*.mov
+*.avi
+*.mkv
+*.wmv
+*.flv
+
+# Python & Environment
+.venv/
+venv/
+ENV/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# System & OS Files
+.DS_Store
+Thumbs.db
+.system_generated/
+*.log
+.~lock.*
+
+# Editor & IDE Settings
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node & Packages
+node_modules/
+package-lock.json
+package.json
+mobile_test.png

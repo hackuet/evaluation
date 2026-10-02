@@ -1,0 +1,927 @@
+// HACK Elo Rating Board - CSV-Powered Automated Ranking Engine
+// Hardware Acceleration Club of KUET
+
+document.addEventListener('DOMContentLoaded', () => {
+  let activeBatch = '2k25';
+  let activeScope = 'all'; // Default to cumulative rating!
+  let searchQuery = '';
+  let statusFilter = 'all';
+
+  // Elements
+  const assignmentSelect = document.getElementById('assignmentSelect');
+  const searchInput = document.getElementById('searchInput');
+  const statusFilterSelect = document.getElementById('statusFilter');
+  const ratingTable = document.getElementById('ratingTable');
+  const ratingTableHead = ratingTable.querySelector('thead');
+  const ratingTableBody = document.getElementById('ratingTableBody');
+  const leaderboardSection = document.getElementById('leaderboardSection');
+  const metricSubmissions = document.getElementById('metricSubmissions');
+  const metricTopScore = document.getElementById('metricTopScore');
+  const metricMean = document.getElementById('metricMean');
+  const exportCsvBtn = document.getElementById('exportCsvBtn');
+  const printBtn = document.getElementById('printBtn');
+  const rubricToggleBtn = document.getElementById('rubricToggleBtn');
+  const rubricModal = document.getElementById('rubricModal');
+  const rubricCloseBtn = document.getElementById('rubricCloseBtn');
+  const rubricModalTitle = document.getElementById('rubricModalTitle');
+  const rubricModalContent = document.getElementById('rubricModalContent');
+
+  // Profile Modal Elements (Cumulative View)
+  const profileModal = document.getElementById('profileModal');
+  const profileModalCloseBtn = document.getElementById('profileModalCloseBtn');
+  const profileModalTitle = document.getElementById('profileModalTitle');
+  const profileModalBody = document.getElementById('profileModalBody');
+
+  // Detail Modal Elements (Assignment Audit View)
+  const detailModal = document.getElementById('detailModal');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
+  const modalBackBtn = document.getElementById('modalBackBtn');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalInstructorCallout = document.getElementById('modalInstructorCallout');
+  const modalInstructorNoteText = document.getElementById('modalInstructorNoteText');
+  const modalScoreTableBody = document.getElementById('modalScoreTableBody');
+  const modalFileTabs = document.getElementById('modalFileTabs');
+  const modalCodeDisplay = document.getElementById('modalCodeDisplay');
+  const modalCritiqueDisplay = document.getElementById('modalCritiqueDisplay');
+  const modalStudentCommentText = document.getElementById('modalStudentCommentText');
+  const modalDriveLinkAnchor = document.getElementById('modalDriveLinkAnchor');
+  const modalDriveWarning = document.getElementById('modalDriveWarning');
+
+  // RFC-4180 compliant CSV Parser
+  function parseCSV(text) {
+    const lines = [];
+    let row = [];
+    let inQuotes = false;
+    let cur = '';
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      const next = text[i + 1];
+      if (c === '"') {
+        if (inQuotes && next === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (c === ',' && !inQuotes) {
+        row.push(cur.trim());
+        cur = '';
+      } else if ((c === '\r' || c === '\n') && !inQuotes) {
+        if (c === '\r' && next === '\n') i++;
+        row.push(cur.trim());
+        if (row.some(cell => cell.length > 0)) lines.push(row);
+        row = [];
+        cur = '';
+      } else {
+        cur += c;
+      }
+    }
+    if (cur.length > 0 || row.length > 0) {
+      row.push(cur.trim());
+      if (row.some(cell => cell.length > 0)) lines.push(row);
+    }
+    return lines;
+  }
+
+  // Attempt to load CSV from 2k25/assignment-1/assignment-1.csv dynamically
+  async function loadCSVData() {
+    try {
+      const res = await fetch(`2k25/assignment-1/assignment-1.csv?_t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) return;
+      const text = await res.text();
+      const rows = parseCSV(text);
+      if (rows.length < 2) return;
+
+      const headers = rows[0].map(h => h.toLowerCase());
+      const getVal = (r, key) => {
+        const idx = headers.indexOf(key.toLowerCase());
+        return idx !== -1 ? r[idx] : '';
+      };
+
+      // Ingest CSV records and merge/update students
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        const roll = getVal(r, 'roll');
+        if (!roll) continue;
+        const batch = getVal(r, 'batch') || '2k25';
+        const status = getVal(r, 'status') || 'Evaluated';
+        const subTime = getVal(r, 'submission_time');
+        const driveLink = getVal(r, 'drive_link');
+        const instNote = getVal(r, 'instructor_note');
+        const stdComment = getVal(r, 'student_comment');
+
+        const part = parseFloat(getVal(r, 'participation')) || 55;
+        const inTime = parseFloat(getVal(r, 'in_time')) || 15;
+        const t1Inst = parseFloat(getVal(r, 'task1_inst')) || 0;
+        const t1Llm = parseFloat(getVal(r, 'task1_llm')) || 0;
+        const t2Inst = parseFloat(getVal(r, 'task2_inst')) || 0;
+        const t2Llm = parseFloat(getVal(r, 'task2_llm')) || 0;
+        const t3Inst = parseFloat(getVal(r, 'task3_inst')) || 0;
+        const t3Llm = parseFloat(getVal(r, 'task3_llm')) || 0;
+        const docInst = parseFloat(getVal(r, 'docs_inst')) || 0;
+        const docLlm = parseFloat(getVal(r, 'docs_llm')) || 0;
+        const bInst = parseFloat(getVal(r, 'bonus_inst')) || 0;
+        const bLlm = parseFloat(getVal(r, 'bonus_llm')) || 0;
+
+        let student = HACK_DATA.students.find(s => s.id === roll || s.roll === roll);
+        if (!student) {
+          student = {
+            id: roll,
+            roll: roll,
+            batch: batch,
+            assignments: []
+          };
+          HACK_DATA.students.push(student);
+        }
+
+        // Update assignment 1 submission in student's assignments array
+        let a1Sub = student.assignments.find(a => a.assignmentId === 'a1');
+        if (!a1Sub) {
+          a1Sub = { assignmentId: 'a1', codeFiles: [] };
+          student.assignments.push(a1Sub);
+        }
+
+        a1Sub.status = status;
+        a1Sub.submissionTime = subTime;
+        a1Sub.driveLink = driveLink;
+        a1Sub.instructorTransparencyNote = instNote;
+        a1Sub.studentComment = stdComment;
+        a1Sub.scores = {
+          participation: { max: 55, inst: part, llm: part, note: 'Participation credit' },
+          inTime: { max: 15, inst: inTime, llm: inTime, note: 'Submission timing' },
+          task1: { max: 25, inst: t1Inst, llm: t1Llm, note: `Inst: ${t1Inst}, LLM: ${t1Llm}` },
+          task2: { max: 25, inst: t2Inst, llm: t2Llm, note: `Inst: ${t2Inst}, LLM: ${t2Llm}` },
+          task3: { max: 25, inst: t3Inst, llm: t3Llm, note: `Inst: ${t3Inst}, LLM: ${t3Llm}` },
+          documentation: { max: 5, inst: docInst, llm: docLlm, note: `Inst: ${docInst}, LLM: ${docLlm}` },
+          bonus: { max: 75, inst: bInst, llm: bLlm, note: `Inst: ${bInst}, LLM: ${bLlm}` }
+        };
+      }
+    } catch (e) {
+      // Direct file:// access without HTTP server fallback to built-in HACK_DATA
+      console.log('Using pre-bundled dataset (HTTP fetch bypassed)');
+    }
+  }
+
+  // Calculate score items using hybrid 60/40 rule
+  function getComputedItem(item, isTaskOrBonus = true) {
+    if (!item) return { max: 0, inst: 0, llm: 0, final: 0, note: '-' };
+    let finalVal;
+    if (isTaskOrBonus) {
+      finalVal = (item.inst * 0.6) + (item.llm * 0.4);
+    } else {
+      finalVal = item.inst;
+    }
+    finalVal = Math.round(finalVal * 100) / 100;
+    return {
+      max: item.max,
+      inst: item.inst,
+      llm: item.llm,
+      final: finalVal,
+      note: item.note
+    };
+  }
+
+  // Evaluate an assignment submission
+  function evaluateSubmission(submission) {
+    if (!submission) return null;
+    const sc = submission.scores;
+    const cPart = getComputedItem(sc.participation, false);
+    const cTime = getComputedItem(sc.inTime, false);
+    const cT1 = getComputedItem(sc.task1, true);
+    const cT2 = getComputedItem(sc.task2, true);
+    const cT3 = getComputedItem(sc.task3, true);
+    const cDoc = getComputedItem(sc.documentation, false);
+    const cBonus = getComputedItem(sc.bonus, true);
+
+    const total = Math.round((cPart.final + cTime.final + cT1.final + cT2.final + cT3.final + cDoc.final + cBonus.final) * 100) / 100;
+    const percentage = ((total / 150) * 100).toFixed(1) + '%';
+
+    return {
+      ...submission,
+      computedScores: {
+        participation: cPart,
+        inTime: cTime,
+        task1: cT1,
+        task2: cT2,
+        task3: cT3,
+        documentation: cDoc,
+        bonus: cBonus
+      },
+      computedTotal: total,
+      computedPercentage: percentage
+    };
+  }
+
+  // Get student's score model for active scope
+  function getStudentScoreModel(student) {
+    if (!student.assignments || !Array.isArray(student.assignments)) return null;
+
+    if (activeScope === 'all') {
+      // Cumulative View: Sum across all completed assignments in array
+      let cumTotal = 0;
+      let evaluatedCount = 0;
+      let lastStatus = 'Evaluated';
+      const assignmentSummaries = [];
+
+      student.assignments.forEach(a => {
+        const ev = evaluateSubmission(a);
+        if (ev) {
+          cumTotal += ev.computedTotal;
+          evaluatedCount++;
+          if (ev.status === 'Pending Drive Access') lastStatus = ev.status;
+          const meta = HACK_DATA.assignments.find(metaA => metaA.id === a.assignmentId) || {};
+          assignmentSummaries.push({
+            id: a.assignmentId,
+            code: meta.code || a.assignmentId.toUpperCase(),
+            title: meta.title || 'Assignment',
+            baseMax: meta.baseMax || 150,
+            score: ev.computedTotal,
+            percentage: ev.computedPercentage,
+            status: ev.status,
+            submissionTime: ev.submissionTime
+          });
+        }
+      });
+
+      return {
+        isCumulative: true,
+        cumulativeScore: Math.round(cumTotal * 100) / 100,
+        evaluatedCount: evaluatedCount,
+        assignmentSummaries: assignmentSummaries,
+        status: lastStatus,
+        primarySubmission: evaluateSubmission(student.assignments[0])
+      };
+    } else {
+      // Single Assignment View: Look up selected assignment
+      const found = student.assignments.find(a => a.assignmentId === activeScope);
+      const ev = evaluateSubmission(found || student.assignments[0]);
+      return {
+        isCumulative: false,
+        assignmentData: ev,
+        status: ev ? ev.status : 'Unknown'
+      };
+    }
+  }
+
+  // Main Render Function
+  function render() {
+    leaderboardSection.style.display = 'block';
+
+    // 1. Process and map students with calculated scores
+    let list = HACK_DATA.students
+      .filter(s => s.batch === activeBatch)
+      .map(s => ({
+        ...s,
+        scoreModel: getStudentScoreModel(s)
+      }));
+
+    // 2. Filter by search query
+    if (searchQuery) {
+      list = list.filter(s => 
+        s.roll.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    // 3. Filter by status
+    if (statusFilter !== 'all') {
+      list = list.filter(s => s.scoreModel && s.scoreModel.status === statusFilter);
+    }
+
+    // 4. AUTOMATIC RANK CALCULATION:
+    // Sort descending by score
+    list.sort((a, b) => {
+      const scoreA = a.scoreModel.isCumulative ? a.scoreModel.cumulativeScore : a.scoreModel.assignmentData.computedTotal;
+      const scoreB = b.scoreModel.isCumulative ? b.scoreModel.cumulativeScore : b.scoreModel.assignmentData.computedTotal;
+      return scoreB - scoreA;
+    });
+
+    list.forEach((s, idx) => {
+      s.computedRank = idx + 1;
+    });
+
+    // 5. Update Metrics Strip
+    metricSubmissions.textContent = list.length;
+    if (list.length > 0) {
+      const topScore = list[0].scoreModel.isCumulative ? list[0].scoreModel.cumulativeScore : list[0].scoreModel.assignmentData.computedTotal;
+      const sum = list.reduce((acc, s) => acc + (s.scoreModel.isCumulative ? s.scoreModel.cumulativeScore : s.scoreModel.assignmentData.computedTotal), 0);
+      const mean = (sum / list.length).toFixed(2);
+      metricTopScore.innerHTML = `${topScore.toFixed(2)} <span style="font-size: 11px; font-weight: normal;">/ 150</span>`;
+      metricMean.innerHTML = `${mean} <span style="font-size: 11px; font-weight: normal;">/ 150</span>`;
+    }
+
+    // 6. Update Table Header & Rubric Button based on Scope (Dual-mode)
+    if (activeScope === 'all') {
+      // Cumulative Rating View: Rubric is assignment-specific, so hide it
+      rubricToggleBtn.style.display = 'none';
+      if (statusFilterSelect) statusFilterSelect.style.display = 'none';
+
+      ratingTableHead.innerHTML = `
+        <tr>
+          <th style="width: 50px;">Rank</th>
+          <th style="width: 140px;">Roll</th>
+          <th style="width: 140px; text-align: right;">Cumulative Points</th>
+          <th>Assignments</th>
+          <th style="width: 110px; text-align: center;">Profile</th>
+        </tr>
+      `;
+    } else {
+      // Assignment-specific View: Show rubric button specifically for this assignment
+      const assignMeta = HACK_DATA.assignments.find(a => a.id === activeScope) || { code: activeScope.toUpperCase() };
+      rubricToggleBtn.style.display = 'inline-flex';
+      rubricToggleBtn.textContent = `[View ${assignMeta.code} Rubric]`;
+      if (statusFilterSelect) statusFilterSelect.style.display = 'inline-block';
+
+      ratingTableHead.innerHTML = `
+        <tr>
+          <th style="width: 50px;">Rank</th>
+          <th style="width: 140px;">Roll</th>
+          <th style="width: 120px; text-align: right;">Total Score</th>
+          <th>Task Breakdown & Transparency Notes</th>
+          <th style="width: 110px; text-align: center;">Audit</th>
+        </tr>
+      `;
+    }
+
+    if (list.length === 0) {
+      ratingTableBody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 24px; color: var(--fg-muted);">
+            No records found matching current query.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    // Precompute per-assignment rank map across all students in activeBatch
+    const assignmentRankMap = {};
+    HACK_DATA.assignments.forEach(assign => {
+      const arr = [];
+      HACK_DATA.students
+        .filter(s => s.batch === activeBatch)
+        .forEach(s => {
+          const sub = s.assignments && s.assignments.find(a => a.assignmentId === assign.id);
+          if (sub) {
+            const ev = evaluateSubmission(sub);
+            if (ev) arr.push({ studentId: s.id, score: ev.computedTotal });
+          }
+        });
+      arr.sort((a, b) => b.score - a.score);
+      const rMap = {};
+      arr.forEach((item, idx) => {
+        rMap[item.studentId] = idx + 1;
+      });
+      assignmentRankMap[assign.id] = rMap;
+    });
+
+    // 7. Render Table Rows
+    if (activeScope === 'all') {
+      // Render Cumulative Table Rows
+      ratingTableBody.innerHTML = list.map(student => {
+        const sm = student.scoreModel;
+        return `
+          <tr>
+            <td class="rank-col">#${student.computedRank}</td>
+            <td class="student-col">
+              <strong>${student.roll}</strong>
+            </td>
+            <td class="score-col">
+              <div style="font-size: 16px; font-weight: bold;">${sm.cumulativeScore.toFixed(2)}</div>
+              <div style="font-size: 10px; color: var(--fg-muted);">Cumulative Points</div>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                ${sm.assignmentSummaries.map(as => {
+                  const aRank = (assignmentRankMap[as.id] && assignmentRankMap[as.id][student.id]) || student.computedRank;
+                  return `
+                    <div style="display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border-light); padding: 4px 8px; background: var(--bg-subtle);">
+                      <button class="btn btn-sm switch-scope-btn" data-assign="${as.id}" style="padding: 2px 6px; font-size: 11px; font-weight: 700;" title="Inspect ${as.code} (Score: ${as.score.toFixed(2)}/${as.baseMax})">
+                        ${as.code.replace('A-0', 'A')}
+                      </button>
+                      <span style="font-weight: 700; font-size: 12px;">Rank #${aRank}</span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <button class="btn btn-sm view-profile-btn" data-id="${student.id}">[View Profile]</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    } else {
+      // Render Assignment Details Table Rows with Collapsible Transparency
+      ratingTableBody.innerHTML = list.map(student => {
+        const ev = student.scoreModel.assignmentData;
+        const sc = ev.computedScores;
+
+        return `
+          <tr>
+            <td class="rank-col">#${student.computedRank}</td>
+            <td class="student-col">
+              <strong>${student.roll}</strong>
+              <div style="font-size: 10px; color: var(--fg-dim); margin-top: 2px;">Status: ${ev.status}</div>
+            </td>
+            <td class="score-col">
+              <div style="font-size: 15px; font-weight: bold;">${ev.computedTotal.toFixed(2)}</div>
+              <div style="font-size: 10px; color: var(--fg-muted);">${ev.computedPercentage} (150 base)</div>
+            </td>
+            <td>
+              <div class="breakdown-row">
+                <span class="tag-plain">PART: ${sc.participation.final}/55</span>
+                <span class="tag-plain">TIME: ${sc.inTime.final}/15</span>
+                <span class="tag-plain">T1: ${sc.task1.final}/25</span>
+                <span class="tag-plain">T2: ${sc.task2.final}/25</span>
+                <span class="tag-plain">T3: ${sc.task3.final}/25</span>
+                <span class="tag-plain">DOC: ${sc.documentation.final}/5</span>
+                <span class="tag-plain">BONUS: ${sc.bonus.final}/75</span>
+              </div>
+
+              <!-- Collapsible Transparency Notes -->
+              <details class="transparency-block">
+                <summary>Instructor Transparency Notes (Why I Marked How)</summary>
+                <div class="transparency-body">
+                  <span class="inst-note">&ldquo;${ev.instructorTransparencyNote}&rdquo;</span>
+                  <table style="width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 10px;">
+                    <tr style="border-bottom: 1px solid #ddd; background: #eaeaea; font-weight: bold;">
+                      <td style="padding: 2px 4px;">Task</td>
+                      <td style="padding: 2px 4px;">Max</td>
+                      <td style="padding: 2px 4px;">Inst (60%)</td>
+                      <td style="padding: 2px 4px;">LLM (40%)</td>
+                      <td style="padding: 2px 4px;">Final</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 2px 4px;">Task 1</td>
+                      <td style="padding: 2px 4px;">25</td>
+                      <td style="padding: 2px 4px;">${sc.task1.inst}</td>
+                      <td style="padding: 2px 4px;">${sc.task1.llm}</td>
+                      <td style="padding: 2px 4px;"><strong>${sc.task1.final}</strong></td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 2px 4px;">Task 2</td>
+                      <td style="padding: 2px 4px;">25</td>
+                      <td style="padding: 2px 4px;">${sc.task2.inst}</td>
+                      <td style="padding: 2px 4px;">${sc.task2.llm}</td>
+                      <td style="padding: 2px 4px;"><strong>${sc.task2.final}</strong></td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 2px 4px;">Task 3</td>
+                      <td style="padding: 2px 4px;">25</td>
+                      <td style="padding: 2px 4px;">${sc.task3.inst}</td>
+                      <td style="padding: 2px 4px;">${sc.task3.llm}</td>
+                      <td style="padding: 2px 4px;"><strong>${sc.task3.final}</strong></td>
+                    </tr>
+                  </table>
+                </div>
+              </details>
+            </td>
+            <td style="text-align: center;">
+              <button class="btn btn-sm audit-btn" data-id="${student.id}">[Audit Code]</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Attach click listeners to profile buttons (in Cumulative Mode)
+    document.querySelectorAll('.view-profile-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.currentTarget.getAttribute('data-id');
+        openStudentProfileModal(id);
+      });
+    });
+
+    // Attach click listeners to audit buttons (in Assignment Mode)
+    document.querySelectorAll('.audit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.currentTarget.getAttribute('data-id');
+        openAssignmentAuditModal(id, activeScope, false);
+      });
+    });
+
+    // Quick switch to assignment scope when clicking [Select A-01]
+    document.querySelectorAll('.switch-scope-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const assignId = e.currentTarget.getAttribute('data-assign');
+        activeScope = assignId;
+        assignmentSelect.value = assignId;
+        render();
+      });
+    });
+  }
+
+  // Open Cumulative Student Profile Modal (Lists enrolled assignments, NOT micro task breakdown)
+  function openStudentProfileModal(studentId) {
+    const student = HACK_DATA.students.find(s => s.id === studentId);
+    if (!student) return;
+
+    const sm = getStudentScoreModel(student);
+    const batchAssignments = HACK_DATA.assignments.filter(a => a.batch === activeBatch);
+
+    profileModalTitle.textContent = `Student Profile: Roll ${student.roll}`;
+
+    profileModalBody.innerHTML = `
+      <div class="callout" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="min-width: 0; word-break: break-word;">
+          <div style="font-size: 14px; font-weight: bold;">Roll: ${student.roll}</div>
+          <div style="color: var(--fg-muted); font-size: 11px; margin-top: 2px;">
+            Batch: ${student.batch}
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 10px; text-transform: uppercase; color: var(--fg-muted);">Cumulative Rating</div>
+          <div style="font-size: 20px; font-weight: 700;">
+            ${sm.cumulativeScore.toFixed(2)} <span style="font-size: 11px; font-weight: normal; color: var(--fg-muted);">pts (Rank #${student.computedRank || 1})</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin: 16px 0 8px 0;">
+        <h4 style="text-transform: uppercase; font-size: 12px; font-weight: 700;">Enrolled Assignments Overview (${sm.evaluatedCount} / ${batchAssignments.length} Submitted)</h4>
+        <p style="color: var(--fg-muted); font-size: 11px; margin-top: 2px;">
+          Assignments for Batch ${student.batch}. Click [Inspect Code] to view task-level breakdown, code files, and transparency notes.
+        </p>
+      </div>
+
+      <div class="table-wrap" style="margin-top: 10px; margin-bottom: 0;">
+        <table class="score-detail-table">
+          <thead>
+            <tr>
+              <th style="width: 50px;">Code</th>
+              <th>Assignment Title</th>
+              <th style="width: 90px;">Status</th>
+              <th style="width: 100px;">Submitted</th>
+              <th style="width: 110px; text-align: right;">Score</th>
+              <th style="width: 140px; text-align: center;">Action</th>
+            </tr>
+          </thead>
+        <tbody>
+          ${batchAssignments.map(meta => {
+            const sub = student.assignments.find(a => a.assignmentId === meta.id);
+            if (sub) {
+              const ev = evaluateSubmission(sub);
+              return `
+                <tr>
+                  <td>
+                    <button class="btn btn-sm profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}" style="padding: 2px 6px; font-weight: 700; cursor: pointer;" title="Inspect ${meta.code} code & audit">
+                      ${meta.code}
+                    </button>
+                  </td>
+                  <td>
+                    <span class="profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}" style="font-weight: 700; cursor: pointer; text-decoration: underline;" title="Inspect ${meta.code}">
+                      ${meta.title}
+                    </span>
+                  </td>
+                  <td><span class="tag-plain">${ev.status}</span></td>
+                  <td style="font-size: 11px; color: var(--fg-muted);">${ev.submissionTime || 'In-time'}</td>
+                  <td style="text-align: right; font-weight: 700;">
+                    ${ev.computedTotal.toFixed(2)} / ${meta.baseMax}
+                    <div style="font-size: 10px; font-weight: normal; color: var(--fg-muted);">${ev.computedPercentage}</div>
+                  </td>
+                  <td style="text-align: center;">
+                    <button class="btn btn-sm profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}">
+                      [Inspect Code]
+                    </button>
+                  </td>
+                </tr>
+              `;
+            } else {
+              return `
+                <tr style="opacity: 0.6; background: var(--bg-subtle);">
+                  <td><strong>${meta.code}</strong></td>
+                  <td>${meta.title}</td>
+                  <td><span style="font-size: 10px; color: var(--fg-muted);">Upcoming</span></td>
+                  <td>--</td>
+                  <td style="text-align: right; color: var(--fg-muted);">-- / ${meta.baseMax}</td>
+                  <td style="text-align: center; font-size: 10px; color: var(--fg-muted);">[Pending Release]</td>
+                </tr>
+              `;
+            }
+          }).join('')}
+        </tbody>
+      </table>
+      </div>
+    `;
+
+    profileModalBody.querySelectorAll('.profile-inspect-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const sId = e.currentTarget.getAttribute('data-student');
+        const aId = e.currentTarget.getAttribute('data-assign');
+        profileModal.style.display = 'none';
+        openAssignmentAuditModal(sId, aId, true);
+      });
+    });
+
+    profileModal.style.display = 'flex';
+  }
+
+  // Open Assignment Audit Modal (Detailed task breakdown, code, transparency notes)
+  function openAssignmentAuditModal(studentId, assignmentId, fromProfile = false) {
+    const student = HACK_DATA.students.find(s => s.id === studentId);
+    if (!student) return;
+
+    const targetAssignId = assignmentId || (activeScope === 'all' ? 'a1' : activeScope);
+    const meta = HACK_DATA.assignments.find(a => a.id === targetAssignId) || { code: targetAssignId.toUpperCase(), baseMax: 150 };
+    const aSub = student.assignments.find(a => a.assignmentId === targetAssignId) || student.assignments[0];
+    const ev = evaluateSubmission(aSub);
+    if (!ev) return;
+    const sc = ev.computedScores;
+
+    if (fromProfile) {
+      modalBackBtn.style.display = 'inline-block';
+      modalBackBtn.onclick = () => {
+        detailModal.style.display = 'none';
+        openStudentProfileModal(studentId);
+      };
+    } else {
+      modalBackBtn.style.display = 'none';
+    }
+
+    modalTitle.textContent = `[${meta.code} Audit] Roll ${student.roll} - Score: ${ev.computedTotal.toFixed(2)} / ${meta.baseMax}`;
+    modalInstructorNoteText.textContent = `"${ev.instructorTransparencyNote}"`;
+
+    const components = [
+      { key: 'participation', name: 'Participation' },
+      { key: 'inTime', name: 'In-Time Submission (5m grace)' },
+      { key: 'task1', name: 'Task 1: Dual LED Blinker' },
+      { key: 'task2', name: 'Task 2: Software PWM' },
+      { key: 'task3', name: 'Task 3: Sonar Reader (Hardware Accel)' },
+      { key: 'documentation', name: 'Inline Code Comments' },
+      { key: 'bonus', name: 'Bonus Pool (i.b.1–iii.b)' }
+    ];
+
+    modalScoreTableBody.innerHTML = components.map(c => {
+      const item = sc[c.key] || { max: 0, inst: 0, llm: 0, final: 0, note: '-' };
+      return `
+        <tr>
+          <td><strong>${c.name}</strong></td>
+          <td>${item.max}</td>
+          <td>${item.inst}</td>
+          <td>${item.llm}</td>
+          <td><strong>${item.final}</strong></td>
+          <td style="color: var(--fg-muted);">${item.note}</td>
+        </tr>
+      `;
+    }).join('') + `
+      <tr style="background: var(--bg-alt); font-weight: bold;">
+        <td>TOTAL BASE SCORE</td>
+        <td>${meta.baseMax}</td>
+        <td colspan="2" style="text-align: center;">Me(60%) + LLM(40%)</td>
+        <td>${ev.computedTotal.toFixed(2)}</td>
+        <td>${ev.computedPercentage} (Evaluated)</td>
+      </tr>
+    `;
+
+    // Code Viewer
+    if (ev.codeFiles && ev.codeFiles.length > 0) {
+      modalFileTabs.innerHTML = ev.codeFiles.map((f, i) => `
+        <button class="f-btn ${i === 0 ? 'active' : ''}" data-idx="${i}">[${f.name}]</button>
+      `).join('');
+
+      modalCodeDisplay.textContent = ev.codeFiles[0].content;
+
+      modalFileTabs.querySelectorAll('.f-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          modalFileTabs.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+          e.currentTarget.classList.add('active');
+          const idx = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+          modalCodeDisplay.textContent = ev.codeFiles[idx].content;
+        });
+      });
+    } else {
+      modalFileTabs.innerHTML = '<span>No code files downloaded</span>';
+      modalCodeDisplay.textContent = `// No local code files.\n// Note: Student's Google Drive link requires permission access:\n// ${ev.driveLink}`;
+    }
+
+    // Subagent Critique
+    modalCritiqueDisplay.innerHTML = `
+      <div class="callout">
+        <h4>Task 1 Technical Evaluation:</h4>
+        <p>Evaluated on non-blocking concurrency vs blocking delay. Millis() state machine gets 25/25; sequential delay gets 15/25.</p>
+      </div>
+      <div class="callout">
+        <h4>Task 2 Technical Evaluation:</h4>
+        <p>Evaluated on microsecond PWM duty cycle without analogWrite(). AVR 16-bit signed int overflow (time*value) checked.</p>
+      </div>
+      <div class="callout">
+        <h4>Task 3 Technical Evaluation:</h4>
+        <p>Evaluated on ultrasonic reading without pulseIn(). True hardware acceleration requires interrupts (Timer1 Input Capture / PCINT).</p>
+      </div>
+    `;
+
+    // Metadata
+    modalStudentCommentText.textContent = `"${ev.studentComment}"`;
+    modalDriveLinkAnchor.href = ev.driveLink;
+    modalDriveLinkAnchor.textContent = ev.driveLink;
+    if (ev.status === 'Pending Drive Access') {
+      modalDriveWarning.innerHTML = `
+        <p style="color: red; font-weight: bold;">
+          [!] WARNING: Google Drive folder is permission-locked to Google Sign-in. Student must set sharing to "Anyone with the link can view" for code re-scoring.
+        </p>
+      `;
+    } else {
+      modalDriveWarning.innerHTML = `<p style="color: green;">[+] Verified: Files retrieved and analyzed.</p>`;
+    }
+
+    switchModalPane('scorecardPane');
+    detailModal.style.display = 'flex';
+  }
+
+  // Modal Tab Switching
+  document.querySelectorAll('.m-tab').forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      const paneId = e.currentTarget.getAttribute('data-pane');
+      switchModalPane(paneId);
+    });
+  });
+
+  function switchModalPane(paneId) {
+    document.querySelectorAll('.m-tab').forEach(t => {
+      t.classList.toggle('active', t.getAttribute('data-pane') === paneId);
+    });
+    document.querySelectorAll('.pane').forEach(p => {
+      p.classList.toggle('active', p.id === paneId);
+    });
+  }
+
+  // Close Modal Handlers
+  modalCloseBtn.addEventListener('click', () => detailModal.style.display = 'none');
+  detailModal.addEventListener('click', (e) => {
+    if (e.target === detailModal) detailModal.style.display = 'none';
+  });
+
+  profileModalCloseBtn.addEventListener('click', () => profileModal.style.display = 'none');
+  profileModal.addEventListener('click', (e) => {
+    if (e.target === profileModal) profileModal.style.display = 'none';
+  });
+
+  // Open Assignment-Specific Rubric Modal
+  function openRubricModal(assignmentId) {
+    const targetAssignId = assignmentId || (activeScope === 'all' ? 'a1' : activeScope);
+    const meta = HACK_DATA.assignments.find(a => a.id === targetAssignId) || HACK_DATA.assignments[0];
+    if (!meta) return;
+
+    rubricModalTitle.textContent = `[${meta.code}] Rubric & Criteria: ${meta.title}`;
+
+    rubricModalContent.innerHTML = `
+      <div class="callout" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <span style="font-weight: 700; text-transform: uppercase;">Assignment: ${meta.code}</span>
+          <div style="font-size: 11px; color: var(--fg-muted);">${meta.title}</div>
+        </div>
+        <div>
+          <span class="tag-plain" style="font-weight: 700;">Base Max: ${meta.baseMax} pts</span>
+          <span class="tag-plain" style="font-weight: 700;">Bonus Pool: +${meta.bonusMax} pts</span>
+        </div>
+      </div>
+
+      <div class="callout">
+        <h4>Base Points Breakdown (${meta.baseMax} Marks Total)</h4>
+        <p>&bull; <strong>Participation</strong>: 55 Marks (Full marks for authentic effort)<br>
+           &bull; <strong>In-Time Submission</strong>: 15 Marks (5-minute grace window applied)<br>
+           &bull; <strong>Task 1 (Dual LED Blinker)</strong>: 25 Marks (Non-blocking millis() vs blocking delay)<br>
+           &bull; <strong>Task 2 (Software PWM)</strong>: 25 Marks (Microsecond duty cycle without analogWrite)<br>
+           &bull; <strong>Task 3 (Sonar Reader)</strong>: 25 Marks (Hardware acceleration via interrupts)<br>
+           &bull; <strong>Inline Comments</strong>: 5 Marks (Directly in code files)<br>
+           &bull; <strong>Simulation Video</strong>: Scoring Removed (0 Marks)</p>
+      </div>
+      <div class="callout">
+        <h4>Bonus Pool (+${meta.bonusMax} Marks Total - Adds on top of ${meta.baseMax})</h4>
+        <p>&bull; <strong>i.b.1 (Generic N-LEDs)</strong>: 10 Marks<br>
+           &bull; <strong>i.b.2 (Hardware Registers DDRx/PORTx)</strong>: 15 Marks<br>
+           &bull; <strong>i.b.3 (Multitasking Systems)</strong>: 10 Marks<br>
+           &bull; <strong>ii.b.1 (Timer Registers PWM)</strong>: 15 Marks<br>
+           &bull; <strong>ii.b.2 (Custom PWM Servo Control)</strong>: 10 Marks<br>
+           &bull; <strong>iii.b (Smart Dustbin Simulation)</strong>: 15 Marks</p>
+      </div>
+      <div class="callout">
+        <h4>Hybrid Scoring Formula</h4>
+        <p><code>Task & Bonus Final = (Instructor * 0.6) + (LLM * 0.4)</code></p>
+      </div>
+    `;
+
+    rubricModal.style.display = 'flex';
+  }
+
+  // Rubric Modal Handlers
+  rubricToggleBtn.addEventListener('click', () => openRubricModal(activeScope));
+  rubricCloseBtn.addEventListener('click', () => rubricModal.style.display = 'none');
+  rubricModal.addEventListener('click', (e) => {
+    if (e.target === rubricModal) rubricModal.style.display = 'none';
+  });
+
+  // Print
+  printBtn.addEventListener('click', () => window.print());
+
+  // Export CSV
+  exportCsvBtn.addEventListener('click', () => {
+    if (activeScope === 'all') {
+      const headers = [
+        'Rank', 'Roll', 'Batch', 'Status', 'Cumulative Points', 'Completed Assignments'
+      ];
+      const evaluatedList = HACK_DATA.students
+        .filter(s => s.batch === activeBatch)
+        .map(s => ({ ...s, scoreModel: getStudentScoreModel(s) }))
+        .sort((a, b) => b.scoreModel.cumulativeScore - a.scoreModel.cumulativeScore);
+
+      const rows = evaluatedList.map((s, idx) => {
+        const sm = s.scoreModel;
+        const assignsStr = sm.assignmentSummaries.map(as => `${as.code}: ${as.score.toFixed(2)} pts (${as.percentage})`).join('; ');
+        return [
+          idx + 1,
+          `"${s.roll}"`,
+          `"${s.batch}"`,
+          `"${sm.status}"`,
+          sm.cumulativeScore.toFixed(2),
+          `"${assignsStr}"`
+        ];
+      });
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const encoded = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.href = encoded;
+      link.download = `HACK_Elo_Cumulative_Ratings_${activeBatch}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+
+    const headers = [
+      'Rank', 'Roll', 'Batch', 'Status', 'Total Score', 'Max Score', 'Percentage',
+      'Participation (55)', 'In-Time (15)', 'Task 1 (25)', 'Task 2 (25)', 'Task 3 (25)',
+      'Inline Comments (5)', 'Bonus (75)', 'Instructor Notes', 'Drive Link'
+    ];
+
+    const evaluatedList = HACK_DATA.students
+      .filter(s => s.batch === activeBatch)
+      .map(s => ({ ...s, scoreModel: getStudentScoreModel(s) }))
+      .sort((a, b) => {
+        const scA = a.scoreModel.isCumulative ? a.scoreModel.cumulativeScore : a.scoreModel.assignmentData.computedTotal;
+        const scB = b.scoreModel.isCumulative ? b.scoreModel.cumulativeScore : b.scoreModel.assignmentData.computedTotal;
+        return scB - scA;
+      });
+
+    const rows = evaluatedList.map((s, idx) => {
+      const a = s.scoreModel.assignmentData;
+      const sc = a.computedScores;
+      return [
+        idx + 1,
+        `"${s.roll}"`,
+        `"${s.batch}"`,
+        `"${a.status}"`,
+        a.computedTotal.toFixed(2),
+        150,
+        `"${a.computedPercentage}"`,
+        sc.participation.final,
+        sc.inTime.final,
+        sc.task1.final,
+        sc.task2.final,
+        sc.task3.final,
+        sc.documentation.final,
+        sc.bonus.final,
+        `"${a.instructorTransparencyNote.replace(/"/g, '""')}"`,
+        `"${a.driveLink}"`
+      ];
+    });
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encoded = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.href = encoded;
+    link.download = `HACK_Elo_Ratings_${activeBatch}_${activeScope}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+
+  // Switch Scope
+  assignmentSelect.addEventListener('change', (e) => {
+    activeScope = e.target.value;
+    render();
+  });
+
+  // Search
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    render();
+  });
+
+  statusFilterSelect.addEventListener('change', (e) => {
+    statusFilter = e.target.value;
+    render();
+  });
+
+  // Initial load: parse CSV then render
+  loadCSVData().then(() => {
+    render();
+  });
+});

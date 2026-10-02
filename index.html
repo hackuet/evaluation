@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HACK Elo Rating Board | KUET</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-top">
+        <div class="title-box">
+          <h1>[HACK] Hardware Acceleration Club of KUET</h1>
+          <p>Elo Rating Board &bull; Multi-Assignment Technical Performance Index</p>
+        </div>
+        <div class="header-actions">
+          <button id="exportCsvBtn" class="btn">[Export CSV]</button>
+          <button id="printBtn" class="btn">[Print View]</button>
+          <button id="rubricToggleBtn" class="btn" style="display: none;">[View Rubric]</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation & Generic Selectors -->
+    <nav class="nav-bar">
+      <!-- Batch Label -->
+      <div class="nav-group">
+        <span class="nav-label">Batch:</span>
+        <span class="selector-btn active" style="cursor: default;">2k25</span>
+      </div>
+
+      <!-- Assignment Scope Selector -->
+      <div class="nav-group">
+        <span class="nav-label">Scope:</span>
+        <select id="assignmentSelect">
+          <option value="all" selected>Cumulative Rating (All Assignments)</option>
+          <option value="a1">Assignment 1: Dual LED, PWM & Sonar</option>
+        </select>
+      </div>
+
+      <!-- Filters & Search -->
+      <div class="nav-group">
+        <input type="text" id="searchInput" placeholder="Search roll...">
+        <select id="statusFilter">
+          <option value="all">All Statuses</option>
+          <option value="Evaluated">Evaluated</option>
+          <option value="Pending Drive Access">Pending Drive Access</option>
+        </select>
+      </div>
+    </nav>
+
+    <!-- Metrics Bar -->
+    <div class="metrics-strip">
+      <div class="metric-cell">
+        <span class="metric-title">Total Submissions</span>
+        <div class="metric-val" id="metricSubmissions">3</div>
+      </div>
+      <div class="metric-cell">
+        <span class="metric-title">Top Score</span>
+        <div class="metric-val" id="metricTopScore">135.60 <span style="font-size: 11px; font-weight: normal;">/ 150</span></div>
+      </div>
+      <div class="metric-cell">
+        <span class="metric-title">Batch Mean</span>
+        <div class="metric-val" id="metricMean">105.62 <span style="font-size: 11px; font-weight: normal;">/ 150</span></div>
+      </div>
+      <div class="metric-cell">
+        <span class="metric-title">Formula</span>
+        <div class="metric-val" style="font-size: 13px; margin-top: 6px;">Inst(60%) + LLM(40%)</div>
+      </div>
+    </div>
+
+    <!-- Active View Area -->
+    <section id="leaderboardSection">
+      <div class="table-wrap">
+        <table class="rating-table" id="ratingTable">
+          <thead>
+            <tr>
+              <th style="width: 50px;">Rank</th>
+              <th style="width: 140px;">Roll</th>
+              <th style="width: 120px; text-align: right;">Total Score</th>
+              <th>Task Breakdown & Transparency Notes</th>
+              <th style="width: 110px; text-align: center;">Audit</th>
+            </tr>
+          </thead>
+          <tbody id="ratingTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+
+    <!-- Footer -->
+    <footer>
+      <div>&copy; 2026 HACK (Hardware Acceleration Club of KUET)</div>
+    </footer>
+  </div>
+
+  <!-- Cumulative Student Profile Modal -->
+  <div class="modal-overlay" id="profileModal" style="display: none;">
+    <div class="modal-window" style="max-width: 860px;">
+      <div class="modal-header-bar">
+        <h2 id="profileModalTitle">Student Profile: Cumulative Standings</h2>
+        <button class="modal-close" id="profileModalCloseBtn">[X]</button>
+      </div>
+      <div class="modal-content-area" id="profileModalBody">
+        <!-- Dynamically populated: student overview & completed assignments table -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Assignment Audit Modal -->
+  <div class="modal-overlay" id="detailModal" style="display: none;">
+    <div class="modal-window">
+      <div class="modal-header-bar">
+        <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+          <button class="btn btn-sm" id="modalBackBtn" style="display: none; flex-shrink: 0;">[< Back]</button>
+          <h2 id="modalTitle" style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Assignment Audit & Code Review</h2>
+        </div>
+        <button class="modal-close" id="modalCloseBtn">[X]</button>
+      </div>
+
+      <div class="modal-tabs-bar">
+        <button class="m-tab active" data-pane="scorecardPane">Scorecard & Rationale</button>
+        <button class="m-tab" data-pane="codePane">Submitted Code</button>
+        <button class="m-tab" data-pane="critiquePane">AI Subagent Audit</button>
+        <button class="m-tab" data-pane="submissionPane">Submission Metadata</button>
+      </div>
+
+      <div class="modal-content-area">
+        <!-- Pane 1: Scorecard -->
+        <div class="pane active" id="scorecardPane">
+          <div class="callout" id="modalInstructorCallout">
+            <h4>Instructor Transparency Note (Why I Marked How):</h4>
+            <p id="modalInstructorNoteText">...</p>
+          </div>
+
+          <div class="table-wrap" style="margin-top: 10px; margin-bottom: 0;">
+            <table class="score-detail-table">
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th style="width: 50px;">Max</th>
+                  <th style="width: 80px;">Inst (60%)</th>
+                  <th style="width: 80px;">LLM (40%)</th>
+                  <th style="width: 80px;">Final</th>
+                  <th>Marking Rationale & Remarks</th>
+                </tr>
+              </thead>
+              <tbody id="modalScoreTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pane 2: Code Viewer -->
+        <div class="pane" id="codePane">
+          <div class="file-select-btns" id="modalFileTabs">
+            <!-- Dynamically populated -->
+          </div>
+          <div class="code-box" id="modalCodeDisplay">// No code selected</div>
+        </div>
+
+        <!-- Pane 3: Subagent Critique -->
+        <div class="pane" id="critiquePane">
+          <div id="modalCritiqueDisplay">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Pane 4: Submission Metadata -->
+        <div class="pane" id="submissionPane">
+          <div class="callout">
+            <h4>Submission Message & Notes:</h4>
+            <p id="modalStudentCommentText">"..."</p>
+          </div>
+          <div class="callout">
+            <h4>Google Drive Submission URL:</h4>
+            <p><a id="modalDriveLinkAnchor" href="#" target="_blank" style="color: #000; word-break: break-all;"></a></p>
+            <div id="modalDriveWarning" style="margin-top: 8px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rubric Modal (Assignment-Specific) -->
+  <div class="modal-overlay" id="rubricModal" style="display: none;">
+    <div class="modal-window" style="max-width: 750px;">
+      <div class="modal-header-bar">
+        <h2 id="rubricModalTitle">Official Assignment Rubric</h2>
+        <button class="modal-close" id="rubricCloseBtn">[X]</button>
+      </div>
+      <div class="modal-content-area" id="rubricModalContent">
+        <!-- Dynamically rendered for the active assignment -->
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

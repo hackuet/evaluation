@@ -1,0 +1,34 @@
+int trigPin = 10;
+int echoPin = 9;
+
+long duration;
+float distance;
+
+void setup() {
+  pinMode(trigPin, OUTPUT); // Sound made by trigger pin will be sent out
+  pinMode(echoPin, INPUT); // Signal will be recieved by Echo pin
+  Serial.begin(9600); // Data rate 
+}
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2); // Initially keeping clear by turning off 
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10); // Keeping high for sending sound waves
+  digitalWrite(trigPin, LOW); // Turning off
+
+  while (digitalRead(echoPin) == LOW); 
+  long startTime = micros(); // Starting count down in microsec
+
+  while (digitalRead(echoPin) == HIGH); 
+  long endTime = micros(); // Stopping count down
+
+  duration = endTime - startTime;
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  Serial.println(" cm");
+
+  delay(100); // Gap between taking each reading 
+}

@@ -1,0 +1,49 @@
+//position of LEDs in the Arduino
+int led_yellow = 8;
+int led_red = 9;
+
+//unsigned : only 0 and (+ve) values
+//long : more space in the memory
+//fixing intervals for both LEDs 
+unsigned long interval_yellow = 1000;
+unsigned long interval_red = 2000;
+
+//Last time when LEDs were off
+unsigned long lastTime_yellow = 0;
+unsigned long lastTime_red = 0;
+
+//Initial state, which is off
+int state_yellow = LOW;
+int state_red = LOW;
+
+//Preparing 8 and 9 pins for output, means arduino will send command outside (to LEDs)
+void setup(){
+  pinMode(led_yellow, OUTPUT);
+  pinMode(led_red,OUTPUT);
+}
+
+//To work in loops with intervals for both LEDs
+void loop(){
+  unsigned long currentTime = millis(); /* millis : Asks 'after how much time';
+  setting time for different values, can work independtly which 'delay' can't.*/
+
+  if (currentTime - lastTime_yellow >= interval_yellow) {
+    lastTime_yellow = currentTime;
+    if (state_yellow == LOW) {
+      state_yellow = HIGH;
+    } else {
+      state_yellow = LOW;
+    }
+    digitalWrite (led_yellow, state_yellow);
+  }
+
+  if (currentTime - lastTime_red >= interval_red) {
+    lastTime_red = currentTime;
+    if (state_red == LOW) {
+      state_red = HIGH;
+    } else {
+      state_red = LOW;
+    }
+    digitalWrite(led_red, state_red);
+  }
+}
