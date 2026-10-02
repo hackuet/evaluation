@@ -17,35 +17,37 @@
   </head>
   <body data-page="assignment" data-assignment-id="a1">
     <div class="container">
-      <header style="border-bottom: 2px solid var(--border); padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
-        <div>
-          <div class="logo-title" style="display: flex; align-items: center; gap: 14px;">
-            <svg class="chip-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; max-width: 36px; max-height: 36px; display: block; flex-shrink: 0;">
-              <rect x="4" y="4" width="16" height="16" rx="2"></rect>
-              <path d="M9 9h6v6H9z"></path>
-              <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"></path>
-            </svg>
-            <div>
-              <h1 style="font-size: 16px; font-weight: 700; letter-spacing: -0.5px; text-transform: uppercase; margin: 0;">HACK // HARDWARE ACCELERATION CLUB OF KUET</h1>
-              <p style="color: var(--fg-muted); font-size: 11px; margin-top: 2px; margin-bottom: 0;">Objective Technical Evaluation & Rating System</p>
-            </div>
+      <header style="border-bottom: 2px solid var(--border); padding-bottom: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div class="logo-title" style="display: flex; align-items: center; gap: 14px;">
+          <svg class="chip-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; max-width: 36px; max-height: 36px; display: block; flex-shrink: 0;">
+            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+            <path d="M9 9h6v6H9z"></path>
+            <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"></path>
+          </svg>
+          <div>
+            <h1 style="font-size: 16px; font-weight: 700; letter-spacing: -0.5px; text-transform: uppercase; margin: 0;">HACK // HARDWARE ACCELERATION CLUB OF KUET</h1>
+            <p style="color: var(--fg-muted); font-size: 11px; margin-top: 2px; margin-bottom: 0;">Objective Technical Evaluation & Rating System</p>
           </div>
         </div>
-        <div class="header-badges" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"><span class="badge badge-subagent" id="headerModelBadge" style="display: inline-flex; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg-alt); letter-spacing: 0.5px;">EVALUATOR SUBAGENT: Gemini 3.8 Flash (Medium Thinking)</span>
-          <button class="badge" id="btnRubricModal" style="cursor: pointer; display: inline-flex; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg); font-family: inherit;">[VIEW RUBRIC]</button>
+      </header>
+      <nav class="assignment-nav" id="assignmentNav" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
+        <div class="nav-controls-left" style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
           <div class="batch-btns-wrap" style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;"><span style="color: var(--fg-muted); font-size: 11px; font-family: var(--font-mono);">BATCH:</span>
             <div class="batch-btn-group" id="headerBatchBtns" style="display: inline-flex; gap: 4px;">
               <button class="btn btn-sm batch-btn active" type="button" data-batch="2k25" style="padding: 4px 10px; font-size: 11px; font-weight: 700; font-family: var(--font-mono); cursor: pointer; border: 1px solid var(--border); background: #000000; color: #ffffff;">2K25</button>
             </div>
           </div>
+          <div class="assignment-select-wrap" style="display: inline-flex; align-items: center; gap: 8px;">
+            <label for="assignmentSelect" style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--fg-muted); white-space: nowrap;">ASSIGNMENT:</label>
+            <select class="nav-select" id="assignmentSelect" style="padding: 6px 12px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); font-family: var(--font-mono); font-size: 11px; font-weight: 700; cursor: pointer; min-width: 300px; max-width: 520px;">
+              <option value="index.html" data-scope="all">CUMULATIVE (ALL ROUNDS)</option>
+              <option value="a1.html" data-scope="a1" data-batch="2k25" selected>A-01: ASSIGNMENT 1: DUAL LED, SOFTWARE PWM &amp; SONAR</option>
+            </select>
+          </div>
         </div>
-      </header>
-      <nav class="assignment-nav" id="assignmentNav" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-        <label for="assignmentSelect" style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--fg-muted); white-space: nowrap;">ASSIGNMENT:</label>
-        <select class="nav-select" id="assignmentSelect" style="padding: 8px 12px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); font-family: var(--font-mono); font-size: 11px; font-weight: 700; cursor: pointer; min-width: 320px; max-width: 550px;">
-          <option value="index.html" data-scope="all">CUMULATIVE (ALL ROUNDS)</option>
-          <option value="a1.html" data-scope="a1" data-batch="2k25" selected>A-01: ASSIGNMENT 1: DUAL LED, SOFTWARE PWM &amp; SONAR</option>
-        </select>
+        <div class="nav-controls-right" id="navBadges" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"><span class="badge badge-subagent" id="headerModelBadge" style="display: inline-flex; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg-alt); letter-spacing: 0.5px;">EVALUATOR SUBAGENT: Gemini 3.8 Flash (Medium Thinking)</span>
+          <button class="badge" id="btnRubricModal" style="cursor: pointer; display: inline-flex; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg); font-family: inherit;">[VIEW RUBRIC]</button>
+        </div>
       </nav>
       <section id="assignmentQuestionSection" style="margin-bottom: 20px;">
         <details open style="background: var(--bg-alt); border: 1px solid var(--border); padding: 14px 18px;">

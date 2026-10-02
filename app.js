@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const rows = match.trim().split('\n').filter(r => !r.includes('---'));
       if (rows.length === 0) return match;
       const token = `%%TABLE_BLOCK_${tables.length}%%`;
-      let tblHtml = '<div style="overflow-x: auto; margin: 12px 0;"><table class="audit-md-table" style="width: 100%; border-collapse: collapse; font-size: 11px; border: 1px solid var(--border-light);">';
+      let tblHtml = '<div class="table-wrap" style="margin: 12px 0;"><table class="audit-md-table" style="width: 100%; min-width: 680px; border-collapse: collapse; font-size: 11px; border: 1px solid var(--border-light);">';
       rows.forEach((r, idx) => {
         const cells = r.split('|').slice(1, -1).map(c => c.trim());
         tblHtml += '<tr>';

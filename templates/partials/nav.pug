@@ -1,6 +1,18 @@
-nav.assignment-nav#assignmentNav(style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;")
-  label(for="assignmentSelect" style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--fg-muted); white-space: nowrap;") ASSIGNMENT:
-  select.nav-select#assignmentSelect(style="padding: 8px 12px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); font-family: var(--font-mono); font-size: 11px; font-weight: 700; cursor: pointer; min-width: 320px; max-width: 550px;")
-    option(value="index.html" data-scope="all" selected=(pageType === 'cumulative')) CUMULATIVE (ALL ROUNDS)
-    each a in (assignments || []).filter(a => !activeBatch || !a.batch || a.batch === activeBatch)
-      option(value=`${a.id}.html` data-scope=a.id data-batch=a.batch selected=(assignmentId === a.id))= `${a.code}: ${a.title.toUpperCase()}`
+nav.assignment-nav#assignmentNav(style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;")
+  .nav-controls-left(style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;")
+    .batch-btns-wrap(style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;")
+      span(style="color: var(--fg-muted); font-size: 11px; font-family: var(--font-mono);") BATCH:
+      .batch-btn-group#headerBatchBtns(style="display: inline-flex; gap: 4px;")
+        each b in batches || [{id: '2k25', name: '2k25'}]
+          button.btn.btn-sm.batch-btn(type="button" data-batch=b.id class=(b.id === activeBatch ? 'active' : '') style="padding: 4px 10px; font-size: 11px; font-weight: 700; font-family: var(--font-mono); cursor: pointer; border: 1px solid var(--border); background: " + (b.id === activeBatch ? '#000000; color: #ffffff;' : 'var(--bg); color: var(--fg);'))= b.id.toUpperCase()
+    .assignment-select-wrap(style="display: inline-flex; align-items: center; gap: 8px;")
+      label(for="assignmentSelect" style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--fg-muted); white-space: nowrap;") ASSIGNMENT:
+      select.nav-select#assignmentSelect(style="padding: 6px 12px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); font-family: var(--font-mono); font-size: 11px; font-weight: 700; cursor: pointer; min-width: 300px; max-width: 520px;")
+        option(value="index.html" data-scope="all" selected=(pageType === 'cumulative')) CUMULATIVE (ALL ROUNDS)
+        each a in (assignments || []).filter(a => !activeBatch || !a.batch || a.batch === activeBatch)
+          option(value=`${a.id}.html` data-scope=a.id data-batch=a.batch selected=(assignmentId === a.id))= `${a.code}: ${a.title.toUpperCase()}`
+  .nav-controls-right#navBadges(style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;")
+    if pageType === 'assignment'
+      span.badge.badge-subagent#headerModelBadge(style="display: inline-flex; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg-alt); letter-spacing: 0.5px;")= "EVALUATOR SUBAGENT: " + (activeModel || "GEMINI 3.8 FLASH (MEDIUM THINKING)")
+      button.badge#btnRubricModal(style="cursor: pointer; display: inline-flex; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg); font-family: inherit;") [VIEW RUBRIC]
+

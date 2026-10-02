@@ -138,14 +138,35 @@ header {
 .assignment-nav {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
+.nav-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.nav-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.assignment-select-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .nav-select,
 #assignmentSelect {
-  padding: 8px 12px;
+  padding: 6px 12px;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--fg);
@@ -153,8 +174,8 @@ header {
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  min-width: 320px;
-  max-width: 550px;
+  min-width: 300px;
+  max-width: 520px;
 }
 
 .nav-select:focus,
@@ -306,11 +327,29 @@ select, input[type="text"] {
 .table-wrap {
   border: 1px solid var(--border);
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin-bottom: 28px;
+  max-width: 100%;
+  position: relative;
+}
+
+/* Custom sleek scrollbar for horizontal table scrolling */
+.table-wrap::-webkit-scrollbar {
+  height: 6px;
+}
+.table-wrap::-webkit-scrollbar-track {
+  background: var(--bg-alt);
+}
+.table-wrap::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+}
+.table-wrap::-webkit-scrollbar-thumb:hover {
+  background: #000000;
 }
 
 table.rating-table {
   width: 100%;
+  min-width: 820px; /* Don't resize horizontally past 820px; scroll horizontally instead */
   border-collapse: collapse;
   text-align: left;
 }
@@ -536,6 +575,7 @@ details.transparency-block[open] summary::before {
 /* Scorecard inside modal */
 .score-detail-table {
   width: 100%;
+  min-width: 680px; /* Don't resize horizontally past 680px; scroll horizontally instead */
   border-collapse: collapse;
   margin-top: 8px;
 }
@@ -549,6 +589,14 @@ details.transparency-block[open] summary::before {
 .score-detail-table th {
   background: var(--bg-alt);
   text-transform: uppercase;
+}
+
+/* Markdown tables in audit reports */
+.audit-md-table {
+  width: 100%;
+  min-width: 680px; /* Don't resize horizontally past 680px; scroll horizontally instead */
+  border-collapse: collapse;
+  font-size: 11px;
 }
 
 /* Plain Code Box */
@@ -710,16 +758,39 @@ footer {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     margin-bottom: 20px;
+    max-width: 100%;
   }
 
   table.rating-table {
-    min-width: 650px;
+    min-width: 820px;
   }
 
   table.rating-table th,
   table.rating-table td {
     padding: 8px 10px;
     font-size: 11px;
+  }
+
+  .assignment-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .nav-controls-left,
+  .nav-controls-right {
+    width: 100%;
+  }
+
+  .assignment-select-wrap {
+    width: 100%;
+  }
+
+  .nav-select,
+  #assignmentSelect {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .modal-overlay {
@@ -784,7 +855,12 @@ footer {
   }
 
   .score-detail-table {
-    min-width: 460px;
+    min-width: 680px;
+    width: 100%;
+  }
+
+  .audit-md-table {
+    min-width: 680px;
     width: 100%;
   }
 
