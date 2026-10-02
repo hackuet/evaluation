@@ -84,17 +84,31 @@ header {
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 8px;
+  padding: 0 8px;
+  height: 28px;
+  box-sizing: border-box;
   font-size: 11px;
   font-weight: 700;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--fg);
+  white-space: nowrap;
 }
 
 .badge-subagent {
   background: var(--bg-alt);
   letter-spacing: 0.5px;
+}
+
+#btnRubricModal {
+  cursor: pointer;
+  background: var(--bg);
+  font-family: inherit;
+  transition: all 0.1s ease;
+}
+
+#btnRubricModal:hover {
+  background: var(--bg-alt);
 }
 
 .batch-btns-wrap {
@@ -103,6 +117,16 @@ header {
   gap: 6px;
   font-size: 11px;
   font-weight: 700;
+  flex-shrink: 0;
+}
+
+.batch-btns-wrap .nav-label,
+.assignment-select-wrap .nav-label {
+  color: var(--fg-muted);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .batch-btn-group {
@@ -111,7 +135,9 @@ header {
 }
 
 .batch-btn {
-  padding: 4px 10px;
+  height: 28px;
+  box-sizing: border-box;
+  padding: 0 10px;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--fg);
@@ -122,7 +148,9 @@ header {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   transition: all 0.1s ease;
+  white-space: nowrap;
 }
 
 .batch-btn:hover {
@@ -141,32 +169,35 @@ header {
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
 }
 
 .nav-controls-left {
   display: flex;
   align-items: center;
   gap: 14px;
-  flex-wrap: wrap;
+  min-width: 0;
+  flex: 0 1 auto;
 }
 
 .nav-controls-right {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .assignment-select-wrap {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .nav-select,
 #assignmentSelect {
-  padding: 6px 12px;
+  height: 28px;
+  box-sizing: border-box;
+  padding: 0 10px;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--fg);
@@ -174,8 +205,10 @@ header {
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  min-width: 300px;
-  max-width: 520px;
+  min-width: 220px;
+  max-width: 440px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nav-select:focus,
@@ -804,28 +837,6 @@ footer {
     font-size: 11px;
   }
 
-  .assignment-nav {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .nav-controls-left,
-  .nav-controls-right {
-    width: 100%;
-  }
-
-  .assignment-select-wrap {
-    width: 100%;
-  }
-
-  .nav-select,
-  #assignmentSelect {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-  }
-
   .modal-overlay {
     padding: 6px;
     align-items: center;
@@ -919,6 +930,133 @@ footer {
 
   .metrics-strip {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Assignment Navigation Responsive Breakpoints */
+@media (max-width: 992px) {
+  .assignment-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .nav-controls-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .batch-btns-wrap {
+    flex-shrink: 0;
+  }
+
+  .assignment-select-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .nav-select,
+  #assignmentSelect {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .nav-controls-right {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .nav-controls-right .badge-subagent {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    justify-content: flex-start;
+  }
+
+  .nav-controls-right #btnRubricModal {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .assignment-nav {
+    gap: 8px;
+  }
+
+  .nav-controls-left {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .batch-btns-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .assignment-select-wrap {
+    width: 100%;
+  }
+
+  .nav-controls-right {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .nav-controls-right .badge-subagent {
+    flex: 1;
+    min-width: 0;
+    font-size: 10px;
+    padding: 0 8px;
+    justify-content: flex-start;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    line-height: 26px;
+  }
+
+  .nav-controls-right #btnRubricModal {
+    flex-shrink: 0;
+    font-size: 10px;
+    padding: 0 6px;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav-controls-right {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .nav-controls-right .badge-subagent,
+  .nav-controls-right #btnRubricModal {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
   }
 }
 

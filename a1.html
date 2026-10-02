@@ -32,23 +32,23 @@
           </div>
         </div>
       </header>
-      <nav class="assignment-nav" id="assignmentNav" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
-        <div class="nav-controls-left" style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-          <div class="batch-btns-wrap" style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;"><span style="color: var(--fg-muted); font-size: 11px; font-family: var(--font-mono);">BATCH:</span>
-            <div class="batch-btn-group" id="headerBatchBtns" style="display: inline-flex; gap: 4px;">
-              <button class="btn btn-sm batch-btn active" type="button" data-batch="2k25" style="padding: 4px 10px; font-size: 11px; font-weight: 700; font-family: var(--font-mono); cursor: pointer; border: 1px solid var(--border); background: #000000; color: #ffffff;">2K25</button>
+      <nav class="assignment-nav" id="assignmentNav">
+        <div class="nav-controls-left">
+          <div class="batch-btns-wrap"><span class="nav-label">BATCH:</span>
+            <div class="batch-btn-group" id="headerBatchBtns">
+              <button class="btn btn-sm batch-btn active" type="button" data-batch="2k25">2K25</button>
             </div>
           </div>
-          <div class="assignment-select-wrap" style="display: inline-flex; align-items: center; gap: 8px;">
-            <label for="assignmentSelect" style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--fg-muted); white-space: nowrap;">ASSIGNMENT:</label>
-            <select class="nav-select" id="assignmentSelect" style="padding: 6px 12px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); font-family: var(--font-mono); font-size: 11px; font-weight: 700; cursor: pointer; min-width: 300px; max-width: 520px;">
+          <div class="assignment-select-wrap">
+            <label class="nav-label" for="assignmentSelect">ASSIGNMENT:</label>
+            <select class="nav-select" id="assignmentSelect">
               <option value="index.html" data-scope="all">CUMULATIVE (ALL ROUNDS)</option>
               <option value="a1.html" data-scope="a1" data-batch="2k25" selected>A-01: ASSIGNMENT 1: DUAL LED, SOFTWARE PWM &amp; SONAR</option>
             </select>
           </div>
         </div>
-        <div class="nav-controls-right" id="navBadges" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"><span class="badge badge-subagent" id="headerModelBadge" style="display: inline-flex; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg-alt); letter-spacing: 0.5px;">EVALUATOR SUBAGENT: Gemini 3.8 Flash (Medium Thinking)</span>
-          <button class="badge" id="btnRubricModal" style="cursor: pointer; display: inline-flex; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg); font-family: inherit;">[VIEW RUBRIC]</button>
+        <div class="nav-controls-right" id="navBadges"><span class="badge badge-subagent" id="headerModelBadge">EVALUATOR SUBAGENT: Gemini 3.8 Flash (Medium Thinking)</span>
+          <button class="badge" id="btnRubricModal" type="button">[VIEW RUBRIC]</button>
         </div>
       </nav>
       <section id="assignmentQuestionSection" style="margin-bottom: 20px;">
