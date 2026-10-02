@@ -215,6 +215,20 @@ document.addEventListener('DOMContentLoaded', () => {
       return token;
     });
 
+    function formatInlineMarkdown(str) {
+      if (!str) return '';
+      let val = escapeHtml(str);
+      // Links: [text](url)
+      val = val.replace(/\[(.*?)\]\(((?:file|https?):\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" style="color: var(--fg); text-decoration: underline;">$1</a>');
+      // Bold: **text**
+      val = val.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Italic: *text*
+      val = val.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      // Inline code: `code`
+      val = val.replace(/`([^`]+)`/g, '<code style="background: #f0f0f0; padding: 2px 4px; font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--border-light); color: #000000;">$1</code>');
+      return val;
+    }
+
     // Parse markdown tables before HTML escaping
     const tables = [];
     text = text.replace(/((?:^[ \t]*\|[^\n]+\|\r?\n)+)/gm, (match) => {
@@ -228,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cells.forEach(c => {
           const tag = idx === 0 ? 'th' : 'td';
           const bg = idx === 0 ? 'background: #f0f0f0; font-weight: bold;' : '';
-          tblHtml += `<${tag} style="border: 1px solid #cccccc; padding: 6px 10px; ${bg}">${escapeHtml(c)}</${tag}>`;
+          tblHtml += `<${tag} style="border: 1px solid #cccccc; padding: 6px 10px; ${bg}">${formatInlineMarkdown(c)}</${tag}>`;
         });
         tblHtml += '</tr>';
       });
