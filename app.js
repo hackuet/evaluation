@@ -30,43 +30,72 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Elements
-  const batchSelect = document.getElementById('batchSelect');
-  if (batchSelect) {
-    batchSelect.value = activeBatch;
-  }
-
-  function updateNavLinks() {
-    const navBtns = document.querySelectorAll('#assignmentNav .nav-btn');
-    navBtns.forEach(btn => {
-      const b = btn.getAttribute('data-batch');
-      if (b && b !== activeBatch) {
-        btn.style.display = 'none';
-      } else {
-        btn.style.display = 'inline-flex';
-      }
-      const href = btn.getAttribute('href');
-      if (href) {
-        const parts = href.split('?');
-        btn.setAttribute('href', `${parts[0]}?batch=${encodeURIComponent(activeBatch)}`);
-      }
-    });
-  }
-
-  if (batchSelect) {
-    batchSelect.addEventListener('change', (e) => {
-      activeBatch = e.target.value;
-      const url = new URL(window.location);
-      url.searchParams.set('batch', activeBatch);
-      window.history.pushState({}, '', url);
-      updateNavLinks();
-      render();
-    });
-  }
-
-  updateNavLinks();
-
   const assignmentSelect = document.getElementById('assignmentSelect');
+
+  // Batch Buttons & Navigation Handling
+  function updateBatchButtons() {
+    const batchBtns = document.querySelectorAll('.batch-btn');
+    batchBtns.forEach(btn => {
+      const bId = btn.getAttribute('data-batch');
+      if (bId === activeBatch) {
+        btn.classList.add('active');
+        btn.style.background = '#000000';
+        btn.style.color = '#ffffff';
+        btn.style.borderColor = '#000000';
+      } else {
+        btn.classList.remove('active');
+        btn.style.background = 'var(--bg)';
+        btn.style.color = 'var(--fg)';
+        btn.style.borderColor = 'var(--border)';
+      }
+    });
+  }
+
+  function updateAssignmentDropdown() {
+    if (!assignmentSelect) return;
+    const batchAssignments = (HACK_DATA.assignments || []).filter(a => !a.batch || a.batch === activeBatch);
+    
+    // Clear and rebuild options
+    assignmentSelect.innerHTML = '';
+    
+    const cumOpt = document.createElement('option');
+    cumOpt.value = 'index.html';
+    cumOpt.setAttribute('data-scope', 'all');
+    cumOpt.textContent = 'CUMULATIVE (ALL ROUNDS)';
+    if (activeScope === 'all') cumOpt.selected = true;
+    assignmentSelect.appendChild(cumOpt);
+
+    batchAssignments.forEach(a => {
+      const opt = document.createElement('option');
+      opt.value = `${a.id}.html`;
+      opt.setAttribute('data-scope', a.id);
+      opt.setAttribute('data-batch', a.batch || activeBatch);
+      opt.textContent = `${a.code}: ${a.title.toUpperCase()}`;
+      if (activeScope === a.id) opt.selected = true;
+      assignmentSelect.appendChild(opt);
+    });
+  }
+
+  function attachBatchButtonListeners() {
+    document.querySelectorAll('.batch-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const bId = e.currentTarget.getAttribute('data-batch');
+        if (!bId || bId === activeBatch) return;
+        activeBatch = bId;
+        const url = new URL(window.location);
+        url.searchParams.set('batch', activeBatch);
+        window.history.pushState({}, '', url);
+        updateBatchButtons();
+        updateAssignmentDropdown();
+        render();
+      });
+    });
+  }
+
+  updateBatchButtons();
+  attachBatchButtonListeners();
+  updateAssignmentDropdown();
+
   const searchInput = document.getElementById('searchInput');
   const statusFilterSelect = document.getElementById('statusFilter');
   const ratingTable = document.getElementById('ratingTable');
@@ -1172,11 +1201,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Switch Scope
+  // Switch Scope via Assignment Dropdown
   if (assignmentSelect) {
     assignmentSelect.addEventListener('change', (e) => {
-      activeScope = e.target.value;
-      render();
+      const selectedVal = e.target.value;
+      const targetPage = selectedVal.includes('.html') ? selectedVal : (selectedVal === 'all' ? 'index.html' : `${selectedVal}.html`);
+      const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      if (currentPath === targetPage) return;
+      window.location.href = `${targetPage}?batch=${encodeURIComponent(activeBatch)}`;
     });
   }
 

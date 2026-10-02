@@ -32,15 +32,19 @@
           </div>
         </div>
         <div class="header-badges" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <div class="batch-select-wrap" style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;">
-            <label for="batchSelect">BATCH:</label>
-            <select id="batchSelect" style="font-family: var(--font-mono); font-size: 11px; padding: 3px 6px; border: 1px solid var(--border); background: var(--bg); cursor: pointer;">
-              <option value="2k25" selected>Batch 2k25</option>
-            </select>
+          <div class="batch-btns-wrap" style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;"><span style="color: var(--fg-muted); font-size: 11px; font-family: var(--font-mono);">BATCH:</span>
+            <div class="batch-btn-group" id="headerBatchBtns" style="display: inline-flex; gap: 4px;">
+              <button class="btn btn-sm batch-btn active" type="button" data-batch="2k25" style="padding: 4px 10px; font-size: 11px; font-weight: 700; font-family: var(--font-mono); cursor: pointer; border: 1px solid var(--border); background: #000000; color: #ffffff;">2K25</button>
+            </div>
           </div>
         </div>
       </header>
-      <nav class="assignment-nav" id="assignmentNav" style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;"><a class="nav-btn active" href="index.html" data-scope="all" style="padding: 8px 14px; border: 1px solid var(--border); background: #000000; color: #ffffff; font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center;">CUMULATIVE (ALL ROUNDS)</a><a class="nav-btn" href="a1.html" data-scope="a1" data-batch="2k25" style="padding: 8px 14px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center;">A-01: ASSIGNMENT 1: DUAL LED, SOFTWARE PWM &amp; SONAR</a>
+      <nav class="assignment-nav" id="assignmentNav" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+        <label for="assignmentSelect" style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--fg-muted); white-space: nowrap;">ASSIGNMENT:</label>
+        <select class="nav-select" id="assignmentSelect" style="padding: 8px 12px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); font-family: var(--font-mono); font-size: 11px; font-weight: 700; cursor: pointer; min-width: 320px; max-width: 550px;">
+          <option value="index.html" data-scope="all" selected>CUMULATIVE (ALL ROUNDS)</option>
+          <option value="a1.html" data-scope="a1" data-batch="2k25">A-01: ASSIGNMENT 1: DUAL LED, SOFTWARE PWM &amp; SONAR</option>
+        </select>
       </nav>
       <section id="assignmentQuestionSection" style="display: none; margin-bottom: 20px;">
         <details open style="background: var(--bg-alt); border: 1px solid var(--border); padding: 14px 18px;">

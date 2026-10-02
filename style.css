@@ -97,7 +97,7 @@ header {
   letter-spacing: 0.5px;
 }
 
-.batch-select-wrap {
+.batch-btns-wrap {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -105,43 +105,62 @@ header {
   font-weight: 700;
 }
 
-.batch-select-wrap select {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  padding: 3px 6px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  cursor: pointer;
+.batch-btn-group {
+  display: inline-flex;
+  gap: 4px;
 }
 
-.assignment-nav {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.nav-btn {
-  padding: 8px 14px;
+.batch-btn {
+  padding: 4px 10px;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  text-decoration: none;
+  text-transform: uppercase;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  transition: all 0.1s ease;
 }
 
-.nav-btn:hover {
+.batch-btn:hover {
   background: var(--bg-alt);
 }
 
-.nav-btn.active {
-  background: #000000;
-  color: #ffffff;
+.batch-btn.active {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+.assignment-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.nav-select,
+#assignmentSelect {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 320px;
+  max-width: 550px;
+}
+
+.nav-select:focus,
+#assignmentSelect:focus {
+  outline: none;
+  border-color: #000000;
 }
 
 .header-top {
