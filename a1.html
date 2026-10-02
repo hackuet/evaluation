@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACK Technical Leaderboard | Hardware Acceleration Club of KUET</title>
+    <title>A-01: Assignment 1: Dual LED, Software PWM &amp; Sonar | HACK KUET</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
     <link rel="stylesheet" href="style.css?v=2">
   </head>
-  <body data-page="cumulative">
+  <body data-page="assignment" data-assignment-id="a1">
     <div class="container">
       <header>
         <div>
@@ -33,12 +33,42 @@
           </div>
         </div>
       </header>
-      <nav class="assignment-nav" id="assignmentNav"><a class="nav-btn active" href="index.html" data-scope="all">CUMULATIVE (ALL ROUNDS)</a><a class="nav-btn" href="a1.html" data-scope="a1">A-01: ASSIGNMENT 1: DUAL LED, SOFTWARE PWM &amp; SONAR</a>
+      <nav class="assignment-nav" id="assignmentNav"><a class="nav-btn" href="index.html" data-scope="all">CUMULATIVE (ALL ROUNDS)</a><a class="nav-btn active" href="a1.html" data-scope="a1">A-01: ASSIGNMENT 1: DUAL LED, SOFTWARE PWM &amp; SONAR</a>
       </nav>
-      <section id="assignmentQuestionSection" style="display: none; margin-bottom: 20px;">
+      <section id="assignmentQuestionSection" style="margin-bottom: 20px;">
         <details open style="background: var(--bg-alt); border: 1px solid var(--border); padding: 14px 18px;">
-          <summary style="cursor: pointer; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; user-select: none;"><span id="assignmentQuestionTitle">ASSIGNMENT PROBLEM STATEMENT / QUESTION</span><span style="font-size: 11px; color: var(--fg-muted); font-weight: normal;">[Click to toggle]</span></summary>
-          <div id="assignmentQuestionBody" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-light); font-size: 12px; line-height: 1.6; white-space: pre-wrap; font-family: var(--font-mono); color: var(--fg);"></div>
+          <summary style="cursor: pointer; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; user-select: none;"><span id="assignmentQuestionTitle">A-01: Assignment 1: Dual LED, Software PWM &amp; Sonar (Problem Statement)</span><span style="font-size: 11px; color: var(--fg-muted); font-weight: normal;">[Click to toggle]</span></summary>
+          <div id="assignmentQuestionBody" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-light); font-size: 12px; line-height: 1.6; white-space: pre-wrap; font-family: var(--font-mono); color: var(--fg);">Your tasks:
+i. create a sketch : given two leds connected to an arduino board. you need to blink them in Xs and Ys interval .
+i.b.1 make a generic system where n leds can be connected
+i.b.2 add hardware optimizations
+i.b.3 study multi tasking systems
+ii. create a function pwm(pin, value), that mimics pwm in software (without using analogWrite()
+ii.b.1 use hardware acceleration
+ii.b.2 use that to control a servo
+iii. make a hardware accelerated sonar reader, that does not wait for pulseIn()
+iii.b make a simulation for the smart dustbin in the
+Use tinkercad or wokwi. (We recommend you use wokwi with local execution with vscode extension). 'b' means bonus.
+Submission guideline :
+i. well commented sketches 1.ino,2.ino,3.ino.
+ii. a txt /md/ pdf with further explanation, and note on what new things you have learnt solving these tasks (share tinkercad/wokwi links if you prefer)
+iii. a/many simulation video(s) (basic, no editing required, no audio or voice required)
+iv. upload to google/drive
+Resources :
+i. wokwi + vscode [https://www.youtube.com/watch?v=ECNTyMm_5PE](https://www.youtube.com/watch?v=ECNTyMm_5PE)
+ii. platformio : [https://www.youtube.com/watch?v=PYSy_PLjytQ](https://www.youtube.com/watch?v=PYSy_PLjytQ)
+iii. Prompts you may (use example) &quot;running wokwi locally on vscode along with platformio&quot;
+(You are to find on google regarding the actual problems)
+Youtube channels I like
+i. [https://www.youtube.com/@greatscottlab](https://www.youtube.com/@greatscottlab)
+ii. [https://www.youtube.com/@mattbrwn](https://www.youtube.com/@mattbrwn)
+..... more unlocks later
+Projects We(HACK) are interested to work on in near future :
+i. [https://octo-models.github.io/](https://octo-models.github.io/)
+ii. TinyML (Signal, Vision, Sensor)
+.... more unlocks later
+Deadline: 1/10/26 11:59PM
+[Please try to write code yourself. Use AI, but don't let that be the largest chunk of your identity.]</div>
         </details>
       </section>
       <section id="leaderboardSection">

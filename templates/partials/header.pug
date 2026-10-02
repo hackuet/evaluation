@@ -1,0 +1,18 @@
+header
+  div
+    .logo-title
+      svg.chip-icon(viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2")
+        rect(x="4" y="4" width="16" height="16" rx="2")
+        path(d="M9 9h6v6H9z")
+        path(d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3")
+      div
+        h1 HACK // HARDWARE ACCELERATION CLUB OF KUET
+        p Objective Technical Evaluation & Rating System
+  .header-badges
+    span.badge.badge-subagent#headerModelBadge= "EVALUATOR SUBAGENT: " + (activeModel || "GEMINI 3.8 FLASH (MEDIUM THINKING)")
+    button.badge#btnRubricModal(style="cursor: pointer; background: var(--bg); border: 1px solid var(--border); font-family: inherit;") [VIEW RUBRIC]
+    .batch-select-wrap
+      label(for="batchSelect") BATCH:
+      select#batchSelect
+        each b in batches || [{id: '2k25', name: '2k25'}]
+          option(value=b.id selected=(b.id === activeBatch))= b.name

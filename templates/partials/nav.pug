@@ -1,0 +1,4 @@
+nav.assignment-nav#assignmentNav
+  a.nav-btn(href="index.html" class=(pageType === 'cumulative' ? 'active' : '') data-scope="all") CUMULATIVE (ALL ROUNDS)
+  each a in assignments || [{id: 'a1', code: 'A-01', title: 'Dual LED, Software PWM & Sonar'}]
+    a.nav-btn(href=`${a.id}.html` class=(assignmentId === a.id ? 'active' : '') data-scope=a.id)= `${a.code}: ${a.title.toUpperCase()}`

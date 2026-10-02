@@ -1,0 +1,21 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title= pageTitle || "HACK Technical Leaderboard | Hardware Acceleration Club of KUET"
+    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap")
+    link(rel="stylesheet" href="style.css?v=2")
+  body(data-page=pageType data-assignment-id=assignmentId)
+    .container
+      include ../partials/header.pug
+      include ../partials/nav.pug
+      
+      block content
+
+      include ../partials/footer.pug
+
+    include ../partials/modals.pug
+
+    script(src="data.js?v=2")
+    script(src="app.js?v=2")

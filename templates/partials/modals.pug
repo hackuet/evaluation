@@ -1,0 +1,74 @@
+// Cumulative Student Profile Modal
+.modal-overlay#profileModal(style="display: none;")
+  .modal-window(style="max-width: 860px;")
+    .modal-header-bar
+      h2#profileModalTitle Student Profile: Cumulative Standings
+      button.modal-close#profileModalCloseBtn [X]
+    .modal-content-area#profileModalBody
+      // Dynamically populated
+
+// Detailed Assignment Audit Modal
+.modal-overlay#detailModal(style="display: none;")
+  .modal-window
+    .modal-header-bar
+      div(style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;")
+        button.btn.btn-sm#modalBackBtn(style="display: none; flex-shrink: 0;") [< Back]
+        h2#modalTitle(style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;") Assignment Audit & Code Review
+      button.modal-close#modalCloseBtn [X]
+
+    .modal-tabs-bar
+      button.m-tab.active(data-pane="scorecardPane") Scorecard & Rationale
+      button.m-tab(data-pane="codePane") Submitted Code
+      button.m-tab(data-pane="critiquePane") AI Subagent Audit
+      button.m-tab(data-pane="submissionPane") Submission Metadata
+
+    .modal-content-area
+      // Pane 1: Scorecard
+      .pane.active#scorecardPane
+        .callout#modalInstructorCallout
+          h4 Instructor Transparency Note (Why I Marked How):
+          p#modalInstructorNoteText ...
+
+        .table-wrap(style="margin-top: 10px; margin-bottom: 0;")
+          table.score-detail-table
+            thead
+              tr
+                th Component
+                th(style="width: 50px;") Max
+                th(style="width: 80px;") Inst (60%)
+                th(style="width: 80px;") LLM (40%)
+                th(style="width: 80px;") Final
+                th Marking Rationale & Remarks
+            tbody#modalScoreTableBody
+              // Dynamically populated
+
+      // Pane 2: Code Viewer
+      .pane#codePane
+        .file-select-btns#modalFileTabs
+          // Dynamically populated
+        .code-box#modalCodeDisplay // No code selected
+
+      // Pane 3: Subagent Critique
+      .pane#critiquePane
+        #modalCritiqueDisplay
+          // Dynamically populated with student's specific evaluation report
+
+      // Pane 4: Submission Metadata
+      .pane#submissionPane
+        .callout
+          h4 Submission Message & Notes:
+          p#modalStudentCommentText "..."
+        .callout
+          h4 Google Drive Submission URL:
+          p
+            a#modalDriveLinkAnchor(href="#" target="_blank" style="color: #000; word-break: break-all;")
+          #modalDriveWarning(style="margin-top: 8px;")
+
+// Rubric Modal
+.modal-overlay#rubricModal(style="display: none;")
+  .modal-window(style="max-width: 750px;")
+    .modal-header-bar
+      h2#rubricModalTitle Official Assignment Rubric
+      button.modal-close#rubricCloseBtn [X]
+    .modal-content-area#rubricModalContent
+      // Dynamically rendered

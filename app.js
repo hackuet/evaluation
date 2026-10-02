@@ -7,12 +7,31 @@ document.addEventListener('DOMContentLoaded', () => {
   let searchQuery = '';
   let statusFilter = 'all';
 
+  // Detect initial scope from body attributes or URL parameters
+  const pageType = document.body ? document.body.getAttribute('data-page') : null;
+  const pageAssignmentId = document.body ? document.body.getAttribute('data-assignment-id') : null;
+  if (pageType === 'assignment' && pageAssignmentId) {
+    activeScope = pageAssignmentId;
+  } else {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('scope')) {
+      activeScope = urlParams.get('scope');
+    } else if (urlParams.get('assignment')) {
+      activeScope = urlParams.get('assignment');
+    } else {
+      const pathMatch = window.location.pathname.match(/([a-zA-Z0-9_-]+)\.html$/);
+      if (pathMatch && pathMatch[1] !== 'index') {
+        activeScope = pathMatch[1];
+      }
+    }
+  }
+
   // Elements
   const assignmentSelect = document.getElementById('assignmentSelect');
   const searchInput = document.getElementById('searchInput');
   const statusFilterSelect = document.getElementById('statusFilter');
   const ratingTable = document.getElementById('ratingTable');
-  const ratingTableHead = ratingTable.querySelector('thead');
+  const ratingTableHead = ratingTable ? ratingTable.querySelector('thead') : null;
   const ratingTableBody = document.getElementById('ratingTableBody');
   const leaderboardSection = document.getElementById('leaderboardSection');
   const metricSubmissions = document.getElementById('metricSubmissions');
@@ -20,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const metricMean = document.getElementById('metricMean');
   const exportCsvBtn = document.getElementById('exportCsvBtn');
   const printBtn = document.getElementById('printBtn');
-  const rubricToggleBtn = document.getElementById('rubricToggleBtn');
+  const rubricToggleBtn = document.getElementById('rubricToggleBtn') || document.getElementById('btnRubricModal');
   const rubricModal = document.getElementById('rubricModal');
   const rubricCloseBtn = document.getElementById('rubricCloseBtn');
   const rubricModalTitle = document.getElementById('rubricModalTitle');
@@ -51,6 +70,55 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalStudentCommentText = document.getElementById('modalStudentCommentText');
   const modalDriveLinkAnchor = document.getElementById('modalDriveLinkAnchor');
   const modalDriveWarning = document.getElementById('modalDriveWarning');
+
+  // Security & Prompt Injection Defense: HTML escaping for all untrusted student data
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // Safe markdown renderer for evaluation reports
+  function renderMarkdownSafe(md) {
+    if (!md) return '';
+    const codeBlocks = [];
+    let text = md.replace(/```([a-zA-Z0-9_+-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+      const token = `%%CODE_BLOCK_${codeBlocks.length}%%`;
+      codeBlocks.push(`<pre class="code-box" style="margin: 10px 0; overflow-x: auto; background: var(--bg-alt); padding: 12px; border: 1px solid var(--border); font-family: var(--font-mono); font-size: 11px;"><code>${escapeHtml(code)}</code></pre>`);
+      return token;
+    });
+
+    text = escapeHtml(text);
+
+    // Headers
+    text = text.replace(/^#### (.*?)$/gm, '<h5 style="margin-top: 14px; margin-bottom: 6px; font-size: 12px; font-weight: bold; color: var(--fg);">$1</h5>');
+    text = text.replace(/^### (.*?)$/gm, '<h4 style="margin-top: 16px; margin-bottom: 8px; font-size: 13px; font-weight: bold; color: var(--fg);">$1</h4>');
+    text = text.replace(/^## (.*?)$/gm, '<h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 14px; font-weight: bold; color: var(--fg); border-bottom: 1px solid var(--border-light); padding-bottom: 4px;">$1</h3>');
+    text = text.replace(/^# (.*?)$/gm, '<h2 style="margin-top: 22px; margin-bottom: 12px; font-size: 16px; font-weight: bold; color: var(--fg); border-bottom: 2px solid var(--border); padding-bottom: 6px;">$1</h2>');
+
+    // Bold, italic, code spans
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    text = text.replace(/`([^`]+)`/g, '<code style="background: var(--bg-alt); padding: 2px 4px; font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--border-light);">$1</code>');
+
+    // Horizontal rule
+    text = text.replace(/^---$/gm, '<hr style="border: none; border-top: 1px solid var(--border-light); margin: 16px 0;">');
+
+    // Paragraphs
+    text = text.replace(/\n\n+/g, '</p><p style="margin-bottom: 10px;">');
+    text = `<p style="margin-bottom: 10px;">${text}</p>`;
+
+    // Restore code blocks
+    codeBlocks.forEach((cb, i) => {
+      text = text.replace(`%%CODE_BLOCK_${i}%%`, cb);
+    });
+
+    return text;
+  }
 
   // RFC-4180 compliant CSV Parser
   function parseCSV(text) {
@@ -157,14 +225,57 @@ document.addEventListener('DOMContentLoaded', () => {
         a1Sub.driveLink = driveLink;
         a1Sub.instructorTransparencyNote = instNote;
         a1Sub.studentComment = stdComment;
+        const existingScores = a1Sub.scores || {};
         a1Sub.scores = {
-          participation: { max: 55, inst: part, llm: part, note: 'Participation credit' },
-          inTime: { max: 15, inst: inTime, llm: inTime, note: 'Submission timing' },
-          task1: { max: 25, inst: t1Inst, llm: t1Llm, note: `Inst: ${t1Inst}, LLM: ${t1Llm}` },
-          task2: { max: 25, inst: t2Inst, llm: t2Llm, note: `Inst: ${t2Inst}, LLM: ${t2Llm}` },
-          task3: { max: 25, inst: t3Inst, llm: t3Llm, note: `Inst: ${t3Inst}, LLM: ${t3Llm}` },
-          documentation: { max: 5, inst: docInst, llm: docLlm, note: `Inst: ${docInst}, LLM: ${docLlm}` },
-          bonus: { max: 75, inst: bInst, llm: bLlm, note: `Inst: ${bInst}, LLM: ${bLlm}` }
+          participation: {
+            max: 55,
+            inst: part,
+            llm: part,
+            note: (existingScores.participation && existingScores.participation.note) || 'Participation credit',
+            llmReasoning: (existingScores.participation && existingScores.participation.llmReasoning) || 'Full credit for submitted attempt.'
+          },
+          inTime: {
+            max: 15,
+            inst: inTime,
+            llm: inTime,
+            note: (existingScores.inTime && existingScores.inTime.note) || 'Submission timing',
+            llmReasoning: (existingScores.inTime && existingScores.inTime.llmReasoning) || 'Submitted on time.'
+          },
+          task1: {
+            max: 25,
+            inst: t1Inst,
+            llm: t1Llm,
+            note: (existingScores.task1 && existingScores.task1.note) || `Inst: ${t1Inst}, LLM: ${t1Llm}`,
+            llmReasoning: (existingScores.task1 && existingScores.task1.llmReasoning) || `Task 1 technical evaluation.`
+          },
+          task2: {
+            max: 25,
+            inst: t2Inst,
+            llm: t2Llm,
+            note: (existingScores.task2 && existingScores.task2.note) || `Inst: ${t2Inst}, LLM: ${t2Llm}`,
+            llmReasoning: (existingScores.task2 && existingScores.task2.llmReasoning) || `Task 2 technical evaluation.`
+          },
+          task3: {
+            max: 25,
+            inst: t3Inst,
+            llm: t3Llm,
+            note: (existingScores.task3 && existingScores.task3.note) || `Inst: ${t3Inst}, LLM: ${t3Llm}`,
+            llmReasoning: (existingScores.task3 && existingScores.task3.llmReasoning) || `Task 3 technical evaluation.`
+          },
+          documentation: {
+            max: 5,
+            inst: docInst,
+            llm: docLlm,
+            note: (existingScores.documentation && existingScores.documentation.note) || `Inst: ${docInst}, LLM: ${docLlm}`,
+            llmReasoning: (existingScores.documentation && existingScores.documentation.llmReasoning) || `Inline comments evaluation.`
+          },
+          bonus: {
+            max: 75,
+            inst: bInst,
+            llm: bLlm,
+            note: (existingScores.bonus && existingScores.bonus.note) || `Inst: ${bInst}, LLM: ${bLlm}`,
+            llmReasoning: (existingScores.bonus && existingScores.bonus.llmReasoning) || `Bonus pool evaluation.`
+          }
         };
       }
     } catch (e) {
@@ -175,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Calculate score items using hybrid 60/40 rule
   function getComputedItem(item, isTaskOrBonus = true) {
-    if (!item) return { max: 0, inst: 0, llm: 0, final: 0, note: '-' };
+    if (!item) return { max: 0, inst: 0, llm: 0, final: 0, note: '-', llmReasoning: '-' };
     let finalVal;
     if (isTaskOrBonus) {
       finalVal = (item.inst * 0.6) + (item.llm * 0.4);
@@ -188,7 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
       inst: item.inst,
       llm: item.llm,
       final: finalVal,
-      note: item.note
+      note: item.note,
+      llmReasoning: item.llmReasoning || item.note || '-'
     };
   }
 
@@ -311,8 +423,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 5. Update Metrics Strip
-    metricSubmissions.textContent = list.length;
-    if (list.length > 0) {
+    if (metricSubmissions) metricSubmissions.textContent = list.length;
+    if (list.length > 0 && metricTopScore && metricMean) {
       const topScore = list[0].scoreModel.isCumulative ? list[0].scoreModel.cumulativeScore : list[0].scoreModel.assignmentData.computedTotal;
       const sum = list.reduce((acc, s) => acc + (s.scoreModel.isCumulative ? s.scoreModel.cumulativeScore : s.scoreModel.assignmentData.computedTotal), 0);
       const mean = (sum / list.length).toFixed(2);
@@ -323,31 +435,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. Update Table Header, Question Block & Rubric Button based on Scope (Dual-mode)
     if (activeScope === 'all') {
       // Cumulative Rating View: Rubric and question are assignment-specific, so hide them
-      rubricToggleBtn.style.display = 'none';
+      if (rubricToggleBtn) rubricToggleBtn.style.display = 'none';
       if (statusFilterSelect) statusFilterSelect.style.display = 'none';
       if (assignmentQuestionSection) assignmentQuestionSection.style.display = 'none';
 
-      ratingTableHead.innerHTML = `
-        <tr>
-          <th style="width: 50px;">Rank</th>
-          <th style="width: 140px;">Roll</th>
-          <th style="width: 140px; text-align: right;">Cumulative Points</th>
-          <th>Assignments</th>
-          <th style="width: 110px; text-align: center;">Profile</th>
-        </tr>
-      `;
+      if (ratingTableHead) {
+        ratingTableHead.innerHTML = `
+          <tr>
+            <th style="width: 50px;">Rank</th>
+            <th style="width: 140px;">Roll</th>
+            <th style="width: 140px; text-align: right;">Cumulative Points</th>
+            <th>Assignments</th>
+            <th style="width: 110px; text-align: center;">Profile</th>
+          </tr>
+        `;
+      }
     } else {
       // Assignment-specific View: Show rubric button and question block
-      const assignMeta = HACK_DATA.assignments.find(a => a.id === activeScope) || { code: activeScope.toUpperCase() };
-      rubricToggleBtn.style.display = 'inline-flex';
-      rubricToggleBtn.textContent = `[View ${assignMeta.code} Rubric]`;
+      const assignMeta = HACK_DATA.assignments.find(a => a.id === activeScope) || { code: activeScope.toUpperCase(), title: 'Assignment' };
+      if (rubricToggleBtn) {
+        rubricToggleBtn.style.display = 'inline-flex';
+        rubricToggleBtn.textContent = `[View ${assignMeta.code} Rubric]`;
+      }
       if (statusFilterSelect) statusFilterSelect.style.display = 'inline-block';
 
       if (assignmentQuestionSection && assignmentQuestionBody && assignMeta.question) {
         assignmentQuestionSection.style.display = 'block';
-        if (assignmentQuestionHeader) assignmentQuestionHeader.textContent = `[${assignMeta.code}] Assignment Question & Guidelines`;
+        const qTitleEl = document.getElementById('assignmentQuestionTitle') || assignmentQuestionHeader;
+        if (qTitleEl) qTitleEl.textContent = `[${assignMeta.code}] ${assignMeta.title} (Problem Statement)`;
         
-        const escapeHtml = (str) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         let formatted = escapeHtml(assignMeta.question);
         
         // Convert [url](url) markdown links to clickable anchors
@@ -360,15 +476,17 @@ document.addEventListener('DOMContentLoaded', () => {
         assignmentQuestionSection.style.display = 'none';
       }
 
-      ratingTableHead.innerHTML = `
-        <tr>
-          <th style="width: 50px;">Rank</th>
-          <th style="width: 140px;">Roll</th>
-          <th style="width: 120px; text-align: right;">Total Score</th>
-          <th>Task Breakdown & Transparency Notes</th>
-          <th style="width: 110px; text-align: center;">Audit</th>
-        </tr>
-      `;
+      if (ratingTableHead) {
+        ratingTableHead.innerHTML = `
+          <tr>
+            <th style="width: 50px;">Rank</th>
+            <th style="width: 140px;">Roll</th>
+            <th style="width: 120px; text-align: right;">Total Score</th>
+            <th>Task Breakdown & Transparency Notes</th>
+            <th style="width: 110px; text-align: center;">Audit</th>
+          </tr>
+        `;
+      }
     }
 
     if (list.length === 0) {
@@ -678,15 +796,21 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     modalScoreTableBody.innerHTML = components.map(c => {
-      const item = sc[c.key] || { max: 0, inst: 0, llm: 0, final: 0, note: '-' };
+      const item = sc[c.key] || { max: 0, inst: 0, llm: 0, final: 0, note: '-', llmReasoning: '-' };
+      const reasoning = item.llmReasoning || item.note || '-';
       return `
         <tr>
-          <td><strong>${c.name}</strong></td>
+          <td><strong>${escapeHtml(c.name)}</strong></td>
           <td>${item.max}</td>
           <td>${item.inst}</td>
           <td>${item.llm}</td>
           <td><strong>${item.final}</strong></td>
-          <td style="color: var(--fg-muted);">${item.note}</td>
+          <td>
+            <div style="font-size: 11px; line-height: 1.4;">
+              <span style="color: var(--fg); font-weight: 600; display: block; margin-bottom: 2px;">LLM Reasoning:</span>
+              <span style="color: var(--fg-muted);">${escapeHtml(reasoning)}</span>
+            </div>
+          </td>
         </tr>
       `;
     }).join('') + `
@@ -702,7 +826,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Code Viewer
     if (ev.codeFiles && ev.codeFiles.length > 0) {
       modalFileTabs.innerHTML = ev.codeFiles.map((f, i) => `
-        <button class="f-btn ${i === 0 ? 'active' : ''}" data-idx="${i}">[${f.name}]</button>
+        <button class="f-btn ${i === 0 ? 'active' : ''}" data-idx="${i}">[${escapeHtml(f.name)}]</button>
       `).join('');
 
       modalCodeDisplay.textContent = ev.codeFiles[0].content;
@@ -720,26 +844,27 @@ document.addEventListener('DOMContentLoaded', () => {
       modalCodeDisplay.textContent = `// No local code files.\n// Note: Student's Google Drive link requires permission access:\n// ${ev.driveLink}`;
     }
 
-    // Subagent Critique
-    modalCritiqueDisplay.innerHTML = `
-      <div class="callout" style="background: var(--bg-alt); margin-bottom: 12px;">
+    // Subagent Critique (Student-Specific AI Audit Report)
+    const modelUsed = meta.llmModel || 'Gemini 3.8 Flash (Medium Thinking)';
+    let critiqueHtml = `
+      <div class="callout" style="background: var(--bg-alt); margin-bottom: 14px;">
         <span style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Evaluator Subagent Model:</span>
-        <div style="font-size: 13px; font-weight: bold; margin-top: 2px;">Gemini 3.8 Flash (Medium Thinking)</div>
-        <div style="font-size: 11px; color: var(--fg-muted); margin-top: 2px;">Objective technical code review executed per rubric criteria.</div>
-      </div>
-      <div class="callout">
-        <h4>Task 1 Technical Evaluation:</h4>
-        <p>Evaluated on non-blocking concurrency vs blocking delay. Millis() state machine gets 25/25; sequential delay gets 15/25.</p>
-      </div>
-      <div class="callout">
-        <h4>Task 2 Technical Evaluation:</h4>
-        <p>Evaluated on microsecond PWM duty cycle without analogWrite(). AVR 16-bit signed int overflow (time*value) checked.</p>
-      </div>
-      <div class="callout">
-        <h4>Task 3 Technical Evaluation:</h4>
-        <p>Evaluated on ultrasonic reading without pulseIn(). True hardware acceleration requires interrupts (Timer1 Input Capture / PCINT).</p>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 2px;">${escapeHtml(modelUsed)}</div>
+        <div style="font-size: 11px; color: var(--fg-muted); margin-top: 2px;">Objective technical code review executed per assignment rubric with prompt-injection defense.</div>
       </div>
     `;
+
+    if (ev.auditReport) {
+      critiqueHtml += `<div class="audit-report-container">${renderMarkdownSafe(ev.auditReport)}</div>`;
+    } else {
+      critiqueHtml += `
+        <div class="callout">
+          <h4>Technical Evaluation Status</h4>
+          <p>Detailed technical markdown audit report is pending or not generated for Roll ${escapeHtml(student.roll)}.</p>
+        </div>
+      `;
+    }
+    modalCritiqueDisplay.innerHTML = critiqueHtml;
 
     // Metadata
     modalStudentCommentText.textContent = `"${ev.studentComment}"`;
@@ -837,17 +962,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Rubric Modal Handlers
-  rubricToggleBtn.addEventListener('click', () => openRubricModal(activeScope));
-  rubricCloseBtn.addEventListener('click', () => rubricModal.style.display = 'none');
-  rubricModal.addEventListener('click', (e) => {
-    if (e.target === rubricModal) rubricModal.style.display = 'none';
-  });
+  if (rubricToggleBtn) {
+    rubricToggleBtn.addEventListener('click', () => openRubricModal(activeScope));
+  }
+  if (rubricCloseBtn) {
+    rubricCloseBtn.addEventListener('click', () => {
+      if (rubricModal) rubricModal.style.display = 'none';
+    });
+  }
+  if (rubricModal) {
+    rubricModal.addEventListener('click', (e) => {
+      if (e.target === rubricModal) rubricModal.style.display = 'none';
+    });
+  }
 
   // Print
-  printBtn.addEventListener('click', () => window.print());
+  if (printBtn) {
+    printBtn.addEventListener('click', () => window.print());
+  }
 
   // Export CSV
-  exportCsvBtn.addEventListener('click', () => {
+  if (exportCsvBtn) {
+    exportCsvBtn.addEventListener('click', () => {
     if (activeScope === 'all') {
       const headers = [
         'Rank', 'Roll', 'Batch', 'Status', 'Cumulative Points', 'Completed Assignments'
@@ -927,24 +1063,31 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  });
+    });
+  }
 
   // Switch Scope
-  assignmentSelect.addEventListener('change', (e) => {
-    activeScope = e.target.value;
-    render();
-  });
+  if (assignmentSelect) {
+    assignmentSelect.addEventListener('change', (e) => {
+      activeScope = e.target.value;
+      render();
+    });
+  }
 
   // Search
-  searchInput.addEventListener('input', (e) => {
-    searchQuery = e.target.value.toLowerCase().trim();
-    render();
-  });
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      render();
+    });
+  }
 
-  statusFilterSelect.addEventListener('change', (e) => {
-    statusFilter = e.target.value;
-    render();
-  });
+  if (statusFilterSelect) {
+    statusFilterSelect.addEventListener('change', (e) => {
+      statusFilter = e.target.value;
+      render();
+    });
+  }
 
   // Initial load: parse CSV then render
   loadCSVData().then(() => {
