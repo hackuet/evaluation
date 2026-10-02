@@ -69,6 +69,12 @@ def main():
         }
     ]
 
+    for meta in assignments_meta:
+        q_path = os.path.join(REPO_ROOT, meta["batch"], meta["folder"], "QUESTION.md")
+        if os.path.exists(q_path):
+            with open(q_path, "r", encoding="utf-8") as fp:
+                meta["question"] = fp.read().strip()
+
     students_map = {}
 
     # Read CSV files in 2k25/*/*.csv (merging data directly with assignment folder)

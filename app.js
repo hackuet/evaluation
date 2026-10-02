@@ -26,6 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const rubricModalTitle = document.getElementById('rubricModalTitle');
   const rubricModalContent = document.getElementById('rubricModalContent');
 
+  // Assignment Question Section
+  const assignmentQuestionSection = document.getElementById('assignmentQuestionSection');
+  const assignmentQuestionHeader = document.getElementById('assignmentQuestionHeader');
+  const assignmentQuestionBody = document.getElementById('assignmentQuestionBody');
+
   // Profile Modal Elements (Cumulative View)
   const profileModal = document.getElementById('profileModal');
   const profileModalCloseBtn = document.getElementById('profileModalCloseBtn');
@@ -315,11 +320,12 @@ document.addEventListener('DOMContentLoaded', () => {
       metricMean.innerHTML = `${mean} <span style="font-size: 11px; font-weight: normal;">/ 150</span>`;
     }
 
-    // 6. Update Table Header & Rubric Button based on Scope (Dual-mode)
+    // 6. Update Table Header, Question Block & Rubric Button based on Scope (Dual-mode)
     if (activeScope === 'all') {
-      // Cumulative Rating View: Rubric is assignment-specific, so hide it
+      // Cumulative Rating View: Rubric and question are assignment-specific, so hide them
       rubricToggleBtn.style.display = 'none';
       if (statusFilterSelect) statusFilterSelect.style.display = 'none';
+      if (assignmentQuestionSection) assignmentQuestionSection.style.display = 'none';
 
       ratingTableHead.innerHTML = `
         <tr>
@@ -331,11 +337,28 @@ document.addEventListener('DOMContentLoaded', () => {
         </tr>
       `;
     } else {
-      // Assignment-specific View: Show rubric button specifically for this assignment
+      // Assignment-specific View: Show rubric button and question block
       const assignMeta = HACK_DATA.assignments.find(a => a.id === activeScope) || { code: activeScope.toUpperCase() };
       rubricToggleBtn.style.display = 'inline-flex';
       rubricToggleBtn.textContent = `[View ${assignMeta.code} Rubric]`;
       if (statusFilterSelect) statusFilterSelect.style.display = 'inline-block';
+
+      if (assignmentQuestionSection && assignmentQuestionBody && assignMeta.question) {
+        assignmentQuestionSection.style.display = 'block';
+        if (assignmentQuestionHeader) assignmentQuestionHeader.textContent = `[${assignMeta.code}] Assignment Question & Guidelines`;
+        
+        const escapeHtml = (str) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        let formatted = escapeHtml(assignMeta.question);
+        
+        // Convert [url](url) markdown links to clickable anchors
+        formatted = formatted.replace(/\[(https?:\/\/[^\s\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--fg); text-decoration: underline;">$1</a>');
+        // Convert any remaining bare URLs
+        formatted = formatted.replace(/(^|[^">])(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--fg); text-decoration: underline;">$2</a>');
+        
+        assignmentQuestionBody.innerHTML = formatted;
+      } else if (assignmentQuestionSection) {
+        assignmentQuestionSection.style.display = 'none';
+      }
 
       ratingTableHead.innerHTML = `
         <tr>
