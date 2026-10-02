@@ -1,18 +1,19 @@
-header
+header(style="border-bottom: 2px solid var(--border); padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;")
   div
-    .logo-title
-      svg.chip-icon(viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2")
+    .logo-title(style="display: flex; align-items: center; gap: 14px;")
+      svg.chip-icon(width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; max-width: 36px; max-height: 36px; display: block; flex-shrink: 0;")
         rect(x="4" y="4" width="16" height="16" rx="2")
         path(d="M9 9h6v6H9z")
         path(d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3")
       div
-        h1 HACK // HARDWARE ACCELERATION CLUB OF KUET
-        p Objective Technical Evaluation & Rating System
-  .header-badges
-    span.badge.badge-subagent#headerModelBadge= "EVALUATOR SUBAGENT: " + (activeModel || "GEMINI 3.8 FLASH (MEDIUM THINKING)")
-    button.badge#btnRubricModal(style="cursor: pointer; background: var(--bg); border: 1px solid var(--border); font-family: inherit;") [VIEW RUBRIC]
-    .batch-select-wrap
+        h1(style="font-size: 16px; font-weight: 700; letter-spacing: -0.5px; text-transform: uppercase; margin: 0;") HACK // HARDWARE ACCELERATION CLUB OF KUET
+        p(style="color: var(--fg-muted); font-size: 11px; margin-top: 2px; margin-bottom: 0;") Objective Technical Evaluation & Rating System
+  .header-badges(style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;")
+    if pageType === 'assignment'
+      span.badge.badge-subagent#headerModelBadge(style="display: inline-flex; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg-alt); letter-spacing: 0.5px;")= "EVALUATOR SUBAGENT: " + (activeModel || "GEMINI 3.8 FLASH (MEDIUM THINKING)")
+      button.badge#btnRubricModal(style="cursor: pointer; display: inline-flex; align-items: center; padding: 4px 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg); font-family: inherit;") [VIEW RUBRIC]
+    .batch-select-wrap(style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;")
       label(for="batchSelect") BATCH:
-      select#batchSelect
+      select#batchSelect(style="font-family: var(--font-mono); font-size: 11px; padding: 3px 6px; border: 1px solid var(--border); background: var(--bg); cursor: pointer;")
         each b in batches || [{id: '2k25', name: '2k25'}]
           option(value=b.id selected=(b.id === activeBatch))= b.name

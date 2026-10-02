@@ -7,13 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let searchQuery = '';
   let statusFilter = 'all';
 
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('batch')) {
+    activeBatch = urlParams.get('batch');
+  }
+
   // Detect initial scope from body attributes or URL parameters
   const pageType = document.body ? document.body.getAttribute('data-page') : null;
   const pageAssignmentId = document.body ? document.body.getAttribute('data-assignment-id') : null;
   if (pageType === 'assignment' && pageAssignmentId) {
     activeScope = pageAssignmentId;
   } else {
-    const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('scope')) {
       activeScope = urlParams.get('scope');
     } else if (urlParams.get('assignment')) {
@@ -27,6 +31,41 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Elements
+  const batchSelect = document.getElementById('batchSelect');
+  if (batchSelect) {
+    batchSelect.value = activeBatch;
+  }
+
+  function updateNavLinks() {
+    const navBtns = document.querySelectorAll('#assignmentNav .nav-btn');
+    navBtns.forEach(btn => {
+      const b = btn.getAttribute('data-batch');
+      if (b && b !== activeBatch) {
+        btn.style.display = 'none';
+      } else {
+        btn.style.display = 'inline-flex';
+      }
+      const href = btn.getAttribute('href');
+      if (href) {
+        const parts = href.split('?');
+        btn.setAttribute('href', `${parts[0]}?batch=${encodeURIComponent(activeBatch)}`);
+      }
+    });
+  }
+
+  if (batchSelect) {
+    batchSelect.addEventListener('change', (e) => {
+      activeBatch = e.target.value;
+      const url = new URL(window.location);
+      url.searchParams.set('batch', activeBatch);
+      window.history.pushState({}, '', url);
+      updateNavLinks();
+      render();
+    });
+  }
+
+  updateNavLinks();
+
   const assignmentSelect = document.getElementById('assignmentSelect');
   const searchInput = document.getElementById('searchInput');
   const statusFilterSelect = document.getElementById('statusFilter');
@@ -88,11 +127,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const codeBlocks = [];
     let text = md.replace(/```([a-zA-Z0-9_+-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
       const token = `%%CODE_BLOCK_${codeBlocks.length}%%`;
-      codeBlocks.push(`<pre class="code-box" style="margin: 10px 0; overflow-x: auto; background: var(--bg-alt); padding: 12px; border: 1px solid var(--border); font-family: var(--font-mono); font-size: 11px;"><code>${escapeHtml(code)}</code></pre>`);
+      codeBlocks.push(`<pre class="code-box" style="margin: 10px 0; overflow-x: auto; background: #f0f0f0 !important; color: #000000 !important; padding: 12px; border: 1px solid var(--border); font-family: var(--font-mono); font-size: 11px;"><code style="color: #000000 !important; background: transparent !important;">${escapeHtml(code)}</code></pre>`);
+      return token;
+    });
+
+    // Parse markdown tables before HTML escaping
+    const tables = [];
+    text = text.replace(/((?:^[ \t]*\|[^\n]+\|\r?\n)+)/gm, (match) => {
+      const rows = match.trim().split('\n').filter(r => !r.includes('---'));
+      if (rows.length === 0) return match;
+      const token = `%%TABLE_BLOCK_${tables.length}%%`;
+      let tblHtml = '<div style="overflow-x: auto; margin: 12px 0;"><table class="audit-md-table" style="width: 100%; border-collapse: collapse; font-size: 11px; border: 1px solid var(--border-light);">';
+      rows.forEach((r, idx) => {
+        const cells = r.split('|').slice(1, -1).map(c => c.trim());
+        tblHtml += '<tr>';
+        cells.forEach(c => {
+          const tag = idx === 0 ? 'th' : 'td';
+          const bg = idx === 0 ? 'background: #f0f0f0; font-weight: bold;' : '';
+          tblHtml += `<${tag} style="border: 1px solid #cccccc; padding: 6px 10px; ${bg}">${escapeHtml(c)}</${tag}>`;
+        });
+        tblHtml += '</tr>';
+      });
+      tblHtml += '</table></div>';
+      tables.push(tblHtml);
       return token;
     });
 
     text = escapeHtml(text);
+
+    // Markdown Links
+    text = text.replace(/\[(.*?)\]\(((?:file|https?):\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" style="color: var(--fg); text-decoration: underline;">$1</a>');
 
     // Headers
     text = text.replace(/^#### (.*?)$/gm, '<h5 style="margin-top: 14px; margin-bottom: 6px; font-size: 12px; font-weight: bold; color: var(--fg);">$1</h5>');
@@ -103,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Bold, italic, code spans
     text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    text = text.replace(/`([^`]+)`/g, '<code style="background: var(--bg-alt); padding: 2px 4px; font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--border-light);">$1</code>');
+    text = text.replace(/`([^`]+)`/g, '<code style="background: #f0f0f0; padding: 2px 4px; font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--border-light); color: #000000;">$1</code>');
 
     // Horizontal rule
     text = text.replace(/^---$/gm, '<hr style="border: none; border-top: 1px solid var(--border-light); margin: 16px 0;">');
@@ -111,6 +175,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Paragraphs
     text = text.replace(/\n\n+/g, '</p><p style="margin-bottom: 10px;">');
     text = `<p style="margin-bottom: 10px;">${text}</p>`;
+
+    // Restore tables
+    tables.forEach((tbl, i) => {
+      text = text.replace(`%%TABLE_BLOCK_${i}%%`, tbl);
+    });
 
     // Restore code blocks
     codeBlocks.forEach((cb, i) => {
@@ -227,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
         a1Sub.studentComment = stdComment;
         const existingScores = a1Sub.scores || {};
         a1Sub.scores = {
+          ...existingScores,
           participation: {
             max: 55,
             inst: part,
@@ -307,29 +377,53 @@ document.addEventListener('DOMContentLoaded', () => {
   // Evaluate an assignment submission
   function evaluateSubmission(submission) {
     if (!submission) return null;
-    const sc = submission.scores;
-    const cPart = getComputedItem(sc.participation, false);
-    const cTime = getComputedItem(sc.inTime, false);
-    const cT1 = getComputedItem(sc.task1, true);
-    const cT2 = getComputedItem(sc.task2, true);
-    const cT3 = getComputedItem(sc.task3, true);
-    const cDoc = getComputedItem(sc.documentation, false);
-    const cBonus = getComputedItem(sc.bonus, true);
+    const sc = submission.scores || {};
+    const computedScores = {};
+    let total = 0;
 
-    const total = Math.round((cPart.final + cTime.final + cT1.final + cT2.final + cT3.final + cDoc.final + cBonus.final) * 100) / 100;
+    const nonTaskKeys = ['participation', 'inTime', 'documentation'];
+    const hasIndividualBonuses = Object.keys(sc).some(k => k.startsWith('bonus_'));
+
+    Object.keys(sc).forEach(key => {
+      // If individual bonuses exist, don't double count the pooled 'bonus' key
+      if (hasIndividualBonuses && key === 'bonus') return;
+      const isTaskOrBonus = !nonTaskKeys.includes(key);
+      const computed = getComputedItem(sc[key], isTaskOrBonus);
+      computedScores[key] = computed;
+      total += computed.final;
+    });
+
+    // Provide computedScores.bonus for unified summary/breakdown
+    if (!computedScores.bonus) {
+      if (hasIndividualBonuses) {
+        let bInst = 0, bLlm = 0, bFinal = 0, bMax = 0;
+        Object.keys(computedScores).forEach(k => {
+          if (k.startsWith('bonus_')) {
+            bInst += computedScores[k].inst;
+            bLlm += computedScores[k].llm;
+            bFinal += computedScores[k].final;
+            bMax += computedScores[k].max;
+          }
+        });
+        computedScores.bonus = {
+          max: bMax || 75,
+          inst: Math.round(bInst * 100) / 100,
+          llm: Math.round(bLlm * 100) / 100,
+          final: Math.round(bFinal * 100) / 100,
+          note: 'Sum of individual bonus tasks',
+          llmReasoning: 'Sum of individual bonus evaluations.'
+        };
+      } else {
+        computedScores.bonus = getComputedItem(sc.bonus, true);
+      }
+    }
+
+    total = Math.round(total * 100) / 100;
     const percentage = ((total / 150) * 100).toFixed(1) + '%';
 
     return {
       ...submission,
-      computedScores: {
-        participation: cPart,
-        inTime: cTime,
-        task1: cT1,
-        task2: cT2,
-        task3: cT3,
-        documentation: cDoc,
-        bonus: cBonus
-      },
+      computedScores,
       computedTotal: total,
       computedPercentage: percentage
     };
@@ -785,15 +879,27 @@ document.addEventListener('DOMContentLoaded', () => {
     modalTitle.textContent = `[${meta.code} Audit] Roll ${student.roll} - Score: ${ev.computedTotal.toFixed(2)} / ${meta.baseMax}`;
     modalInstructorNoteText.textContent = `"${ev.instructorTransparencyNote}"`;
 
-    const components = [
+    let components = [
       { key: 'participation', name: 'Participation' },
       { key: 'inTime', name: 'In-Time Submission (5m grace)' },
       { key: 'task1', name: 'Task 1: Dual LED Blinker' },
       { key: 'task2', name: 'Task 2: Software PWM' },
       { key: 'task3', name: 'Task 3: Sonar Reader (Hardware Accel)' },
       { key: 'documentation', name: 'Inline Code Comments' },
-      { key: 'bonus', name: 'Bonus Pool (i.b.1–iii.b)' }
+      { key: 'bonus_ib1', name: 'Bonus i.b.1: Generic N-LEDs' },
+      { key: 'bonus_ib2', name: 'Bonus i.b.2: Hardware Port Opt.' },
+      { key: 'bonus_ib3', name: 'Bonus i.b.3: Multitasking Systems' },
+      { key: 'bonus_iib1', name: 'Bonus ii.b.1: HW PWM Acceleration' },
+      { key: 'bonus_iib2', name: 'Bonus ii.b.2: Custom PWM Servo Control' },
+      { key: 'bonus_iiib', name: 'Bonus iii.b: Smart Dustbin Simulation' }
     ];
+
+    if (meta.rubric && Object.keys(meta.rubric).length > 0) {
+      components = Object.keys(meta.rubric).map(k => ({
+        key: k,
+        name: meta.rubric[k].name || k
+      }));
+    }
 
     modalScoreTableBody.innerHTML = components.map(c => {
       const item = sc[c.key] || { max: 0, inst: 0, llm: 0, final: 0, note: '-', llmReasoning: '-' };
@@ -815,11 +921,11 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }).join('') + `
       <tr style="background: var(--bg-alt); font-weight: bold;">
-        <td>TOTAL BASE SCORE</td>
-        <td>${meta.baseMax}</td>
+        <td>TOTAL SCORE (BASE + BONUS)</td>
+        <td>${meta.totalMax || 225}</td>
         <td colspan="2" style="text-align: center;">Me(60%) + LLM(40%)</td>
         <td>${ev.computedTotal.toFixed(2)}</td>
-        <td>${ev.computedPercentage} (Evaluated)</td>
+        <td>${ev.computedPercentage} (150 base)</td>
       </tr>
     `;
 
@@ -954,7 +1060,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="callout">
         <h4>Hybrid Scoring Formula</h4>
         <p><code>Task & Bonus Final = (Instructor * 0.6) + (LLM * 0.4)</code></p>
-        <div style="font-size: 11px; color: var(--fg-muted); margin-top: 4px;">Evaluator Model: Gemini 3.8 Flash (Medium Thinking)</div>
+        <div style="font-size: 11px; color: var(--fg-muted); margin-top: 4px;">Evaluator Model: ${escapeHtml(meta.llmModel || 'Gemini 3.8 Flash (Medium Thinking)')}</div>
       </div>
     `;
 

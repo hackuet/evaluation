@@ -158,20 +158,32 @@ Record concise transparency notes in `instructor_note`.
    - Assignment question is rendered verbatim.
    - Profile, audit, and rubric modals open and close cleanly.
 
-### Step 8: Git Commit & Remote Deployment
-1. Verify git configuration:
+### Step 8: Strict `dev -> main` Branching & Remote Deployment
+Direct commits and direct pushes to `main` are **strictly forbidden**. Follow this mandatory protocol:
+1. **Always Develop and Verify on `dev`**:
+   - Ensure all work, code modifications, data regeneration, and Playwright verifications happen on the `dev` branch:
+     ```bash
+     git checkout -b dev 2>/dev/null || git checkout dev
+     ```
+2. **Verify git configuration**:
    ```bash
    git config user.name "hackuet"
    git config user.email "hackuet@users.noreply.github.com"
    ```
-2. Check `git status` and `git diff` to ensure no video files, PII, or unexpected modifications exist.
-3. Commit and push:
+3. **Commit on `dev`**:
    ```bash
    git add -A
-   git commit -m "feat: add <assignment-name> evaluation and grades"
-   git push origin main
+   git commit -m "feat: <feature or assignment name>"
+   git push origin dev
    ```
-4. GitHub Pages will build and deploy to `https://hackuet.github.io/evaluation/`.
+4. **Merge `dev -> main` Only After Verification Passes**:
+   ```bash
+   git checkout main
+   git merge dev --ff-only || git merge dev
+   git push origin main
+   git checkout dev
+   ```
+5. GitHub Pages builds and deploys from `main` to `https://hackuet.github.io/evaluation/`.
 
 ---
 

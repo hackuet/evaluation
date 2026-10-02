@@ -139,9 +139,18 @@ After populating submissions, running audits, and updating the assignment CSV:
      - Scorecard table displays per-task LLM reasoning.
      - AI Subagent Audit tab renders the student's markdown report.
 
-4. **Deploy**:
-   ```bash
-   git add -A
-   git commit -m "feat: add <assignment> evaluation"
-   git push origin main
-   ```
+4. **Strict `dev -> main` Deployment Protocol**:
+   - Always commit and push on `dev` first:
+     ```bash
+     git checkout dev
+     git add -A
+     git commit -m "feat: add <assignment> evaluation"
+     git push origin dev
+     ```
+   - Merge `dev` into `main` and deploy:
+     ```bash
+     git checkout main
+     git merge dev --ff-only || git merge dev
+     git push origin main
+     git checkout dev
+     ```

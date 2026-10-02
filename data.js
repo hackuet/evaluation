@@ -54,9 +54,29 @@ const HACK_DATA = {
           "max": 5,
           "name": "Inline Comments"
         },
-        "bonus": {
-          "max": 75,
-          "name": "Bonus Pool (i.b.1\u2013iii.b)"
+        "bonus_ib1": {
+          "max": 10,
+          "name": "i.b.1: Generic N-LEDs (Bonus)"
+        },
+        "bonus_ib2": {
+          "max": 15,
+          "name": "i.b.2: Hardware Port Opt. (Bonus)"
+        },
+        "bonus_ib3": {
+          "max": 10,
+          "name": "i.b.3: Multitasking Systems (Bonus)"
+        },
+        "bonus_iib1": {
+          "max": 15,
+          "name": "ii.b.1: HW PWM Acceleration (Bonus)"
+        },
+        "bonus_iib2": {
+          "max": 10,
+          "name": "ii.b.2: Custom PWM Servo (Bonus)"
+        },
+        "bonus_iiib": {
+          "max": 15,
+          "name": "iii.b: Smart Dustbin Sim (Bonus)"
         }
       }
     }
@@ -78,52 +98,94 @@ const HACK_DATA = {
           "auditReport": "# Objective Technical Evaluation Report: 52509028\n\n## 1. Submission Information & Files Present\n- **Student Roll**: `52509028`\n- **Submission Timestamp**: 10/01/2026 23:07:49\n- **On-Time Status**: On-Time (Submitted ~51 minutes before the 10/01/2026 11:59:00 PM deadline)\n- **Files Received & Inspected**:\n  - [`Task-1 LED blinking.txt`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-1%20LED%20blinking.txt)\n  - [`Task-1 Screen Recording.mp4`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-1%20Screen%20Recording.mp4)\n  - [`Task-2 PWM.txt`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-2%20PWM.txt)\n  - [`Task-2 Screen Recording.mp4`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-2%20Screen%20Recording.mp4)\n  - [`Task-3 Sonar reader.txt`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-3%20Sonar%20reader.txt)\n  - [`Task-3 Screen Recording.mp4`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-3%20Screen%20Recording.mp4)\n\n---\n\n## 2. Hybrid Score Summary Table\n\nFormula applied:\n$$\\text{Combined Final Mark} = (\\text{Instructor Mark} \\times 0.6) + (\\text{LLM Subagent Mark} \\times 0.4)$$\n\n| Category | Component | Max Marks | Instructor Mark | LLM Mark | Combined Final Mark | Remarks |\n| :--- | :--- | :---: | :---: | :---: | :---: | :--- |\n| **Commitment** | Participation | 55 | 55.00 | 55.00 | **55.00** | Full marks for submitting an authentic attempt across all mandatory tasks. |\n| | In-Time Submission | 15 | 15.00 | 15.00 | **15.00** | Submitted on-time (10/01/2026 23:07:49, before 11:59 PM deadline). |\n| **Mandatory Tasks (75 pts)** | Task 1: Dual LED Blinker | 25 | 25.00 | 25.00 | **25.00** | Flawless non-blocking implementation using `millis()` with independent interval tracking. |\n| | Task 2: Software PWM | 25 | 25.00 | 21.00 | **23.40** | Clean software PWM without `analogWrite()`; 4-point LLM deduction for 16-bit signed AVR integer overflow bug. |\n| | Task 3: Sonar Reader | 25 | 8.33 | 18.00 | **12.20** | Custom edge timing via `micros()` without `pulseIn()`; lacks interrupts for hardware acceleration and lacks timeout guards. |\n| **Deliverables (5 pts)** | Inline Code Comments & Clarity | 5 | 5.00 | 5.00 | **5.00** | Exceptional inline documentation explaining hardware pins, timing, and memory allocation. |\n| **SUBTOTAL (BASE)** | | **150** | **133.33** | **139.00** | **135.60** | **Base Mandatory Score (90.4%)** |\n| **Bonus Tasks (+75 pts Pool)** | i.b.1 (Generic N-LEDs) | 10 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | i.b.2 (Hardware Optimization) | 15 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | i.b.3 (Multitasking Systems) | 10 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | ii.b.1 (Hardware PWM Acceleration) | 15 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | ii.b.2 (Custom PWM Servo Control) | 10 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | iii.b (Smart Dustbin Simulation) | 15 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| **SUBTOTAL (BONUS)** | | **75** | **0.00** | **0.00** | **0.00** | No bonus implementations provided. |\n| **TOTAL SCORE** | | **225** | **133.33** | **139.00** | **135.60** | **Final Combined Total Score: 135.60 / 225** |\n\n---\n\n## 3. Detailed Technical Analysis of Submissions\n\n### Task 1: Dual LED Blinker ([Task-1 LED blinking.txt](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-1%20LED%20blinking.txt))\n\n#### Technical Implementation\nThe student implemented an independent, non-blocking dual LED blinker:\n```cpp\nint led_yellow = 8;\nint led_red = 9;\n\nunsigned long interval_yellow = 1000;\nunsigned long interval_red = 2000;\n\nunsigned long lastTime_yellow = 0;\nunsigned long lastTime_red = 0;\n\nint state_yellow = LOW;\nint state_red = LOW;\n\nvoid setup(){\n  pinMode(led_yellow, OUTPUT);\n  pinMode(led_red, OUTPUT);\n}\n\nvoid loop(){\n  unsigned long currentTime = millis();\n\n  if (currentTime - lastTime_yellow >= interval_yellow) {\n    lastTime_yellow = currentTime;\n    if (state_yellow == LOW) {\n      state_yellow = HIGH;\n    } else {\n      state_yellow = LOW;\n    }\n    digitalWrite (led_yellow, state_yellow);\n  }\n\n  if (currentTime - lastTime_red >= interval_red) {\n    lastTime_red = currentTime;\n    if (state_red == LOW) {\n      state_red = HIGH;\n    } else {\n      state_red = LOW;\n    }\n    digitalWrite(led_red, state_red);\n  }\n}\n```\n\n#### Evaluation & Merits\n1. **True Concurrency & Non-Blocking Design**:\n   - The sketch completely avoids `delay()`. Both LEDs evaluate their elapsed intervals independently against `millis()` on every iteration of `loop()`.\n   - The yellow LED toggles at $1000\\text{ ms}$ intervals and the red LED toggles at $2000\\text{ ms}$ intervals without interference or cumulative drift.\n2. **Proper Data Types for Embedded Timers**:\n   - All timing variables (`currentTime`, `lastTime_yellow`, `lastTime_red`, `interval_yellow`, `interval_red`) are declared as `unsigned long`. This correctly handles 32-bit `millis()` math and prevents overflow glitches when calculating time differences (`currentTime - lastTime >= interval`).\n3. **Simulation Verification**:\n   - In [`Task-1 Screen Recording.mp4`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-1%20Screen%20Recording.mp4), the Wokwi simulation shows both LEDs blinking concurrently at their designated $1\\text{s}$ and $2\\text{s}$ rates.\n4. **Marking**:\n   - **Instructor Mark**: 25.00 / 25\n   - **LLM Subagent Mark**: 25.00 / 25\n   - **Combined Mark**: $(25.00 \\times 0.6) + (25.00 \\times 0.4) =$ **25.00 / 25**\n\n---\n\n### Task 2: Software PWM Implementation ([Task-2 PWM.txt](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-2%20PWM.txt))\n\n#### Technical Implementation\n```cpp\nint ledPin = 9;\n\nvoid pwm(int pin, int value) {\n  if (value < 0) value = 0;\n  if (value > 255) value = 255;\n\n  int time = 10000; \n\n  int onTime = (time * value) / 255;\n  int offTime = time - onTime;\n\n  if (onTime > 0) {\n    digitalWrite(pin, HIGH);\n    delayMicroseconds(onTime); \n  }\n\n  if (offTime > 0) {\n    digitalWrite(pin, LOW);\n    delayMicroseconds(offTime);\n  }\n}\n```\n\n#### Evaluation & Merits\n1. **Duty Cycle Math & Modulation Principle**:\n   - The function `pwm(pin, value)` successfully generates software PWM without using `analogWrite()`.\n   - The duty cycle formula accurately models the relationship:\n     $$T_{on} = T_{total} \\times \\frac{value}{255}, \\quad T_{off} = T_{total} - T_{on}$$\n   - The total period chosen is $10{,}000\\ \\mu\\text{s}$ ($10\\text{ ms}$), creating a $100\\text{ Hz}$ carrier frequency, which is suitable for LED persistence of vision.\n   - Input clamping (`if (value < 0) value = 0; if (value > 255) value = 255;`) prevents out-of-bound duty cycles.\n2. **Critical Embedded Bug: 16-Bit Signed Integer Overflow on AVR**:\n   - The variables are declared as standard 16-bit signed `int` on 8-bit AVR microcontrollers (ATmega328P / Arduino Uno):\n     ```cpp\n     int time = 10000; \n     int onTime = (time * value) / 255;\n     ```\n   - On AVR, `int` is 16 bits with a maximum value of $+32{,}767$.\n   - When evaluating `(time * value)`, the multiplication is carried out in signed 16-bit arithmetic:\n     - For $value = 3$: $10000 \\times 3 = 30000 \\le 32767$ (valid).\n     - For $value = 4$: $10000 \\times 4 = 40000 > 32767$, which overflows to signed negative $-25536$, resulting in $onTime = -100$.\n     - Because $onTime \\le 0$, the condition `if (onTime > 0)` fails, skipping the ON pulse completely!\n     - Furthermore, $offTime = time - onTime = 10000 - (-100) = 10100$, causing severe pulse distortion.\n   - *Rubric Specification*: The rubric explicitly specifies:\n     > *\"Microsecond timing and proper duty cycle: $T_{on} = T_{total} \\times \\frac{value}{255}$: 21\u201325 / 25 (deduct 3-4 pts for 16-bit signed AVR integer overflow or edge clamping bugs).\"*\n   - Consequently, an objective deduction of 4 points is applied under the rubric.\n3. **Simulation Verification**:\n   - [`Task-2 Screen Recording.mp4`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-2%20Screen%20Recording.mp4) demonstrates the circuit wired in Wokwi with the LED connected to digital pin 9.\n4. **Marking**:\n   - **Instructor Mark**: 25.00 / 25 (Awarded full credit on functional concept)\n   - **LLM Subagent Mark**: 21.00 / 25 (Deduct 4 pts for AVR 16-bit signed integer overflow)\n   - **Combined Mark**: $(25.00 \\times 0.6) + (21.00 \\times 0.4) = 15.00 + 8.40 =$ **23.40 / 25**\n\n---\n\n### Task 3: Hardware-Accelerated Sonar Reader ([Task-3 Sonar reader.txt](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52509028/Task-3%20Sonar%20reader.txt))\n\n#### Technical Implementation\n```cpp\nint trigPin = 10;\nint echoPin = 9;\n\nlong duration;\nfloat distance;\n\nvoid setup() {\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  while (digitalRead(echoPin) == LOW); \n  long startTime = micros();\n\n  while (digitalRead(echoPin) == HIGH); \n  long endTime = micros();\n\n  duration = endTime - startTime;\n  distance = duration * 0.034 / 2;\n\n  Serial.print(\"Distance: \");\n  Serial.println(distance);\n  Serial.println(\" cm\");\n\n  delay(100);\n}\n```\n\n#### Evaluation & Merits\n1. **Pulse Timing & Physics**:\n   - The trigger pulse sequence follows the HC-SR04 datasheet: $2\\,\\mu\\text{s}$ LOW baseline, $10\\,\\mu\\text{s}$ HIGH acoustic transmit trigger, and LOW idle.\n   - The round-trip acoustic equation properly applies the speed of sound in air ($0.034\\text{ cm}/\\mu\\text{s}$) divided by 2:\n     $$\\text{Distance} = \\frac{\\text{duration} \\times 0.034}{2}$$\n2. **Custom Edge Polling vs. Hardware Acceleration**:\n   - The student successfully avoids `pulseIn()` by capturing edge transitions using `while` polling and `micros()`.\n   - However, **true hardware acceleration** requires asynchronous hardware interrupts (e.g. Timer1 Input Capture Unit `ICP1` or Pin Change Interrupts `PCINT`), which offload edge timing completely from the CPU core.\n   - The student's implementation uses CPU busy-waiting loops:\n     ```cpp\n     while (digitalRead(echoPin) == LOW); \n     while (digitalRead(echoPin) == HIGH);\n     ```\n   - **Vulnerability (Infinite Blocking)**: These tight `while` loops lack a timeout mechanism. If an echo pulse is lost (e.g. out of range, signal absorbed, or wire disconnected), the microcontroller hangs indefinitely in the `while` loop, crashing real-time system operation.\n3. **Rubric Alignment**:\n   - The rubric specifies:\n     > *\"Interrupt-driven (Timer1 Input Capture / PCINT): 25 / 25.\"*\n     > *\"CPU-polling edge timing using `micros()` (without `pulseIn()`): 16\u201320 / 25.\"*\n   - Because the student implemented CPU-polling edge timing without `pulseIn()`, but lacks timeout protection and hardware interrupts, the LLM awards **18.00 / 25** (within the 16\u201320 bracket).\n   - The instructor evaluated strictly against the hardware acceleration requirement (interrupts) and assigned **8.33 / 25** (1/3 credit).\n4. **Marking**:\n   - **Instructor Mark**: 8.33 / 25 (1/3 credit for missing hardware interrupts)\n   - **LLM Subagent Mark**: 18.00 / 25 (CPU-polling edge timing without `pulseIn()`, with timeout penalty)\n   - **Combined Mark**: $(8.3333 \\times 0.6) + (18.00 \\times 0.4) = 5.00 + 7.20 =$ **12.20 / 25**\n\n---\n\n### Deliverables: Inline Code Comments & Clarity\nAcross all three files, the code includes exceptional inline documentation:\n- Clear variable naming conventions (`interval_yellow`, `lastTime_red`, `onTime`, `offTime`).\n- Explanations of hardware pin configurations and directions (`pinMode(trigPin, OUTPUT)` vs `pinMode(echoPin, INPUT)`).\n- Thoughtful reasoning about memory usage and unsigned integer arithmetic (\"unsigned : only 0 and (+ve) values, long : more space in the memory\").\n- Explaining the difference between `millis()` and `delay()` (\"can work independently which 'delay' can't\").\n- **Awarded Mark**: **5.00 / 5** (Full Marks).\n\n---\n\n## 4. Strengths & Recommended Next Steps\n\n### Strengths\n1. **Solid Foundational Understanding of Concurrency**:\n   Task 1 is implemented correctly using non-blocking timestamp comparisons with `millis()`, demonstrating genuine comprehension of embedded concurrency.\n2. **First-Principles Implementation**:\n   Both Task 2 (`pwm`) and Task 3 (`sonar reader`) avoid high-level Arduino black boxes (`analogWrite()`, `pulseIn()`) in favor of direct microsecond timing control.\n3. **Superb Code Documentation**:\n   Inline comments are authentic, thorough, and capture both the \"how\" and the \"why\" behind every line of code.\n\n### Recommended Next Steps for Technical Growth\n\n1. **Beware of 16-Bit Architecture Integer Overflows**:\n   - On 8-bit AVR microcontrollers like the Arduino Uno (ATmega328P), an `int` is 16 bits ($-32{,}768$ to $+32{,}767$).\n   - When multiplying large constants like $10{,}000$ by an 8-bit variable ($0 \\dots 255$), the result ($0 \\dots 2{,}550{,}000$) immediately exceeds 16 bits.\n   - *Fix*: Declare `time` as `unsigned long` or explicitly cast the calculation:\n     ```cpp\n     unsigned long time = 10000;\n     unsigned long onTime = (time * (unsigned long)value) / 255;\n     ```\n\n2. **Add Timeout Guards to All Sensor Polling Loops**:\n   - Never trust an external sensor to pull a pin HIGH or LOW indefinitely. If an ultrasonic pulse misses the sensor, `while (digitalRead(echoPin) == HIGH);` locks the entire board forever.\n   - Always include a microsecond timeout guard (e.g., $30\\text{ ms}$ for HC-SR04, corresponding to $>400\\text{ cm}$):\n     ```cpp\n     unsigned long startWait = micros();\n     while (digitalRead(echoPin) == LOW) {\n       if (micros() - startWait > 30000) return -1.0; // Timeout error handling\n     }\n     ```\n\n3. **Advance to True Hardware Acceleration via Timers and Interrupts**:\n   - **For PWM**: Utilize the hardware Timer1 registers (`TCCR1A`, `TCCR1B`, `OCR1A`) to generate hardware PWM directly on pin 9 at 16 MHz with **zero CPU utilization**.\n   - **For Sonar**: Use Timer1 Input Capture (`ICP1` on Pin 8) or Pin Change Interrupts (`PCINT`) to record the exact clock cycle of rising and falling edges in hardware without any polling loops.\n",
           "scores": {
             "participation": {
-              "max": 55,
+              "max": 55.0,
               "inst": 55.0,
               "llm": 55.0,
               "note": "Full marks for submitting an authentic attempt across all mandatory tasks.",
               "llmReasoning": "Full marks for submitting an authentic attempt across all mandatory tasks."
             },
             "inTime": {
-              "max": 15,
+              "max": 15.0,
               "inst": 15.0,
               "llm": 15.0,
               "note": "Submitted on-time (10/01/2026 23:07:49, before 11:59 PM deadline).",
               "llmReasoning": "Submitted on-time (10/01/2026 23:07:49, before 11:59 PM deadline)."
             },
             "task1": {
-              "max": 25,
+              "max": 25.0,
               "inst": 25.0,
               "llm": 25.0,
               "note": "Flawless non-blocking implementation using `millis()` with independent interval tracking.",
               "llmReasoning": "Flawless non-blocking implementation using `millis()` with independent interval tracking."
             },
             "task2": {
-              "max": 25,
+              "max": 25.0,
               "inst": 25.0,
               "llm": 21.0,
               "note": "Clean software PWM without `analogWrite()`; 4-point LLM deduction for 16-bit signed AVR integer overflow bug.",
               "llmReasoning": "Clean software PWM without `analogWrite()`; 4-point LLM deduction for 16-bit signed AVR integer overflow bug."
             },
             "task3": {
-              "max": 25,
+              "max": 25.0,
               "inst": 8.33,
               "llm": 18.0,
               "note": "Custom edge timing via `micros()` without `pulseIn()`; lacks interrupts for hardware acceleration and lacks timeout guards.",
               "llmReasoning": "Custom edge timing via `micros()` without `pulseIn()`; lacks interrupts for hardware acceleration and lacks timeout guards."
             },
             "documentation": {
-              "max": 5,
+              "max": 5.0,
               "inst": 5.0,
               "llm": 5.0,
               "note": "Exceptional inline documentation explaining hardware pins, timing, and memory allocation.",
               "llmReasoning": "Exceptional inline documentation explaining hardware pins, timing, and memory allocation."
             },
+            "bonus_ib1": {
+              "max": 10.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_ib2": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_ib3": {
+              "max": 10.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iib1": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iib2": {
+              "max": 10.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iiib": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
             "bonus": {
               "max": 75,
               "inst": 0.0,
               "llm": 0.0,
-              "note": "Inst: 0.0, LLM: 0.0",
+              "note": "Bonus pool evaluation.",
               "llmReasoning": "Bonus pool evaluation."
             }
           },
@@ -157,56 +219,98 @@ const HACK_DATA = {
           "driveLink": "https://drive.google.com/file/d/1BJJDqIfF11OMW6_PQv9BWFYrybPnsonC/view?usp=drive_link",
           "instructorTransparencyNote": "Full marks on Task 1",
           "studentComment": "As I have a little knowledge about coding and Arduino IDE.So,the task seemed too difficult to solve....It would be so helpful if we were provided a road map to learn coding associated with Arduino.",
-          "auditReport": "# Objective Technical Evaluation Report: 52531013\n\n## 1. Submission Information & Files Present\n- **Student Roll**: `52531013`\n- **Submission Timestamp**: 10/02/2026 00:00:14\n- **On-Time Status**: On-Time / Grace Period (Awarded full 15/15 under 5-minute grace window: submitted at 00:00:14 vs deadline 10/01/2026 23:59:00)\n- **Drive Link**: [Google Drive Submission](https://drive.google.com/file/d/1BJJDqIfF11OMW6_PQv9BWFYrybPnsonC/view?usp=drive_link)\n- **Files Received & Inspected**:\n  - [`Task-1 LED blinking.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52531013/Task-1%20LED%20blinking.ino)\n- **Student Note**: *\"As I have a little knowledge about coding and Arduino IDE.So,the task seemed too difficult to solve....It would be so helpful if we were provided a road map to learn coding associated with Arduino.\"*\n\n---\n\n## 2. Hybrid Score Summary Table\n\nFormula applied:\n$$\\text{Combined Final Mark} = (\\text{Instructor Mark} \\times 0.6) + (\\text{LLM Subagent Mark} \\times 0.4)$$\n\n| Category | Component | Max Marks | Instructor Mark | LLM Mark | Combined Final Mark | Technical Rationale & Remarks |\n| :--- | :--- | :---: | :---: | :---: | :---: | :--- |\n| **Commitment** | Participation | 55 | 55.00 | 55.00 | **55.00** | Full marks awarded for authentic effort and code submission. |\n| | In-Time Submission | 15 | 15.00 | 15.00 | **15.00** | Submitted at 00:00:14 (within the agreed 5-minute grace window). |\n| **Mandatory Tasks (75 pts)** | Task 1: Dual LED Blinker | 25 | 25.00 | 25.00 | **25.00** | Full marks. Working non-blocking `millis()` independent dual blinking ($X=2000\\text{ms}, Y=5000\\text{ms}$). |\n| | Task 2: Software PWM | 25 | 0.00 | 0.00 | **0.00** | Not attempted in submission. |\n| | Task 3: Sonar Reader | 25 | 0.00 | 0.00 | **0.00** | Not attempted in submission. |\n| **Deliverables (5 pts)** | Inline Code Comments & Clarity | 5 | 4.00 | 4.00 | **4.00** | Clear variable naming, boolean state inversion (`ledstate = !ledstate`), and clean timing logic. |\n| **SUBTOTAL (BASE)** | | **150** | **99.00** | **99.00** | **99.00** | **Base Mandatory Total: 99.00 / 150 (66.0%)** |\n| **Bonus Tasks (+75 pts Pool)** | All Bonus Tasks (i.b.1\u2013iii.b) | 75 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| **TOTAL SCORE** | | **225** | **99.00** | **99.00** | **99.00** | **Final Combined Total: 99.00 / 150 (Base) [66.0%]** |\n\n---\n\n## 3. Technical Code Analysis\n\n### Task 1: Dual LED Blinker ([`Task-1 LED blinking.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52531013/Task-1%20LED%20blinking.ino))\n```cpp\nconst int ledpin1=8;\nconst int ledpin2=9;\n\nunsigned long X=2000;\nunsigned long Y=5000;\n\nunsigned long previoustime1 =0;\nunsigned long previoustime2 =0;\n\nbool ledstate1=LOW;\nbool ledstate2=LOW;\n\nvoid setup(){\n  pinMode(ledpin1,OUTPUT);\n  pinMode(ledpin2,OUTPUT);\n}\n\nvoid loop(){\n  unsigned long int current_time = millis();\n\n  // LED1 blink in X sec interval\n  if(current_time-previoustime1>=X){\n      ledstate1 = !ledstate1;\n      digitalWrite(ledpin1,ledstate1);\n      previoustime1=current_time;\n  }\n\n  // LED2 blink in Y sec interval\n  if(current_time-previoustime2>=Y){\n    ledstate2 = !ledstate2;\n    digitalWrite(ledpin2,ledstate2);\n    previoustime2 = current_time;\n  }\n}\n```\n\n- **Concurrency & Non-Blocking Design**: Excellent implementation. The student completely avoids blocking `delay()` functions and uses `millis()` timestamp subtraction to toggle LED 1 every $2000\\text{ms}$ and LED 2 every $5000\\text{ms}$ independently.\n- **State Toggling**: Correctly uses boolean inversion (`ledstate1 = !ledstate1;`) to toggle pin state cleanly.\n- **Data Types**: All interval and timestamp trackers (`current_time`, `previoustime1`, `previoustime2`, `X`, `Y`) use `unsigned long`, preventing rollover overflow issues.\n\n---\n\n## 4. Key Strengths & Guidance\n- **Strength**: Despite feeling like a beginner, the student correctly mastered the non-blocking `millis()` paradigm, which is usually the hardest hurdle for new embedded systems programmers.\n- **Next Steps**:\n  1. Review Software PWM (Task 2): Practice microsecond duty cycle generation (`delayMicroseconds()`).\n  2. Review Sonar Reader (Task 3): Learn how ultrasonic sound wave travel time maps to distance without `pulseIn()`.\n",
+          "auditReport": "# Objective Technical Evaluation Report: 52531013\n\n## 1. Submission Information & Files Present\n- **Student Roll**: `52531013`\n- **Submission Timestamp**: 10/02/2026 00:00:14\n- **On-Time Status**: On-Time / Grace Period (Awarded full 15/15 under 5-minute grace window: submitted at 00:00:14 vs deadline 10/01/2026 23:59:00)\n- **Drive Link**: [Google Drive Submission](https://drive.google.com/file/d/1BJJDqIfF11OMW6_PQv9BWFYrybPnsonC/view?usp=drive_link)\n- **Files Received & Inspected**:\n  - [`Task-1 LED blinking.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52531013/Task-1%20LED%20blinking.ino)\n- **Student Note**: *\"As I have a little knowledge about coding and Arduino IDE.So,the task seemed too difficult to solve....It would be so helpful if we were provided a road map to learn coding associated with Arduino.\"*\n\n---\n\n## 2. Hybrid Score Summary Table\n\nFormula applied:\n$$\\text{Combined Final Mark} = (\\text{Instructor Mark} \\times 0.6) + (\\text{LLM Subagent Mark} \\times 0.4)$$\n\n| Category | Component | Max Marks | Instructor Mark | LLM Mark | Combined Final Mark | Technical Rationale & Remarks |\n| :--- | :--- | :---: | :---: | :---: | :---: | :--- |\n| **Commitment** | Participation | 55 | 55.00 | 55.00 | **55.00** | Full marks awarded for authentic effort and code submission. |\n| | In-Time Submission | 15 | 15.00 | 15.00 | **15.00** | Submitted at 00:00:14 (within the agreed 5-minute grace window). |\n| **Mandatory Tasks (75 pts)** | Task 1: Dual LED Blinker | 25 | 25.00 | 25.00 | **25.00** | Full marks. Working non-blocking `millis()` independent dual blinking ($X=2000\\text{ms}, Y=5000\\text{ms}$). |\n| | Task 2: Software PWM | 25 | 0.00 | 0.00 | **0.00** | Not attempted in submission. |\n| | Task 3: Sonar Reader | 25 | 0.00 | 0.00 | **0.00** | Not attempted in submission. |\n| **Deliverables (5 pts)** | Inline Code Comments & Clarity | 5 | 4.00 | 4.00 | **4.00** | Clear variable naming, boolean state inversion (`ledstate = !ledstate`), and clean timing logic. |\n| **SUBTOTAL (BASE)** | | **150** | **99.00** | **99.00** | **99.00** | **Base Mandatory Total: 99.00 / 150 (66.0%)** |\n| **Bonus Tasks (+75 pts Pool)** | i.b.1 (Generic N-LEDs) | 10 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | i.b.2 (Hardware Optimization) | 15 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | i.b.3 (Multitasking Systems) | 10 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | ii.b.1 (Hardware PWM Acceleration) | 15 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | ii.b.2 (Custom PWM Servo Control) | 10 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | iii.b (Smart Dustbin Simulation) | 15 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| **SUBTOTAL (BONUS)** | | **75** | **0.00** | **0.00** | **0.00** | No bonus implementations provided. |\n| **TOTAL SCORE** | | **225** | **99.00** | **99.00** | **99.00** | **Final Combined Total: 99.00 / 150 (Base) [66.0%]** |\n\n---\n\n## 3. Technical Code Analysis\n\n### Task 1: Dual LED Blinker ([`Task-1 LED blinking.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52531013/Task-1%20LED%20blinking.ino))\n```cpp\nconst int ledpin1=8;\nconst int ledpin2=9;\n\nunsigned long X=2000;\nunsigned long Y=5000;\n\nunsigned long previoustime1 =0;\nunsigned long previoustime2 =0;\n\nbool ledstate1=LOW;\nbool ledstate2=LOW;\n\nvoid setup(){\n  pinMode(ledpin1,OUTPUT);\n  pinMode(ledpin2,OUTPUT);\n}\n\nvoid loop(){\n  unsigned long int current_time = millis();\n\n  // LED1 blink in X sec interval\n  if(current_time-previoustime1>=X){\n      ledstate1 = !ledstate1;\n      digitalWrite(ledpin1,ledstate1);\n      previoustime1=current_time;\n  }\n\n  // LED2 blink in Y sec interval\n  if(current_time-previoustime2>=Y){\n    ledstate2 = !ledstate2;\n    digitalWrite(ledpin2,ledstate2);\n    previoustime2 = current_time;\n  }\n}\n```\n\n- **Concurrency & Non-Blocking Design**: Excellent implementation. The student completely avoids blocking `delay()` functions and uses `millis()` timestamp subtraction to toggle LED 1 every $2000\\text{ms}$ and LED 2 every $5000\\text{ms}$ independently.\n- **State Toggling**: Correctly uses boolean inversion (`ledstate1 = !ledstate1;`) to toggle pin state cleanly.\n- **Data Types**: All interval and timestamp trackers (`current_time`, `previoustime1`, `previoustime2`, `X`, `Y`) use `unsigned long`, preventing rollover overflow issues.\n\n---\n\n## 4. Key Strengths & Guidance\n- **Strength**: Despite feeling like a beginner, the student correctly mastered the non-blocking `millis()` paradigm, which is usually the hardest hurdle for new embedded systems programmers.\n- **Next Steps**:\n  1. Review Software PWM (Task 2): Practice microsecond duty cycle generation (`delayMicroseconds()`).\n  2. Review Sonar Reader (Task 3): Learn how ultrasonic sound wave travel time maps to distance without `pulseIn()`.\n",
           "scores": {
             "participation": {
-              "max": 55,
+              "max": 55.0,
               "inst": 55.0,
               "llm": 55.0,
               "note": "Full marks awarded for authentic effort and code submission.",
               "llmReasoning": "Full marks awarded for authentic effort and code submission."
             },
             "inTime": {
-              "max": 15,
+              "max": 15.0,
               "inst": 15.0,
               "llm": 15.0,
               "note": "Submitted at 00:00:14 (within the agreed 5-minute grace window).",
               "llmReasoning": "Submitted at 00:00:14 (within the agreed 5-minute grace window)."
             },
             "task1": {
-              "max": 25,
+              "max": 25.0,
               "inst": 25.0,
               "llm": 25.0,
               "note": "Full marks. Working non-blocking `millis()` independent dual blinking ($X=2000\\text{ms}, Y=5000\\text{ms}$).",
               "llmReasoning": "Full marks. Working non-blocking `millis()` independent dual blinking ($X=2000\\text{ms}, Y=5000\\text{ms}$)."
             },
             "task2": {
-              "max": 25,
+              "max": 25.0,
               "inst": 0.0,
               "llm": 0.0,
               "note": "Not attempted in submission.",
               "llmReasoning": "Not attempted in submission."
             },
             "task3": {
-              "max": 25,
+              "max": 25.0,
               "inst": 0.0,
               "llm": 0.0,
               "note": "Not attempted in submission.",
               "llmReasoning": "Not attempted in submission."
             },
             "documentation": {
-              "max": 5,
+              "max": 5.0,
               "inst": 4.0,
               "llm": 4.0,
               "note": "Clear variable naming, boolean state inversion (`ledstate = !ledstate`), and clean timing logic.",
               "llmReasoning": "Clear variable naming, boolean state inversion (`ledstate = !ledstate`), and clean timing logic."
             },
-            "bonus": {
-              "max": 75,
+            "bonus_ib1": {
+              "max": 10.0,
               "inst": 0.0,
               "llm": 0.0,
               "note": "Not attempted.",
               "llmReasoning": "Not attempted."
+            },
+            "bonus_ib2": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_ib3": {
+              "max": 10.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iib1": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iib2": {
+              "max": 10.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iiib": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus": {
+              "max": 75,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Bonus pool evaluation.",
+              "llmReasoning": "Bonus pool evaluation."
             }
           },
           "codeFiles": [
@@ -234,51 +338,93 @@ const HACK_DATA = {
           "auditReport": "# Evaluation Report: 52503088\n\n## Submission Information\n- **Student Roll**: `52503088`\n- **Submission Timestamp**: 9/30/2026 23:52:18\n- **On-Time Status**: On-Time (Submitted ~24 hours ahead of 10/01/2026 11:59 PM deadline)\n- **Files Received**: \n  - [`No_01.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/No_01.ino)\n  - [`LED Blink By different interval.mp4`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/LED%20Blink%20By%20different%20interval.mp4)\n- **Submission Note**: *\"I can't understand 2no and 3no tasks because unfortunately I missed the last workshop.\"*\n- **Evaluation Principle**: Evaluated strictly on objective technical merits of submitted code in accordance with [`EVALUATION_PROMPT.md`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/EVALUATION_PROMPT.md) and [`RUBRIC.md`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/RUBRIC.md). Submission notes regarding missed workshops do not excuse missing code implementations.\n\n---\n\n## Score Summary Table\n\n| Category | Component | Max Marks | Instructor Mark | LLM Mark | Combined Final Mark | Remarks |\n| :--- | :--- | :---: | :---: | :---: | :---: | :--- |\n| **Commitment** | Participation | 55 | 55.0 | 55.0 | **55.00** | Full marks for submitting an authentic attempt with working simulation video. |\n| | In-Time Submission | 15 | 15.0 | 15.0 | **15.00** | Submitted on 9/30/2026 at 23:52:18 (well ahead of deadline). |\n| **Mandatory Tasks** | Task 1: Dual LED Blinker | 25 | 6.25 | 15.0 | **9.75** | Combined $(6.25 \\times 0.6) + (15.0 \\times 0.4) = 9.75$. Instructor: 1/4 mark (tried, but blocking `delay()` fails concurrency objective). LLM: 15/25 for blocking sequential toggling per rubric. |\n| | Task 2: Software PWM | 25 | 0.0 | 0.0 | **0.00** | No implementation provided in submission files. Missing code receives 0 marks. |\n| | Task 3: Hardware-Accelerated Sonar Reader | 25 | 0.0 | 0.0 | **0.00** | No implementation provided in submission files. Missing code receives 0 marks. |\n| **Deliverables** | Inline Code Comments & Clarity | 5 | 2.5 | 2.5 | **2.50** | Clear pin naming and basic inline comments in [`No_01.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/No_01.ino); tasks 2 and 3 omitted. |\n| **Subtotal Base** | **Mandatory Components** | **150** | **78.75** | **87.50** | **82.25** | **82.25 / 150 Base Marks (54.8%)** |\n| **Bonus Tasks** | i.b.1 (Generic $N$-LEDs) | 10 | 0.0 | 0.0 | **0.00** | Not attempted. |\n| | i.b.2 (Hardware Port Optimization) | 15 | 0.0 | 0.0 | **0.00** | Not attempted. |\n| | i.b.3 (Multitasking Systems) | 10 | 0.0 | 0.0 | **0.00** | Not attempted. |\n| | ii.b.1 (Hardware PWM Acceleration) | 15 | 0.0 | 0.0 | **0.00** | Not attempted. |\n| | ii.b.2 (Custom PWM Servo Control) | 10 | 0.0 | 0.0 | **0.00** | Not attempted. |\n| | iii.b (Smart Dustbin Simulation) | 15 | 0.0 | 0.0 | **0.00** | Not attempted. |\n| **Subtotal Bonus** | **Bonus Pool** | **75** | **0.0** | **0.0** | **0.00** | No bonus tasks attempted. |\n| **TOTAL** | **Base + Bonus Combined** | **225** | **78.75** | **87.50** | **82.25** | **Final Combined Score: 82.25 / 150 (Base) [54.8%]** |\n\n$$\\text{Final Hybrid Score} = (78.75 \\times 0.6) + (87.50 \\times 0.4) = 47.25 + 35.00 = 82.25 / 150$$\n\n---\n\n## Detailed Technical Review\n\n### Task 1 Analysis: Dual LED Blinker\n\n#### Submitted Code\nThe student submitted the following sketch in [`No_01.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/No_01.ino):\n\n```cpp\nint LED1= 13; //led1 pin\nint LED2= 12; //led2 pin\nint X= 1000;  // delay for first led\nint Y= 3000;  //delay for 2nd led\n\nvoid setup()\n{\n  pinMode(LED1, OUTPUT); // pin declear\n  pinMode(LED2, OUTPUT);\n}\n\nvoid loop()\n{\n  digitalWrite(LED1, HIGH); //Blink LED1\n  delay(500); \n  digitalWrite(LED1, LOW);\n  delay(X);                 //wait Xs \n  digitalWrite(LED2, HIGH); //Bink LED2\n  delay(500);\n  digitalWrite(LED2, LOW);\n  delay(Y);                 //wait Ys\n}\n```\n\n#### Objective Technical Critique\n1. **Hardware Pin Configuration & Setup**:\n   - In [`setup()`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/No_01.ino#L6-L10), the student properly configures pins `13` and `12` as digital outputs via `pinMode()`.\n   - Meaningful variable identifiers (`LED1`, `LED2`, `X`, `Y`) are declared at the global scope.\n\n2. **Concurrency Failure & Blocking Delays**:\n   - The implementation in [`loop()`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/No_01.ino#L12-L22) executes sequentially using `delay()`.\n   - The function `delay()` halts the microcontroller's CPU core in a tight busy-wait loop. During this waiting duration, the processor cannot sample inputs, service other tasks, or manipulate other pins.\n   - As a consequence, LED 1 and LED 2 are tightly coupled rather than operating concurrently. LED 2 cannot begin its cycle until LED 1 finishes its 500ms ON time and 1000ms ($X$) OFF time. Likewise, LED 1 cannot begin its next cycle until LED 2 completes its 500ms ON time and 3000ms ($Y$) OFF time.\n\n3. **Period Distortion**:\n   - The assignment requires LED 1 to blink at an $X$-second interval and LED 2 to blink at a $Y$-second interval independently.\n   - In this sequential implementation, the cycle duration for **both** LEDs is identical:\n     $$T_{\\text{cycle}} = 500\\text{ ms} + X\\,(1000\\text{ ms}) + 500\\text{ ms} + Y\\,(3000\\text{ ms}) = 5000\\text{ ms} = 5.0\\text{ seconds}$$\n   - Neither LED toggles at its specified independent rate.\n\n4. **Simulation Recording**:\n   - The student recorded a video demonstrating the circuit simulation in [`LED Blink By different interval.mp4`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/LED%20Blink%20By%20different%20interval.mp4), verifying that the code compiles and runs on an Arduino Uno.\n\n5. **Scoring Breakdown**:\n   - **Instructor Evaluation**: Awarded $1/4$ mark = **6.25 / 25**. Rationale: The student made an earnest attempt to structure the logic, but the fundamental objective of independent multi-rate blinking was not achieved due to blocking delays.\n   - **LLM Evaluation**: Evaluated at **15.0 / 25** per [`EVALUATION_PROMPT.md`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/EVALUATION_PROMPT.md) standard (\"Blocking (`delay()`) sequential toggling: 15 / 25\").\n   - **Hybrid Mark**: $(6.25 \\times 0.6) + (15.0 \\times 0.4) = 3.75 + 6.00 =$ **9.75 / 25**.\n\n#### Reference Solution: Non-Blocking Concurrency via `millis()`\nTo achieve true concurrency without blocking the CPU, time-slicing with `millis()` should be used:\n\n```cpp\nconst uint8_t LED1_PIN = 13;\nconst uint8_t LED2_PIN = 12;\n\nconst unsigned long INTERVAL_LED1 = 1000; // Xs\nconst unsigned long INTERVAL_LED2 = 3000; // Ys\n\nunsigned long prevMillisLED1 = 0;\nunsigned long prevMillisLED2 = 0;\n\nuint8_t stateLED1 = LOW;\nuint8_t stateLED2 = LOW;\n\nvoid setup() {\n  pinMode(LED1_PIN, OUTPUT);\n  pinMode(LED2_PIN, OUTPUT);\n}\n\nvoid loop() {\n  unsigned long currentMillis = millis();\n\n  // Concurrently handle LED1\n  if (currentMillis - prevMillisLED1 >= INTERVAL_LED1) {\n    prevMillisLED1 = currentMillis;\n    stateLED1 = !stateLED1;\n    digitalWrite(LED1_PIN, stateLED1);\n  }\n\n  // Concurrently handle LED2\n  if (currentMillis - prevMillisLED2 >= INTERVAL_LED2) {\n    prevMillisLED2 = currentMillis;\n    stateLED2 = !stateLED2;\n    digitalWrite(LED2_PIN, stateLED2);\n  }\n}\n```\n\n---\n\n### Task 2 Analysis: Software PWM\n\n- **Status**: Not attempted / Missing from submission files.\n- **Score**: **0.0 / 25** (Instructor: 0 / LLM: 0).\n- **Objective Evaluation**: While the student submitted an explanatory note (*\"I can't understand 2no and 3no tasks because unfortunately I missed the last workshop.\"*), assignment grading is conducted strictly on code deliverables. No software PWM code was submitted.\n\n#### Technical Concept & Implementation Guide\nSoftware Pulse Width Modulation (PWM) synthesizes analog-like output on a standard digital pin by switching the pin between `HIGH` and `LOW` at a high frequency (e.g., 100 Hz to 1 kHz):\n\n$$\\text{Duty Cycle} = \\frac{\\text{value}}{255}$$\n$$T_{\\text{on}} = T_{\\text{total}} \\times \\left(\\frac{\\text{value}}{255}\\right), \\quad T_{\\text{off}} = T_{\\text{total}} - T_{\\text{on}}$$\n\nA clean reference implementation of `pwm(pin, value)` without `analogWrite()`:\n\n```cpp\nvoid pwm(uint8_t pin, uint8_t value) {\n  // Edge cases\n  if (value == 0) {\n    digitalWrite(pin, LOW);\n    return;\n  }\n  if (value == 255) {\n    digitalWrite(pin, HIGH);\n    return;\n  }\n\n  // 1 kHz carrier frequency -> total period = 1000 microseconds\n  const unsigned long TOTAL_PERIOD_US = 1000;\n  \n  // Note: Cast to unsigned long prevents 16-bit signed integer overflow on AVR\n  unsigned long onTime = (TOTAL_PERIOD_US * (unsigned long)value) / 255;\n  unsigned long offTime = TOTAL_PERIOD_US - onTime;\n\n  digitalWrite(pin, HIGH);\n  delayMicroseconds(onTime);\n  digitalWrite(pin, LOW);\n  delayMicroseconds(offTime);\n}\n```\n\n---\n\n### Task 3 Analysis: Hardware-Accelerated Sonar Reader\n\n- **Status**: Not attempted / Missing from submission files.\n- **Score**: **0.0 / 25** (Instructor: 0 / LLM: 0).\n- **Objective Evaluation**: No sonar reading code was provided. Missing code receives 0 marks.\n\n#### Technical Concept & Implementation Guide\nThe HC-SR04 ultrasonic distance sensor relies on acoustic time-of-flight:\n1. The microcontroller asserts a $10\\,\\mu\\text{s}$ HIGH pulse on the `TRIG` pin.\n2. The transducer transmits an 8-cycle ultrasonic burst at 40 kHz.\n3. The sensor pulls `ECHO` HIGH for the duration of the sound wave's round trip.\n4. Using the speed of sound in dry air ($343\\text{ m/s} \\approx 0.0343\\text{ cm}/\\mu\\text{s}$):\n   $$\\text{Distance (cm)} = \\frac{\\Delta t\\,(\\mu\\text{s}) \\times 0.0343\\,\\text{cm}/\\mu\\text{s}}{2}$$\n\nWhile beginner tutorials use the blocking `pulseIn()` function, true embedded implementations avoid `pulseIn()`:\n\n- **Intermediate Solution (Non-blocking edge polling with timeout guard)**:\n  ```cpp\n  float readSonarCM(uint8_t trigPin, uint8_t echoPin) {\n    digitalWrite(trigPin, LOW);\n    delayMicroseconds(2);\n    digitalWrite(trigPin, HIGH);\n    delayMicroseconds(10);\n    digitalWrite(trigPin, LOW);\n\n    unsigned long startWait = micros();\n    while (digitalRead(echoPin) == LOW) {\n      if (micros() - startWait > 30000) return -1.0; // Timeout guard\n    }\n\n    unsigned long pulseStart = micros();\n    while (digitalRead(echoPin) == HIGH) {\n      if (micros() - pulseStart > 30000) return -1.0; // Out of range timeout\n    }\n    unsigned long duration = micros() - pulseStart;\n\n    return (duration * 0.0343) / 2.0;\n  }\n  ```\n\n- **Advanced Hardware Acceleration (Timer1 Input Capture / PCINT Interrupt)**:\n  Connecting `ECHO` to Pin 8 (`ICP1` on ATmega328P) enables the 16-bit Timer1 Input Capture Unit to automatically latch timer ticks on rising and falling edges with zero CPU polling overhead.\n\n---\n\n### Bonus Tasks Analysis\n\n- **i.b.1 (Generic $N$-LEDs dynamic array/struct)**: Not attempted (**0 / 10**).\n- **i.b.2 (Direct hardware port optimization: `PORTB`/`DDRB`)**: Not attempted (**0 / 15**).\n- **i.b.3 (Structured multitasking state machine / cooperative scheduler)**: Not attempted (**0 / 10**).\n- **ii.b.1 (Hardware PWM Acceleration via Timer1 registers `TCCR1A`/`OCR1A`)**: Not attempted (**0 / 15**).\n- **ii.b.2 (Precision 50Hz PWM Servo Control without `<Servo.h>`)**: Not attempted (**0 / 10**).\n- **iii.b (Smart Dustbin complete simulation)**: Not attempted (**0 / 15**).\n\n---\n\n## Strengths & Recommended Next Steps\n\n### Demonstrated Strengths\n1. **Proactive & On-Time Submission**:\n   Submitted approximately 24 hours prior to the official deadline, demonstrating excellent time management.\n2. **Authenticity & Intellectual Integrity**:\n   Communicated learning gaps candidly rather than submitting unverified code from online sources.\n3. **Working Baseline Simulation**:\n   Successfully wired, simulated, and screen-recorded the Task 1 circuit in [`LED Blink By different interval.mp4`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/LED%20Blink%20By%20different%20interval.mp4).\n\n### Recommended Next Steps for Hardware & Embedded Mastery\n\n1. **Master Non-Blocking Concurrency (`millis()`)**:\n   - Re-implement Task 1 in [Wokwi](https://wokwi.com) without using `delay()`.\n   - Practice the timestamp subtraction pattern: `if (currentMillis - previousMillis >= interval)`. Notice how both LEDs blink simultaneously without interrupting each other.\n\n2. **Experiment with Software Bit-Banging**:\n   - Set up an LED circuit on Wokwi and test the provided `pwm(pin, value)` helper function.\n   - Experiment with varying duty cycles from 0 to 255 to see smooth LED fading without `analogWrite()`.\n\n3. **Explore Sensor Interfacing without Blocking Calls**:\n   - Connect an HC-SR04 ultrasonic sensor and practice microsecond edge timing.\n   - Observe how adding a timeout check prevents your code from freezing when an echo pulse is missed.\n\n4. **Attend HACK Mentorship & Catch-Up Sessions**:\n   - Review workshop slide decks and reach out to club executives or mentors on Discord.\n   - Missing one workshop is easily overcome with targeted hands-on practice!\n",
           "scores": {
             "participation": {
-              "max": 55,
+              "max": 55.0,
               "inst": 55.0,
               "llm": 55.0,
               "note": "Full marks for submitting an authentic attempt with working simulation video.",
               "llmReasoning": "Full marks for submitting an authentic attempt with working simulation video."
             },
             "inTime": {
-              "max": 15,
+              "max": 15.0,
               "inst": 15.0,
               "llm": 15.0,
               "note": "Submitted on 9/30/2026 at 23:52:18 (well ahead of deadline).",
               "llmReasoning": "Submitted on 9/30/2026 at 23:52:18 (well ahead of deadline)."
             },
             "task1": {
-              "max": 25,
+              "max": 25.0,
               "inst": 6.25,
               "llm": 15.0,
               "note": "Combined $(6.25 \\times 0.6) + (15.0 \\times 0.4) = 9.75$. Instructor: 1/4 mark (tried, but blocking `delay()` fails concurrency objective). LLM: 15/25 for blocking sequential toggling per rubric.",
               "llmReasoning": "Combined $(6.25 \\times 0.6) + (15.0 \\times 0.4) = 9.75$. Instructor: 1/4 mark (tried, but blocking `delay()` fails concurrency objective). LLM: 15/25 for blocking sequential toggling per rubric."
             },
             "task2": {
-              "max": 25,
+              "max": 25.0,
               "inst": 0.0,
               "llm": 0.0,
               "note": "No implementation provided in submission files. Missing code receives 0 marks.",
               "llmReasoning": "No implementation provided in submission files. Missing code receives 0 marks."
             },
             "task3": {
-              "max": 25,
+              "max": 25.0,
               "inst": 0.0,
               "llm": 0.0,
               "note": "No implementation provided in submission files. Missing code receives 0 marks.",
               "llmReasoning": "No implementation provided in submission files. Missing code receives 0 marks."
             },
             "documentation": {
-              "max": 5,
+              "max": 5.0,
               "inst": 2.5,
               "llm": 2.5,
               "note": "Clear pin naming and basic inline comments in [`No_01.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/No_01.ino); tasks 2 and 3 omitted.",
               "llmReasoning": "Clear pin naming and basic inline comments in [`No_01.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/No_01.ino); tasks 2 and 3 omitted."
             },
-            "bonus": {
-              "max": 75,
+            "bonus_ib1": {
+              "max": 10.0,
               "inst": 0.0,
               "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_ib2": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_ib3": {
+              "max": 10.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iib1": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iib2": {
+              "max": 10.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iiib": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus": {
+              "max": 225.0,
+              "inst": 78.75,
+              "llm": 87.5,
               "note": "**Final Combined Score: 82.25 / 150 (Base) [54.8%]**",
               "llmReasoning": "**Final Combined Score: 82.25 / 150 (Base) [54.8%]**"
             }

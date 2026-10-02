@@ -1,4 +1,4 @@
-nav.assignment-nav#assignmentNav
-  a.nav-btn(href="index.html" class=(pageType === 'cumulative' ? 'active' : '') data-scope="all") CUMULATIVE (ALL ROUNDS)
-  each a in assignments || [{id: 'a1', code: 'A-01', title: 'Dual LED, Software PWM & Sonar'}]
-    a.nav-btn(href=`${a.id}.html` class=(assignmentId === a.id ? 'active' : '') data-scope=a.id)= `${a.code}: ${a.title.toUpperCase()}`
+nav.assignment-nav#assignmentNav(style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;")
+  a.nav-btn(href="index.html" class=(pageType === 'cumulative' ? 'active' : '') data-scope="all" style="padding: 8px 14px; border: 1px solid var(--border); background: " + (pageType === 'cumulative' ? '#000000;' : 'var(--bg);') + " color: " + (pageType === 'cumulative' ? '#ffffff;' : 'var(--fg);') + " font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center;") CUMULATIVE (ALL ROUNDS)
+  each a in (assignments || []).filter(a => !activeBatch || !a.batch || a.batch === activeBatch)
+    a.nav-btn(href=`${a.id}.html` class=(assignmentId === a.id ? 'active' : '') data-scope=a.id data-batch=a.batch style="padding: 8px 14px; border: 1px solid var(--border); background: " + (assignmentId === a.id ? '#000000;' : 'var(--bg);') + " color: " + (assignmentId === a.id ? '#ffffff;' : 'var(--fg);') + " font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center;")= `${a.code}: ${a.title.toUpperCase()}`

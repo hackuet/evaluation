@@ -5,35 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HACK Technical Leaderboard | Hardware Acceleration Club of KUET</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
+    <style>
+      svg.chip-icon { width: 36px !important; height: 36px !important; min-width: 36px !important; min-height: 36px !important; max-width: 36px !important; max-height: 36px !important; display: block !important; flex-shrink: 0 !important; }
+      .code-box, pre.code-box { background: #f0f0f0 !important; color: #000000 !important; border: 1px solid #000000; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+      .code-box code, pre.code-box code { color: #000000 !important; background: transparent !important; }
+      .audit-md-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 11px; }
+      .audit-md-table th, .audit-md-table td { border: 1px solid #cccccc; padding: 6px 10px; text-align: left; }
+      .audit-md-table th { background: #f0f0f0; font-weight: 700; }
+    </style>
   </head>
   <body data-page="cumulative">
     <div class="container">
-      <header>
+      <header style="border-bottom: 2px solid var(--border); padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
         <div>
-          <div class="logo-title">
-            <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="logo-title" style="display: flex; align-items: center; gap: 14px;">
+            <svg class="chip-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; max-width: 36px; max-height: 36px; display: block; flex-shrink: 0;">
               <rect x="4" y="4" width="16" height="16" rx="2"></rect>
               <path d="M9 9h6v6H9z"></path>
               <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"></path>
             </svg>
             <div>
-              <h1>HACK // HARDWARE ACCELERATION CLUB OF KUET</h1>
-              <p>Objective Technical Evaluation & Rating System</p>
+              <h1 style="font-size: 16px; font-weight: 700; letter-spacing: -0.5px; text-transform: uppercase; margin: 0;">HACK // HARDWARE ACCELERATION CLUB OF KUET</h1>
+              <p style="color: var(--fg-muted); font-size: 11px; margin-top: 2px; margin-bottom: 0;">Objective Technical Evaluation & Rating System</p>
             </div>
           </div>
         </div>
-        <div class="header-badges"><span class="badge badge-subagent" id="headerModelBadge">EVALUATOR SUBAGENT: Gemini 3.8 Flash (Medium Thinking)</span>
-          <button class="badge" id="btnRubricModal" style="cursor: pointer; background: var(--bg); border: 1px solid var(--border); font-family: inherit;">[VIEW RUBRIC]</button>
-          <div class="batch-select-wrap">
+        <div class="header-badges" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <div class="batch-select-wrap" style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;">
             <label for="batchSelect">BATCH:</label>
-            <select id="batchSelect">
+            <select id="batchSelect" style="font-family: var(--font-mono); font-size: 11px; padding: 3px 6px; border: 1px solid var(--border); background: var(--bg); cursor: pointer;">
               <option value="2k25" selected>Batch 2k25</option>
             </select>
           </div>
         </div>
       </header>
-      <nav class="assignment-nav" id="assignmentNav"><a class="nav-btn active" href="index.html" data-scope="all">CUMULATIVE (ALL ROUNDS)</a><a class="nav-btn" href="a1.html" data-scope="a1">A-01: ASSIGNMENT 1: DUAL LED, SOFTWARE PWM &amp; SONAR</a>
+      <nav class="assignment-nav" id="assignmentNav" style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;"><a class="nav-btn active" href="index.html" data-scope="all" style="padding: 8px 14px; border: 1px solid var(--border); background: #000000; color: #ffffff; font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center;">CUMULATIVE (ALL ROUNDS)</a><a class="nav-btn" href="a1.html" data-scope="a1" data-batch="2k25" style="padding: 8px 14px; border: 1px solid var(--border); background: var(--bg); color: var(--fg); font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center;">A-01: ASSIGNMENT 1: DUAL LED, SOFTWARE PWM &amp; SONAR</a>
       </nav>
       <section id="assignmentQuestionSection" style="display: none; margin-bottom: 20px;">
         <details open style="background: var(--bg-alt); border: 1px solid var(--border); padding: 14px 18px;">
@@ -156,7 +163,7 @@
         </div>
       </div>
     </div>
-    <script src="data.js?v=2"></script>
-    <script src="app.js?v=2"></script>
+    <script src="data.js?v=3"></script>
+    <script src="app.js?v=3"></script>
   </body>
 </html>

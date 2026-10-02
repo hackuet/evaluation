@@ -5,7 +5,14 @@ html(lang="en")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title= pageTitle || "HACK Technical Leaderboard | Hardware Acceleration Club of KUET"
     link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap")
-    link(rel="stylesheet" href="style.css?v=2")
+    link(rel="stylesheet" href="style.css?v=3")
+    style.
+      svg.chip-icon { width: 36px !important; height: 36px !important; min-width: 36px !important; min-height: 36px !important; max-width: 36px !important; max-height: 36px !important; display: block !important; flex-shrink: 0 !important; }
+      .code-box, pre.code-box { background: #f0f0f0 !important; color: #000000 !important; border: 1px solid #000000; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+      .code-box code, pre.code-box code { color: #000000 !important; background: transparent !important; }
+      .audit-md-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 11px; }
+      .audit-md-table th, .audit-md-table td { border: 1px solid #cccccc; padding: 6px 10px; text-align: left; }
+      .audit-md-table th { background: #f0f0f0; font-weight: 700; }
   body(data-page=pageType data-assignment-id=assignmentId)
     .container
       include ../partials/header.pug
@@ -17,5 +24,5 @@ html(lang="en")
 
     include ../partials/modals.pug
 
-    script(src="data.js?v=2")
-    script(src="app.js?v=2")
+    script(src="data.js?v=3")
+    script(src="app.js?v=3")

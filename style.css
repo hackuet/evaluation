@@ -457,7 +457,10 @@ details.transparency-block[open] summary::before {
 }
 
 .modal-tabs-bar {
-  display: flex;
+  display: flex !important;
+  flex-shrink: 0 !important;
+  min-height: 40px !important;
+  height: 40px !important;
   border-bottom: 1px solid var(--border);
   background: var(--bg-subtle);
   overflow-x: auto;
@@ -466,21 +469,32 @@ details.transparency-block[open] summary::before {
 }
 
 .m-tab {
-  flex-shrink: 0;
-  border: none;
-  border-right: 1px solid var(--border-light);
-  background: transparent;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 8px 16px;
-  cursor: pointer;
-  text-transform: uppercase;
+  flex-shrink: 0 !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  padding: 0 16px !important;
+  border: none !important;
+  border-right: 1px solid var(--border-light) !important;
+  background: var(--bg-subtle) !important;
+  color: #000000 !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  text-transform: uppercase !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+}
+
+.m-tab:hover {
+  background: var(--bg-alt) !important;
 }
 
 .m-tab.active {
-  background: #ffffff;
-  border-bottom: 2px solid #000000;
+  background: #ffffff !important;
+  border-bottom: 3px solid #000000 !important;
+  color: #000000 !important;
 }
 
 .modal-content-area {
@@ -520,16 +534,22 @@ details.transparency-block[open] summary::before {
 
 /* Plain Code Box */
 .code-box {
-  background: #000000;
-  color: #ffffff;
+  background: #f0f0f0;
+  color: #000000;
   padding: 14px;
   border: 1px solid var(--border);
   overflow-x: auto;
-  max-height: 350px;
+  max-height: 450px;
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.5;
-  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.code-box code {
+  color: #000000 !important;
+  background: transparent !important;
 }
 
 .file-select-btns {

@@ -46,47 +46,81 @@ def get_code_files(batch, assignment_name, roll):
     return code_files
 
 def get_evaluation_audit(batch, assignment_name, roll):
-    """Read markdown evaluation audit report if present and extract per-component LLM remarks."""
+    """Read markdown evaluation audit report if present and extract per-component LLM remarks and items."""
     md_path = os.path.join(REPO_ROOT, batch, assignment_name, "evaluations", f"{roll}.md")
     if not os.path.exists(md_path):
-        return {"report": None, "remarks": {}}
+        return {"report": None, "remarks": {}, "items": {}}
 
     try:
         with open(md_path, "r", encoding="utf-8", errors="ignore") as fp:
             content = fp.read()
     except Exception as e:
         print(f"Warning: could not read {md_path}: {e}")
-        return {"report": None, "remarks": {}}
+        return {"report": None, "remarks": {}, "items": {}}
 
     remarks = {}
-    # Parse table rows in markdown table: | Category | Component | ... | Remarks |
+    items = {}
+    # Parse table rows in markdown table: | Category | Component | Max | Inst | LLM | Combined | Remarks |
     for line in content.splitlines():
         line_clean = line.strip()
         if not line_clean.startswith("|") or "---" in line_clean:
             continue
         parts = [p.strip() for p in line_clean.split("|")[1:-1]]
         if len(parts) >= 6:
-            # Table columns: Category, Component, Max, Inst, LLM, Combined, Remarks
             component_col = parts[1].lower()
             remark_col = parts[-1]
+            max_col = parts[2]
+            inst_col = parts[3]
+            llm_col = parts[4]
+
+            def parse_num(val):
+                clean = re.sub(r"[^\d.]", "", val)
+                try:
+                    return float(clean)
+                except:
+                    return 0.0
+
+            key = None
             if "participation" in component_col:
-                remarks["participation"] = remark_col
+                key = "participation"
             elif "in-time" in component_col or "time" in component_col:
-                remarks["inTime"] = remark_col
+                key = "inTime"
             elif "task 1" in component_col or "task1" in component_col:
-                remarks["task1"] = remark_col
+                key = "task1"
             elif "task 2" in component_col or "task2" in component_col:
-                remarks["task2"] = remark_col
+                key = "task2"
             elif "task 3" in component_col or "task3" in component_col:
-                remarks["task3"] = remark_col
+                key = "task3"
             elif "comment" in component_col or "documentation" in component_col or "clarity" in component_col:
-                remarks["documentation"] = remark_col
-            elif "bonus" in component_col:
-                remarks["bonus"] = remark_col
+                key = "documentation"
+            elif "ii.b.1" in component_col:
+                key = "bonus_iib1"
+            elif "ii.b.2" in component_col:
+                key = "bonus_iib2"
+            elif "iii.b" in component_col:
+                key = "bonus_iiib"
+            elif "i.b.1" in component_col:
+                key = "bonus_ib1"
+            elif "i.b.2" in component_col:
+                key = "bonus_ib2"
+            elif "i.b.3" in component_col:
+                key = "bonus_ib3"
+            elif "bonus" in component_col and "subtotal" not in component_col and "total" not in component_col:
+                key = "bonus"
+
+            if key:
+                remarks[key] = remark_col
+                items[key] = {
+                    "max": parse_num(max_col),
+                    "inst": parse_num(inst_col),
+                    "llm": parse_num(llm_col),
+                    "remark": remark_col
+                }
 
     return {
         "report": content,
-        "remarks": remarks
+        "remarks": remarks,
+        "items": items
     }
 
 def discover_batches():
@@ -163,7 +197,12 @@ def discover_assignments(batches):
                         "task2": {"max": 25, "name": "Task 2: Software PWM"},
                         "task3": {"max": 25, "name": "Task 3: Sonar Reader (HW Accel)"},
                         "documentation": {"max": 5, "name": "Inline Comments"},
-                        "bonus": {"max": 75, "name": "Bonus Pool (i.b.1–iii.b)"}
+                        "bonus_ib1": {"max": 10, "name": "i.b.1: Generic N-LEDs (Bonus)"},
+                        "bonus_ib2": {"max": 15, "name": "i.b.2: Hardware Port Opt. (Bonus)"},
+                        "bonus_ib3": {"max": 10, "name": "i.b.3: Multitasking Systems (Bonus)"},
+                        "bonus_iib1": {"max": 15, "name": "ii.b.1: HW PWM Acceleration (Bonus)"},
+                        "bonus_iib2": {"max": 10, "name": "ii.b.2: Custom PWM Servo (Bonus)"},
+                        "bonus_iiib": {"max": 15, "name": "iii.b: Smart Dustbin Sim (Bonus)"}
                     })
                 }
                 assignments.append(meta_entry)
@@ -190,7 +229,12 @@ def discover_assignments(batches):
                 "task2": {"max": 25, "name": "Task 2: Software PWM"},
                 "task3": {"max": 25, "name": "Task 3: Sonar Reader (HW Accel)"},
                 "documentation": {"max": 5, "name": "Inline Comments"},
-                "bonus": {"max": 75, "name": "Bonus Pool (i.b.1–iii.b)"}
+                "bonus_ib1": {"max": 10, "name": "i.b.1: Generic N-LEDs (Bonus)"},
+                "bonus_ib2": {"max": 15, "name": "i.b.2: Hardware Port Opt. (Bonus)"},
+                "bonus_ib3": {"max": 10, "name": "i.b.3: Multitasking Systems (Bonus)"},
+                "bonus_iib1": {"max": 15, "name": "ii.b.1: HW PWM Acceleration (Bonus)"},
+                "bonus_iib2": {"max": 10, "name": "ii.b.2: Custom PWM Servo (Bonus)"},
+                "bonus_iiib": {"max": 15, "name": "iii.b: Smart Dustbin Sim (Bonus)"}
             }
         })
     return assignments
@@ -251,6 +295,41 @@ def main():
                     code_files = get_code_files(row_batch, assign_folder, roll)
                     audit_data = get_evaluation_audit(row_batch, assign_folder, roll)
                     remarks = audit_data["remarks"]
+                    audit_items = audit_data.get("items", {})
+
+                    def get_item_data(key, default_max, default_inst, default_llm, default_reasoning):
+                        if key in audit_items:
+                            ai = audit_items[key]
+                            return {
+                                "max": ai["max"] if ai["max"] > 0 else default_max,
+                                "inst": ai["inst"],
+                                "llm": ai["llm"],
+                                "note": ai["remark"] or default_reasoning,
+                                "llmReasoning": ai["remark"] or default_reasoning
+                            }
+                        return {
+                            "max": default_max,
+                            "inst": default_inst,
+                            "llm": default_llm,
+                            "note": remarks.get(key, default_reasoning),
+                            "llmReasoning": remarks.get(key, default_reasoning)
+                        }
+
+                    scores_dict = {
+                        "participation": get_item_data("participation", 55, part, part, "Full credit for submitted attempt."),
+                        "inTime": get_item_data("inTime", 15, in_time, in_time, "Submitted before deadline."),
+                        "task1": get_item_data("task1", 25, t1_inst, t1_llm, "Non-blocking concurrency evaluation."),
+                        "task2": get_item_data("task2", 25, t2_inst, t2_llm, "Software PWM timing and integer overflow audit."),
+                        "task3": get_item_data("task3", 25, t3_inst, t3_llm, "Hardware-accelerated sonar reader evaluation."),
+                        "documentation": get_item_data("documentation", 5, doc_inst, doc_llm, "Clarity and inline comments evaluation."),
+                        "bonus_ib1": get_item_data("bonus_ib1", 10, 0.0, 0.0, "Generic N-LEDs bonus evaluation."),
+                        "bonus_ib2": get_item_data("bonus_ib2", 15, 0.0, 0.0, "Hardware Port Optimization bonus evaluation."),
+                        "bonus_ib3": get_item_data("bonus_ib3", 10, 0.0, 0.0, "Multitasking Systems bonus evaluation."),
+                        "bonus_iib1": get_item_data("bonus_iib1", 15, 0.0, 0.0, "Hardware PWM Acceleration bonus evaluation."),
+                        "bonus_iib2": get_item_data("bonus_iib2", 10, 0.0, 0.0, "Custom PWM Servo Control bonus evaluation."),
+                        "bonus_iiib": get_item_data("bonus_iiib", 15, 0.0, 0.0, "Smart Dustbin Simulation bonus evaluation."),
+                        "bonus": get_item_data("bonus", 75, b_inst, b_llm, "Bonus pool evaluation.")
+                    }
 
                     if roll not in students_map:
                         students_map[roll] = {
@@ -269,57 +348,7 @@ def main():
                         "instructorTransparencyNote": inst_note,
                         "studentComment": std_comment,
                         "auditReport": audit_data["report"],
-                        "scores": {
-                            "participation": {
-                                "max": 55,
-                                "inst": part,
-                                "llm": part,
-                                "note": remarks.get("participation", "Participation credit"),
-                                "llmReasoning": remarks.get("participation", "Full credit for submitted attempt.")
-                            },
-                            "inTime": {
-                                "max": 15,
-                                "inst": in_time,
-                                "llm": in_time,
-                                "note": remarks.get("inTime", "Submission timing"),
-                                "llmReasoning": remarks.get("inTime", "Submitted before deadline.")
-                            },
-                            "task1": {
-                                "max": 25,
-                                "inst": t1_inst,
-                                "llm": t1_llm,
-                                "note": remarks.get("task1", f"Inst: {t1_inst}, LLM: {t1_llm}"),
-                                "llmReasoning": remarks.get("task1", "Non-blocking concurrency evaluation.")
-                            },
-                            "task2": {
-                                "max": 25,
-                                "inst": t2_inst,
-                                "llm": t2_llm,
-                                "note": remarks.get("task2", f"Inst: {t2_inst}, LLM: {t2_llm}"),
-                                "llmReasoning": remarks.get("task2", "Software PWM timing and integer overflow audit.")
-                            },
-                            "task3": {
-                                "max": 25,
-                                "inst": t3_inst,
-                                "llm": t3_llm,
-                                "note": remarks.get("task3", f"Inst: {t3_inst}, LLM: {t3_llm}"),
-                                "llmReasoning": remarks.get("task3", "Hardware-accelerated sonar reader evaluation.")
-                            },
-                            "documentation": {
-                                "max": 5,
-                                "inst": doc_inst,
-                                "llm": doc_llm,
-                                "note": remarks.get("documentation", f"Inst: {doc_inst}, LLM: {doc_llm}"),
-                                "llmReasoning": remarks.get("documentation", "Clarity and inline comments evaluation.")
-                            },
-                            "bonus": {
-                                "max": 75,
-                                "inst": b_inst,
-                                "llm": b_llm,
-                                "note": remarks.get("bonus", f"Inst: {b_inst}, LLM: {b_llm}"),
-                                "llmReasoning": remarks.get("bonus", "Bonus pool evaluation.")
-                            }
-                        },
+                        "scores": scores_dict,
                         "codeFiles": code_files
                     })
 
