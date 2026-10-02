@@ -400,12 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${sm.assignmentSummaries.map(as => {
                   const aRank = (assignmentRankMap[as.id] && assignmentRankMap[as.id][student.id]) || student.computedRank;
                   return `
-                    <div style="display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border-light); padding: 4px 8px; background: var(--bg-subtle);">
-                      <button class="btn btn-sm switch-scope-btn" data-assign="${as.id}" style="padding: 2px 6px; font-size: 11px; font-weight: 700;" title="Inspect ${as.code} (Score: ${as.score.toFixed(2)}/${as.baseMax})">
-                        ${as.code.replace('A-0', 'A')}
-                      </button>
-                      <span style="font-weight: 700; font-size: 12px;">Rank #${aRank}</span>
-                    </div>
+                    <button class="btn btn-sm switch-scope-btn" data-assign="${as.id}" style="font-weight: 700;" title="Inspect ${as.code} (Score: ${as.score.toFixed(2)}/${as.baseMax})">
+                      ${as.code.replace('A-0', 'A')} #${aRank}
+                    </button>
                   `;
                 }).join('')}
               </div>

@@ -210,7 +210,7 @@ const HACK_DATA = {
           "submissionTime": "2026-09-30 23:52:18",
           "onTime": true,
           "driveLink": "https://drive.google.com/drive/u/1/folders/17W3P3X_7sGadGf9inJq8Pmoc0nSYW-oh",
-          "instructorTransparencyNote": "tried to solve the first one, but objective not achived, 1/4 marks of this task no bonus tasks done. (Note: missed workshop for 2 & 3).",
+          "instructorTransparencyNote": "Tried to solve the first one, but objective not achieved; 1/4 marks of this task. No bonus tasks done. (Note: missed workshop for 2 & 3).",
           "studentComment": "I can't understand 2no and 3no tasks because unfortunately I missed the last workshop.",
           "scores": {
             "participation": {
