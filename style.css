@@ -599,6 +599,38 @@ details.transparency-block[open] summary::before {
   font-size: 11px;
 }
 
+/* Formulas and Math Expressions */
+.formula-box {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-left: 3px solid #000000;
+  padding: 8px 14px;
+  margin: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: #000000;
+  overflow-x: auto;
+}
+
+.math-block {
+  margin: 12px 0;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+
+.math-inline {
+  background: #f0f0f0;
+  padding: 2px 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: #000000;
+  border: 1px solid var(--border-light);
+  display: inline-block;
+  margin: 0 2px;
+}
+
 /* Plain Code Box */
 .code-box {
   background: #f0f0f0;

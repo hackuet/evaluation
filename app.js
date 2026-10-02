@@ -150,6 +150,45 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/'/g, '&#039;');
   }
 
+  // Clean LaTeX math to readable plain text
+  function cleanMathText(expr) {
+    if (!expr) return '';
+    return expr
+      .replace(/\\text\{([^}]+)\}/g, '$1')
+      .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1) / ($2)')
+      .replace(/\\times/g, '×')
+      .replace(/\\cdot/g, '·')
+      .replace(/\\mu/g, 'µ')
+      .replace(/\\,/g, ' ')
+      .replace(/\\;/g, ' ')
+      .replace(/\\quad/g, '  ')
+      .replace(/\\dots/g, '...')
+      .replace(/\\([a-zA-Z]+)/g, '$1')
+      .replace(/[{}]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  // Render LaTeX formula using KaTeX if available or clean HTML fallback
+  function renderFormulaHtml(raw, isBlock) {
+    const trimmed = (raw || '').trim();
+    if (!trimmed) return '';
+    if (typeof window !== 'undefined' && typeof window.katex !== 'undefined') {
+      try {
+        return isBlock
+          ? `<div class="math-block" style="margin: 12px 0; overflow-x: auto; padding: 4px 0;">${window.katex.renderToString(trimmed, { displayMode: true, throwOnError: false })}</div>`
+          : window.katex.renderToString(trimmed, { displayMode: false, throwOnError: false });
+      } catch (e) {
+        // Fallback
+      }
+    }
+    const clean = cleanMathText(trimmed);
+    if (isBlock) {
+      return `<div class="formula-box" style="background: var(--bg-alt); border: 1px solid var(--border); border-left: 3px solid #000000; padding: 8px 14px; margin: 12px 0; font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: #000000; overflow-x: auto;">${escapeHtml(clean)}</div>`;
+    }
+    return `<code class="math-inline" style="background: #f0f0f0; padding: 2px 5px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: #000000; border: 1px solid var(--border-light);">${escapeHtml(clean)}</code>`;
+  }
+
   // Safe markdown renderer for evaluation reports
   function renderMarkdownSafe(md) {
     if (!md) return '';
@@ -157,6 +196,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let text = md.replace(/```([a-zA-Z0-9_+-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
       const token = `%%CODE_BLOCK_${codeBlocks.length}%%`;
       codeBlocks.push(`<pre class="code-box" style="margin: 10px 0; overflow-x: auto; background: #f0f0f0 !important; color: #000000 !important; padding: 12px; border: 1px solid var(--border); font-family: var(--font-mono); font-size: 11px;"><code style="color: #000000 !important; background: transparent !important;">${escapeHtml(code)}</code></pre>`);
+      return token;
+    });
+
+    // Parse block math ($$...$$)
+    const mathBlocks = [];
+    text = text.replace(/\$\$([\s\S]*?)\$\$/g, (match, formula) => {
+      const token = `%%MATH_BLOCK_${mathBlocks.length}%%`;
+      mathBlocks.push(renderFormulaHtml(formula, true));
+      return token;
+    });
+
+    // Parse inline math ($...$)
+    const inlineMath = [];
+    text = text.replace(/\$([^\$\n\r]+?)\$/g, (match, formula) => {
+      const token = `%%INLINE_MATH_${inlineMath.length}%%`;
+      inlineMath.push(renderFormulaHtml(formula, false));
       return token;
     });
 
@@ -208,6 +263,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Restore tables
     tables.forEach((tbl, i) => {
       text = text.replace(`%%TABLE_BLOCK_${i}%%`, tbl);
+    });
+
+    // Restore math blocks & inline math
+    mathBlocks.forEach((mb, i) => {
+      text = text.replace(`%%MATH_BLOCK_${i}%%`, mb);
+    });
+    inlineMath.forEach((im, i) => {
+      text = text.replace(`%%INLINE_MATH_${i}%%`, im);
     });
 
     // Restore code blocks
