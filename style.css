@@ -118,20 +118,20 @@ header {
   font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
-}
-
-.batch-btns-wrap .nav-label,
-.assignment-select-wrap .nav-label {
-  color: var(--fg-muted);
-  font-size: 11px;
-  font-family: var(--font-mono);
-  font-weight: 700;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 
 .batch-btn-group {
   display: inline-flex;
+  align-items: center;
   gap: 4px;
+  flex-shrink: 0;
 }
 
 .batch-btn {
@@ -205,8 +205,8 @@ header {
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  min-width: 220px;
-  max-width: 440px;
+  width: 280px;
+  max-width: 100%;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -801,7 +801,7 @@ footer {
     margin-bottom: 2px;
   }
 
-  select, input[type="text"] {
+  select:not(.nav-select), input[type="text"] {
     width: 100% !important;
     padding: 8px 10px;
     font-size: 13px;
@@ -956,22 +956,26 @@ footer {
 
   .batch-btns-wrap {
     flex-shrink: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
   }
 
   .assignment-select-wrap {
-    flex: 1;
-    display: flex;
+    flex: 0 0 auto;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
     min-width: 0;
   }
 
   .nav-select,
   #assignmentSelect {
-    flex: 1;
-    width: 100%;
-    min-width: 0;
+    width: 280px;
     max-width: 100%;
+    flex: none;
   }
 
   .nav-controls-right {
@@ -1003,7 +1007,7 @@ footer {
 
   .nav-controls-left {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 8px;
     width: 100%;
   }
@@ -1012,12 +1016,35 @@ footer {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 8px;
+    gap: 4px;
     width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 2px;
+  }
+
+  .batch-btn-group {
+    display: inline-flex;
+    gap: 4px;
+    flex-shrink: 0;
   }
 
   .assignment-select-wrap {
-    width: 100%;
+    width: auto;
+    max-width: 100%;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .nav-select,
+  #assignmentSelect {
+    width: 280px;
+    max-width: 100%;
+    flex: none;
   }
 
   .nav-controls-right {

@@ -1,13 +1,11 @@
 nav.assignment-nav#assignmentNav
   .nav-controls-left
     .batch-btns-wrap
-      span.nav-label BATCH:
       .batch-btn-group#headerBatchBtns
         each b in batches || [{id: '2k25', name: '2k25'}]
           button.btn.btn-sm.batch-btn(type="button" data-batch=b.id class=(b.id === activeBatch ? 'active' : ''))= b.id.toUpperCase()
     .assignment-select-wrap
-      label.nav-label(for="assignmentSelect") ASSIGNMENT:
-      select.nav-select#assignmentSelect
+      select.nav-select#assignmentSelect(aria-label="Select Assignment")
         option(value="index.html" data-scope="all" selected=(pageType === 'cumulative')) CUMULATIVE (ALL ROUNDS)
         each a in (assignments || []).filter(a => !activeBatch || !a.batch || a.batch === activeBatch)
           option(value=`${a.id}.html` data-scope=a.id data-batch=a.batch selected=(assignmentId === a.id))= `${a.code}: ${a.title.toUpperCase()}`
