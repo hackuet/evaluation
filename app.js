@@ -735,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </td>
             <td style="text-align: center;">
-              <button class="btn btn-sm view-profile-btn" data-id="${student.id}">[View Profile]</button>
+              <button class="btn btn-sm view-profile-btn" data-id="${student.id}">[VIEW]</button>
             </td>
           </tr>
         `;
