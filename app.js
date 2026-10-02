@@ -70,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
       opt.value = `${a.id}.html`;
       opt.setAttribute('data-scope', a.id);
       opt.setAttribute('data-batch', a.batch || activeBatch);
-      opt.textContent = `${a.code}: ${a.title.toUpperCase()}`;
+      const cleanTitle = (a.title || '').replace(/^Assignment\s*\d+:\s*/i, '');
+      opt.textContent = `${a.code}: ${cleanTitle.toUpperCase()}`;
       if (activeScope === a.id) opt.selected = true;
       assignmentSelect.appendChild(opt);
     });

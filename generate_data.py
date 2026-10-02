@@ -126,17 +126,29 @@ def get_evaluation_audit(batch, assignment_name, roll):
 def discover_batches():
     """Dynamically scan repository root for academic batch folders (e.g. 2k24, 2k25, 2k26)."""
     batch_dirs = []
+    standard_batches = ["2k25", "2k24", "2k23"]
+    found_ids = set()
+
+    for b in standard_batches:
+        batch_dirs.append({
+            "id": b,
+            "name": f"Batch {b}",
+            "active": (b == "2k25")
+        })
+        found_ids.add(b)
+
     for item in os.listdir(REPO_ROOT):
         item_path = os.path.join(REPO_ROOT, item)
         if os.path.isdir(item_path) and re.match(r"^\d+k\d+$", item):
-            batch_dirs.append({
-                "id": item,
-                "name": f"Batch {item}",
-                "active": (item == "2k25")
-            })
+            if item not in found_ids:
+                batch_dirs.append({
+                    "id": item,
+                    "name": f"Batch {item}",
+                    "active": False
+                })
+                found_ids.add(item)
+
     batch_dirs.sort(key=lambda b: b["id"], reverse=True)
-    if not batch_dirs:
-        batch_dirs = [{"id": "2k25", "name": "Batch 2k25", "active": True}]
     return batch_dirs
 
 def discover_assignments(batches):

@@ -27,7 +27,7 @@ if (!hackData) {
   console.warn('Could not load data.js, using default fallback metadata.');
   hackData = {
     system: { llmModel: 'Gemini 3.8 Flash (Medium)' },
-    batches: [{ id: '2k25', name: '2k25' }],
+    batches: [{ id: '2k25', name: '2k25' }, { id: '2k24', name: '2k24' }, { id: '2k23', name: '2k23' }],
     assignments: [
       {
         id: 'a1',

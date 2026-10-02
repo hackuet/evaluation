@@ -13,6 +13,16 @@ const HACK_DATA = {
       "id": "2k25",
       "name": "Batch 2k25",
       "active": true
+    },
+    {
+      "id": "2k24",
+      "name": "Batch 2k24",
+      "active": false
+    },
+    {
+      "id": "2k23",
+      "name": "Batch 2k23",
+      "active": false
     }
   ],
   "assignments": [
