@@ -892,7 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <table class="score-detail-table">
           <thead>
             <tr>
-              <th style="width: 50px;">Code</th>
+              <th style="width: 70px; white-space: nowrap;">Code</th>
               <th>Assignment Title</th>
               <th style="width: 90px;">Status</th>
               <th style="width: 100px;">Submitted</th>
@@ -907,8 +907,8 @@ document.addEventListener('DOMContentLoaded', () => {
               const ev = evaluateSubmission(sub);
               return `
                 <tr>
-                  <td>
-                    <button class="btn btn-sm profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}" style="padding: 2px 6px; font-weight: 700; cursor: pointer;" title="Inspect ${meta.code} code & audit">
+                  <td style="white-space: nowrap;">
+                    <button class="btn btn-sm profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}" style="padding: 2px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;" title="Inspect ${meta.code} code & audit">
                       ${meta.code}
                     </button>
                   </td>
@@ -933,7 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
               return `
                 <tr style="opacity: 0.6; background: var(--bg-subtle);">
-                  <td><strong>${meta.code}</strong></td>
+                  <td style="white-space: nowrap;"><strong>${meta.code}</strong></td>
                   <td>${meta.title}</td>
                   <td><span style="font-size: 10px; color: var(--fg-muted);">Upcoming</span></td>
                   <td>--</td>

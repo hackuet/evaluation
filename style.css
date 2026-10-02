@@ -625,6 +625,10 @@ details.transparency-block[open] summary::before {
   text-transform: uppercase;
 }
 
+.profile-inspect-btn {
+  white-space: nowrap !important;
+}
+
 /* Markdown tables in audit reports */
 .audit-md-table {
   width: 100%;
