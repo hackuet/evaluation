@@ -1,6 +1,7 @@
-section#assignmentQuestionSection(style=(pageType === 'assignment' ? 'margin-bottom: 20px;' : 'display: none; margin-bottom: 20px;'))
-  details(open style="background: var(--bg-alt); border: 1px solid var(--border); padding: 14px 18px;")
-    summary(style="cursor: pointer; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; user-select: none;")
-      span#assignmentQuestionTitle= assignmentTitle ? `${assignmentCode}: ${assignmentTitle} (Problem Statement)` : "ASSIGNMENT PROBLEM STATEMENT / QUESTION"
-      span(style="font-size: 11px; color: var(--fg-muted); font-weight: normal;") [Click to toggle]
-    #assignmentQuestionBody(style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-light); font-size: 12px; line-height: 1.6; white-space: pre-wrap; font-family: var(--font-mono); color: var(--fg);")= questionText || ""
+section.question-section#assignmentQuestionSection(style=(pageType === 'assignment' ? 'margin-bottom: 20px;' : 'display: none; margin-bottom: 20px;'))
+  details.question-details(open)
+    summary.question-summary
+      span.question-title#assignmentQuestionTitle= assignmentTitle ? `[${assignmentCode}] ${assignmentTitle.replace(/^Assignment\s*\d+:\s*/i, '')} (Problem Statement)` : "ASSIGNMENT PROBLEM STATEMENT / QUESTION"
+      span.question-toggle-hint [Click to toggle]
+    .question-body#assignmentQuestionBody= questionText || ""
+

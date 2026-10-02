@@ -51,10 +51,10 @@
         <div class="nav-controls-right" id="navBadges">
         </div>
       </nav>
-      <section id="assignmentQuestionSection" style="display: none; margin-bottom: 20px;">
-        <details open style="background: var(--bg-alt); border: 1px solid var(--border); padding: 14px 18px;">
-          <summary style="cursor: pointer; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; user-select: none;"><span id="assignmentQuestionTitle">ASSIGNMENT PROBLEM STATEMENT / QUESTION</span><span style="font-size: 11px; color: var(--fg-muted); font-weight: normal;">[Click to toggle]</span></summary>
-          <div id="assignmentQuestionBody" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-light); font-size: 12px; line-height: 1.6; white-space: pre-wrap; font-family: var(--font-mono); color: var(--fg);"></div>
+      <section class="question-section" id="assignmentQuestionSection" style="display: none; margin-bottom: 20px;">
+        <details class="question-details" open>
+          <summary class="question-summary"><span class="question-title" id="assignmentQuestionTitle">ASSIGNMENT PROBLEM STATEMENT / QUESTION</span><span class="question-toggle-hint">[Click to toggle]</span></summary>
+          <div class="question-body" id="assignmentQuestionBody"></div>
         </details>
       </section>
       <section id="leaderboardSection">

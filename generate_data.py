@@ -226,7 +226,7 @@ def discover_assignments(batches):
             "folder": "assignment-1",
             "code": "A-01",
             "batch": "2k25",
-            "title": "Assignment 1: Dual LED, Software PWM & Sonar",
+            "title": "Dual LED, Software PWM & Sonar",
             "status": "Active",
             "llmModel": "Gemini 3.8 Flash (Medium)",
             "deadline": "2026-10-01 23:59",

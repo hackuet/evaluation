@@ -81,8 +81,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.batch-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const bId = e.currentTarget.getAttribute('data-batch');
-        if (!bId || bId === activeBatch) return;
+        if (!bId) return;
+        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        if (currentPath !== 'index.html' && currentPath !== '') {
+          // If on a specific assignment page, always navigate to cumulative index.html for the selected batch
+          window.location.href = `index.html?batch=${encodeURIComponent(bId)}`;
+          return;
+        }
+        if (bId === activeBatch) return;
         activeBatch = bId;
+        activeScope = 'all';
         const url = new URL(window.location);
         url.searchParams.set('batch', activeBatch);
         window.history.pushState({}, '', url);
@@ -631,6 +639,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const mean = (sum / list.length).toFixed(2);
       metricTopScore.innerHTML = `${topScore.toFixed(2)} <span style="font-size: 11px; font-weight: normal;">/ 150</span>`;
       metricMean.innerHTML = `${mean} <span style="font-size: 11px; font-weight: normal;">/ 150</span>`;
+    } else if (metricTopScore && metricMean) {
+      metricTopScore.innerHTML = `- <span style="font-size: 11px; font-weight: normal;">/ 150</span>`;
+      metricMean.innerHTML = `- <span style="font-size: 11px; font-weight: normal;">/ 150</span>`;
     }
 
     // 6. Update Table Header, Question Block & Rubric Button based on Scope (Dual-mode)
@@ -663,7 +674,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (assignmentQuestionSection && assignmentQuestionBody && assignMeta.question) {
         assignmentQuestionSection.style.display = 'block';
         const qTitleEl = document.getElementById('assignmentQuestionTitle') || assignmentQuestionHeader;
-        if (qTitleEl) qTitleEl.textContent = `[${assignMeta.code}] ${assignMeta.title} (Problem Statement)`;
+        const cleanTitle = (assignMeta.title || '').replace(/^Assignment\s*\d+:\s*/i, '');
+        if (qTitleEl) qTitleEl.textContent = `[${assignMeta.code}] ${cleanTitle} (Problem Statement)`;
         
         let formatted = escapeHtml(assignMeta.question);
         
