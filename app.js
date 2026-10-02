@@ -1057,10 +1057,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Subagent Critique (Student-Specific AI Audit Report)
-    const modelUsed = meta.llmModel || 'Gemini 3.8 Flash (Medium Thinking)';
+    const modelUsed = meta.llmModel || 'Gemini 3.8 Flash (Medium)';
     let critiqueHtml = `
       <div class="callout" style="background: var(--bg-alt); margin-bottom: 14px;">
-        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Evaluator Subagent Model:</span>
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Evaluator Model:</span>
         <div style="font-size: 13px; font-weight: bold; margin-top: 2px;">${escapeHtml(modelUsed)}</div>
         <div style="font-size: 11px; color: var(--fg-muted); margin-top: 2px;">Objective technical code review executed per assignment rubric with prompt-injection defense.</div>
       </div>
@@ -1166,7 +1166,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="callout">
         <h4>Hybrid Scoring Formula</h4>
         <p><code>Task & Bonus Final = (Instructor * 0.6) + (LLM * 0.4)</code></p>
-        <div style="font-size: 11px; color: var(--fg-muted); margin-top: 4px;">Evaluator Model: ${escapeHtml(meta.llmModel || 'Gemini 3.8 Flash (Medium Thinking)')}</div>
+        <div style="font-size: 11px; color: var(--fg-muted); margin-top: 4px;">Evaluator Model: ${escapeHtml(meta.llmModel || 'Gemini 3.8 Flash (Medium)')}</div>
       </div>
     `;
 

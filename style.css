@@ -964,14 +964,14 @@ footer {
   .nav-controls-left {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 12px;
     width: 100%;
   }
 
   .batch-btns-wrap {
     flex-shrink: 0;
-    max-width: 100%;
+    max-width: 50%;
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
@@ -983,6 +983,7 @@ footer {
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
+    margin-left: auto;
     min-width: 0;
   }
 
@@ -1049,17 +1050,17 @@ footer {
   }
 
   .assignment-select-wrap {
-    width: auto;
-    max-width: 100%;
-    display: flex;
-    justify-content: flex-start;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    margin-left: 0 !important;
   }
 
   .nav-select,
   #assignmentSelect {
-    width: 280px;
-    max-width: 100%;
-    flex: none;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
   }
 
   .nav-controls-right {

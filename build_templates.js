@@ -26,14 +26,14 @@ if (fs.existsSync(dataJsPath)) {
 if (!hackData) {
   console.warn('Could not load data.js, using default fallback metadata.');
   hackData = {
-    system: { llmModel: 'Gemini 3.8 Flash (Medium Thinking)' },
+    system: { llmModel: 'Gemini 3.8 Flash (Medium)' },
     batches: [{ id: '2k25', name: '2k25' }],
     assignments: [
       {
         id: 'a1',
         code: 'A-01',
         title: 'Dual LED, Software PWM & Sonar',
-        llmModel: 'Gemini 3.8 Flash (Medium Thinking)',
+        llmModel: 'Gemini 3.8 Flash (Medium)',
         question: ''
       }
     ]
@@ -42,7 +42,7 @@ if (!hackData) {
 
 const batches = hackData.batches || [{ id: '2k25', name: '2k25' }];
 const assignments = hackData.assignments || [];
-const defaultModel = (hackData.system && hackData.system.llmModel) || 'Gemini 3.8 Flash (Medium Thinking)';
+const defaultModel = (hackData.system && hackData.system.llmModel) || 'Gemini 3.8 Flash (Medium)';
 
 // Compile Index (Cumulative View)
 const indexTemplate = path.join(TEMPLATES_DIR, 'index.pug');

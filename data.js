@@ -5,7 +5,7 @@ const HACK_DATA = {
   "system": {
     "name": "HACK Elo Rating Board",
     "org": "Hardware Acceleration Club of KUET",
-    "llmModel": "Gemini 3.8 Flash (Medium Thinking)",
+    "llmModel": "Gemini 3.8 Flash (Medium)",
     "hybridFormula": "Task/Bonus Final = (Instructor * 0.6) + (LLM * 0.4)"
   },
   "batches": [
@@ -23,7 +23,7 @@ const HACK_DATA = {
       "batch": "2k25",
       "title": "Assignment 1: Dual LED, Software PWM & Sonar",
       "status": "Active",
-      "llmModel": "Gemini 3.8 Flash (Medium Thinking)",
+      "llmModel": "Gemini 3.8 Flash (Medium)",
       "deadline": "2026-10-01 23:59",
       "baseMax": 150,
       "bonusMax": 75,

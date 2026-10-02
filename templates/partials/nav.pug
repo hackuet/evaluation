@@ -11,5 +11,5 @@ nav.assignment-nav#assignmentNav
           option(value=`${a.id}.html` data-scope=a.id data-batch=a.batch selected=(assignmentId === a.id))= `${a.code}: ${a.title.toUpperCase()}`
   .nav-controls-right#navBadges
     if pageType === 'assignment'
-      span.badge.badge-subagent#headerModelBadge= "EVALUATOR SUBAGENT: " + (activeModel || "GEMINI 3.8 FLASH (MEDIUM THINKING)")
+      span.badge.badge-subagent#headerModelBadge= "EVALUATOR : " + (activeModel || "Gemini 3.8 Flash (Medium)")
       button.badge#btnRubricModal(type="button") [VIEW RUBRIC]

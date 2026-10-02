@@ -184,7 +184,7 @@ def discover_assignments(batches):
                     "batch": batch_id,
                     "title": meta.get("title", f"Assignment {assign_num}: Dual LED, Software PWM & Sonar" if assign_num == "1" else f"Assignment {assign_num}"),
                     "status": meta.get("status", "Active"),
-                    "llmModel": meta.get("llmModel", "Gemini 3.8 Flash (Medium Thinking)"),
+                    "llmModel": meta.get("llmModel", "Gemini 3.8 Flash (Medium)"),
                     "deadline": meta.get("deadline", "2026-10-01 23:59"),
                     "baseMax": meta.get("baseMax", 150),
                     "bonusMax": meta.get("bonusMax", 75),
@@ -216,7 +216,7 @@ def discover_assignments(batches):
             "batch": "2k25",
             "title": "Assignment 1: Dual LED, Software PWM & Sonar",
             "status": "Active",
-            "llmModel": "Gemini 3.8 Flash (Medium Thinking)",
+            "llmModel": "Gemini 3.8 Flash (Medium)",
             "deadline": "2026-10-01 23:59",
             "baseMax": 150,
             "bonusMax": 75,
@@ -356,7 +356,7 @@ def main():
         "system": {
             "name": "HACK Elo Rating Board",
             "org": "Hardware Acceleration Club of KUET",
-            "llmModel": "Gemini 3.8 Flash (Medium Thinking)",
+            "llmModel": "Gemini 3.8 Flash (Medium)",
             "hybridFormula": "Task/Bonus Final = (Instructor * 0.6) + (LLM * 0.4)"
         },
         "batches": batches,
