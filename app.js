@@ -722,6 +722,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Subagent Critique
     modalCritiqueDisplay.innerHTML = `
+      <div class="callout" style="background: var(--bg-alt); margin-bottom: 12px;">
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Evaluator Subagent Model:</span>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 2px;">Gemini 3.8 Flash (Medium Thinking)</div>
+        <div style="font-size: 11px; color: var(--fg-muted); margin-top: 2px;">Objective technical code review executed per rubric criteria.</div>
+      </div>
       <div class="callout">
         <h4>Task 1 Technical Evaluation:</h4>
         <p>Evaluated on non-blocking concurrency vs blocking delay. Millis() state machine gets 25/25; sequential delay gets 15/25.</p>
@@ -824,6 +829,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="callout">
         <h4>Hybrid Scoring Formula</h4>
         <p><code>Task & Bonus Final = (Instructor * 0.6) + (LLM * 0.4)</code></p>
+        <div style="font-size: 11px; color: var(--fg-muted); margin-top: 4px;">Evaluator Model: Gemini 3.8 Flash (Medium Thinking)</div>
       </div>
     `;
 

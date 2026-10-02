@@ -157,6 +157,7 @@ def main():
         "system": {
             "name": "HACK Elo Rating Board",
             "org": "Hardware Acceleration Club of KUET",
+            "llmModel": "Gemini 3.8 Flash (Medium Thinking)",
             "hybridFormula": "Task/Bonus Final = (Instructor * 0.6) + (LLM * 0.4)"
         },
         "batches": batches,
