@@ -876,7 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).join("")}
                 ${sm.classSummaries.map(cs => {
                   return `
-                    <button class="btn btn-sm switch-class-btn" data-class="${cs.id}" style="font-weight: 700; background: var(--bg-alt);" title="${cs.title} (Award: ${cs.score.toFixed(2)} pts)">
+                    <button class="btn btn-sm switch-class-btn" data-class="${cs.id}" style="font-weight: 700;" title="${cs.title} (Award: ${cs.score.toFixed(2)} pts)">
                       ${cs.code.replace("C-0", "C")} [${cs.score.toFixed(0)} pts]
                     </button>
                   `;

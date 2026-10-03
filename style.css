@@ -271,6 +271,26 @@ header {
   font-size: 11px;
 }
 
+.switch-scope-btn,
+.switch-class-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  transition: all 0.1s ease;
+  user-select: none;
+}
+
+.switch-scope-btn:hover,
+.switch-class-btn:hover {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
 /* Filter & Nav Bars */
 .nav-bar {
   display: flex;
