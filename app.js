@@ -1474,7 +1474,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <span style="font-weight: 700;">Module 2: RTOS on Embedded Silicon (Isaac Aneek Sarkar)</span>
               ${classMeta.repoUrl ? `<a href="${classMeta.repoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="font-size: 10px; font-weight: 700; padding: 2px 6px;">[GitHub RTOS Repo ↗]</a>` : ""}
             </div>
-            <p style="color: var(--fg-muted); margin-bottom: 8px;">FreeRTOS on ESP32 (ESP-IDF & PlatformIO): Super-loop bottlenecks vs preemptive priority scheduling, non-blocking vTaskDelay/vTaskDelayUntil, dual-core SMP & core pinning (Core 0 PRO_CPU vs Core 1 APP_CPU), shared buffer race conditions, and mutex synchronization with priority inheritance.</p>
+            <p style="color: var(--fg-muted); margin-bottom: 8px;">FreeRTOS on ESP32 (ESP-IDF & PlatformIO): Super-loop bottlenecks vs preemptive priority scheduling, cooperative scheduling with vTaskDelay, dual-core SMP & core pinning, boot sequence, shared buffer race conditions, and scalable multi-task architectures.</p>
 
             <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
               <div>

@@ -21,7 +21,7 @@
 
 This in-depth technical workshop introduced students to the dual paradigms of modern embedded intelligence: distributed robotic middleware via **ROS 2 (Robot Operating System)** and deterministic microsecond concurrency via **RTOS (Real-Time Operating Systems)**.
 
-Through hands-on demonstrations and code walkthroughs, students analyzed how asynchronous robotic communication primitives coordinate higher-level perception and planning, and how hardware-enforced RTOS schedulers guarantee deterministic deadlines on multi-core microcontroller units (MCUs).
+Through hands-on demonstrations and code walkthroughs, students analyzed how asynchronous robotic communication primitives coordinate higher-level perception and planning, and how RTOS schedulers provide predictable task execution on multi-core microcontrollers.
 
 ---
 
@@ -52,26 +52,25 @@ Through hands-on demonstrations and code walkthroughs, students analyzed how asy
 **Reference Implementation**: [rtos-tutorial-hack](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main) (FreeRTOS on ESP32 with ESP-IDF + PlatformIO)
 
 - **Why RTOS? (Super-loop vs Preemptive Scheduling)**:
-  - Bottlenecks of sequential `while(1)` super-loops: slow tasks (e.g. ML inference) delaying high-frequency (5ms) control loops.
-  - Predictability & determinism (hard vs soft real-time) vs raw execution speed.
+  - Bottlenecks of sequential `while(1)` super-loops: slow tasks delaying high-frequency operations.
+  - Predictability & real-time responsiveness vs raw execution speed.
   - Preemptive priority scheduling and FreeRTOS task states: Running, Ready, Blocked, and Suspended.
-- **Delays & Task Sleeping**:
-  - Why busy-waiting with `delay()` burns 100% CPU and blocks concurrent operations.
-  - Non-blocking sleep with `vTaskDelay()` and jitter-free fixed-period loops with `vTaskDelayUntil()`.
+- **Cooperative Scheduling & Non-Blocking Delays**:
+  - Why busy-waiting with `delay()` burns CPU and blocks concurrent operations.
+  - Non-blocking task sleep with `vTaskDelay()` and cooperative task yielding.
 - **Multicore & Symmetric Multiprocessing (SMP)**:
-  - Dual-core Xtensa LX6 architecture on ESP32: Core 0 (PRO_CPU, Wi-Fi/BT) vs Core 1 (APP_CPU).
-  - Dynamic scheduling (`xTaskCreate`) vs Core Pinning (`xTaskCreatePinnedToCore`) and task core affinity (`tskNO_AFFINITY`).
-  - Monitoring task stack usage with `uxTaskGetStackHighWaterMark()`.
-- **Shared Data, Race Conditions & Mutexes**:
-  - Non-atomic multi-byte buffer operations (`shared_buffer`) and corrupted memory hazards between concurrent tasks.
-  - Protecting critical sections with FreeRTOS mutexes (`xSemaphoreCreateMutex`, `xSemaphoreTake`, `xSemaphoreGive`).
-  - Priority inheritance mechanism to mitigate Priority Inversion, timeout handling, and deadlock prevention.
+  - Dual-core Xtensa LX6 architecture on ESP32: Core 0 (PRO_CPU) vs Core 1 (APP_CPU).
+  - Dynamic scheduling (`xTaskCreate`) vs Core Pinning (`xTaskCreatePinnedToCore`) and task core affinity.
+- **Boot Sequence & System Lifecycle**:
+  - ESP32 FreeRTOS boot sequence, system startup, and `app_main()` task execution.
+- **Shared Data & Race Conditions**:
+  - Non-atomic buffer operations (`shared_buffer`) and corrupted memory hazards when multiple tasks write concurrently.
 - **Architectural Scalability**:
-  - Tangled bare-metal state machines (nested flags, manual timers) vs modular RTOS tasks (one task per job, independent timelines).
+  - Tangled bare-metal super-loops vs clean multi-task separation (one task per job, independent timelines).
 
 #### Module 2 Assignment: RTOS Concurrency Lab Challenge & Code Submission
 - **Status**: `[NOT PUBLISHED]`
-- **Details**: Practical implementation lab combining multi-task scheduling, mutex priority inheritance, and FreeRTOS queue pipelines on dual-core hardware.
+- **Details**: Practical implementation lab covering multi-task creation, task prioritization, core pinning, and observing race conditions on dual-core ESP32.
 
 ---
 

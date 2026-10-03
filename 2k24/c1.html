@@ -92,13 +92,13 @@
             <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"><span style="color: var(--fg-muted);">Instructor: Isaac Aneek Sarkar</span><a class="btn btn-sm" href="https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main" target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-size: 10px; font-weight: 700; padding: 2px 8px;">[GITHUB RTOS REPO ↗]</a>
             </div>
             <ul style="margin-left: 20px; margin-bottom: 12px;">
-              <li>FreeRTOS on ESP32 with ESP-IDF & PlatformIO toolchain.</li>
-              <li>Super-loop sequential bottlenecks vs preemptive priority task scheduling (Hard vs Soft real-time determinism).</li>
-              <li>Non-blocking task delays (vTaskDelay, vTaskDelayUntil) vs CPU-burning busy-waiting.</li>
-              <li>Dual-core Symmetric Multiprocessing (SMP): Core 0 (PRO_CPU) vs Core 1 (APP_CPU) & core pinning (xTaskCreatePinnedToCore).</li>
-              <li>Shared memory race conditions, non-atomic buffer writes, and critical sections.</li>
-              <li>Thread synchronization via FreeRTOS mutexes (xSemaphoreTake/xSemaphoreGive), priority inheritance, and deadlock avoidance.</li>
-              <li>Architectural scalability: Tangled bare-metal state machines vs modular independent RTOS tasks.</li>
+              <li>FreeRTOS fundamentals on ESP32 using ESP-IDF & PlatformIO.</li>
+              <li>Super-loop bottlenecks vs preemptive priority task scheduling.</li>
+              <li>Cooperative scheduling & non-blocking delays (vTaskDelay) vs busy-wait delay.</li>
+              <li>Symmetric Multiprocessing (SMP): Dual-core task distribution & core pinning (xTaskCreatePinnedToCore).</li>
+              <li>Boot sequence: FreeRTOS initialization and app_main task lifecycle.</li>
+              <li>Race conditions: Shared memory hazards and observing non-atomic buffer corruption.</li>
+              <li>Scalability: Clean multi-task separation vs monolithic super-loop code.</li>
             </ul>
             <div class="assignment-placeholder" style="margin: 12px 0 18px 0; padding: 12px 14px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
               <div><strong style="font-size: 11px;">ASSIGNMENT SUBMISSION:</strong><span style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;">Hands-on Lab Challenge & Code Submission</span></div><span class="badge" style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;">[NOT PUBLISHED]</span>
