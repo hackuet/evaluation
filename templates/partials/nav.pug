@@ -11,7 +11,14 @@ nav.assignment-nav#assignmentNav
           - const aBatch = a.batch || '2k25'
           - const aPath = `${rootPath || ''}${aBatch}/${a.id}.html`
           option(value=aPath data-scope=a.id data-batch=aBatch selected=(assignmentId === a.id))= `${a.code}: ${a.title.replace(/^Assignment\s*\d+:\s*/i, '').toUpperCase()}`
+        each c in (classes || []).filter(c => !activeBatch || !c.batch || c.batch === activeBatch)
+          - const cBatch = c.batch || '2k23'
+          - const cPath = `${rootPath || ''}${cBatch}/${c.id}.html`
+          option(value=cPath data-scope=c.id data-batch=cBatch selected=(classId === c.id))= `${c.code}: ${c.title.replace(/^Technical Workshop\s*\d+:\s*/i, '').toUpperCase()}`
   .nav-controls-right#navBadges
     if pageType === 'assignment'
       span.badge.badge-subagent#headerModelBadge= "EVALUATOR : " + (activeModel || "Gemini 3.8 Flash (Medium)")
       button.badge#btnRubricModal(type="button") [VIEW RUBRIC]
+    else if pageType === 'class'
+      span.badge.badge-subagent#headerClassBadge= "WORKSHOP : " + (classCode || "C-01")
+      button.badge#btnClassCurriculumModal(type="button") [CURRICULUM & REPO]

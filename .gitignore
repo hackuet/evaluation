@@ -7,6 +7,10 @@
 *.wmv
 *.flv
 
+# Exception for curated class demonstration recordings
+!media/classes/**
+!**/class-*/ROS.mp4
+
 # Python & Environment
 .venv/
 venv/

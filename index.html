@@ -172,6 +172,21 @@
         </div>
       </div>
     </div>
+    <!-- Class Details Modal-->
+    <div class="modal-overlay" id="classDetailModal" style="display: none;">
+      <div class="modal-window">
+        <div class="modal-header-bar">
+          <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+            <button class="btn btn-sm" id="classModalBackBtn" style="display: none; flex-shrink: 0;">[< Back]</button>
+            <h2 id="classModalTitle" style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Workshop Details & Session Recording</h2>
+          </div>
+          <button class="modal-close" id="classModalCloseBtn">[X]</button>
+        </div>
+        <div class="modal-content-area" id="classModalBody">
+          <!-- Dynamically populated by app.js-->
+        </div>
+      </div>
+    </div>
     <script src="data.js?v=4"></script>
     <script src="app.js?v=4"></script>
   </body>

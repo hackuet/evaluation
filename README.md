@@ -1,87 +1,121 @@
-# HACK Elo Rating Board
+# HACK Technical Evaluation & Elo Rating Platform
 **Hardware Acceleration Club of KUET (HACK)**
 
-A lightweight, monotonic, CSV-driven technical rating board and evaluation platform for embedded systems and hardware programming assignments.
+A high-density, monotonic, CSV-driven technical rating board, evaluation platform, and curriculum archive for embedded systems, hardware acceleration, robotics middleware, and real-time operating systems.
 
 ---
 
-## Architecture & Features
+## 1. System Architecture & Capabilities
 
-- **Clean Technical UI**: High-contrast engineering layout with clear tabular views.
-- **CSV-Driven Human Grading**: Instructors can edit grades and transparency notes directly in simple spreadsheet CSV files (`2k25/<assignment>/<assignment>.csv`).
-- **Dynamic Dual-Mode Ranking**:
-  - **Cumulative Overall View**: Global rankings across all assignments.
-  - **Assignment Details View**: Itemized task breakdowns, microsecond timing checks, and collapsible instructor transparency notes.
-- **Hybrid Scoring Formula**:
-  $$\text{Task and Bonus Final Mark} = (\text{Instructor Mark} \times 0.6) + (\text{LLM Subagent Mark} \times 0.4)$$
-  Evaluator LLM: **Gemini 3.8 Flash (Medium Thinking)**.
-- **Automatic Rank Calculation**: Ranks are computed dynamically in real time without hardcoding.
-- **Auditing & Code Inspection**: Embedded terminal-style code viewer for submitted sketches with zero external build dependencies.
+- **Unified Multi-Activity Rating Engine**:
+  - **Technical Assignments (`A-*`)**: Rigorous code audits, microsecond timing checks, register-level analysis, and hybrid AI/instructor evaluations.
+  - **Classes & Workshops (`C-*`)**: Physical hands-on lab sessions, verified attendance logging, base 50.00 participation points, and extensible live quiz / Q&A marks.
+  - **Extensible Future Activities**: Built-in architecture ready for club meetings (`M-*`), hackathon and competition participation (`X-*`), and project milestones.
+  - **Cumulative Score Aggregation**:
+    $$\\text{Total Points} = \\sum \\text{Assignments} + \\sum \\text{Classes} + \\dots$$
+- **Multi-Batch Organization**:
+  - Full per-batch scoping across active cohorts (`2K23`, `2K24`, `2K25`, and future batches).
+  - Quick-switch batch buttons with automatic state synchronization.
+- **Multi-Page Static Architecture (Pug)**:
+  - Central Cumulative Standings: `index.html`.
+  - Dedicated Assignment Pages: `<batch>/a<N>.html` (e.g. `2k25/a1.html`).
+  - Dedicated Class & Workshop Pages: `<batch>/c<N>.html` (e.g. `2k23/c1.html`, `2k24/c1.html`).
+  - Distinct bookmarkable URLs and unified activity navigation pills (`[Cumulative] [A-01] [C-01]`).
+- **Interactive Student Profiles**:
+  - Detailed modal view with activity filter tabs: `[All Activities]`, `[Assignments]`, and `[Classes & Workshops]`.
+  - Deep inspection of code submissions, evaluator remarks, and session details.
+- **Embedded Demonstration Recordings**:
+  - Custom, minimalist engineering video player with quick-seek timestamp pills and keyboard shortcuts (`Space` to play/pause, `M` to mute, `F` for fullscreen).
+  - Curated session recordings compressed via `ffmpeg` with FastStart streaming.
+- **Strict Privacy & Anti-Injection Defense**:
+  - **Roll-Only Identifier**: Zero student names, emails, or personal data stored in repository files, markdown reports, or data structures.
+  - Submissions evaluated within strictly demarcated XML isolation boundaries (`<untrusted_student_code>`).
 
 ---
 
-## Directory Structure
+## 2. Directory Structure
 
 ```
-├── .gitignore               # Strictly excludes video submissions (*.mp4, *.webm, etc.)
-├── index.html               # Main single-page application
-├── style.css                # Stylesheet for desktop and mobile views
-├── app.js                   # Client-side dynamic CSV parser & ranking engine
-├── data.js                  # Pre-bundled dataset and fallback data store
-├── generate_data.py         # Data compiler script
-└── 2k25/
-    ├── template.csv         # Starter CSV template for future assignments
-    ├── a1.html              # Dedicated Assignment 1 page with distinct URL
-    └── assignment-1/
-        ├── assignment-1.csv # Editable CSV with human marks and comments (same folder!)
-        ├── QUESTION.md      # Original assignment prompt and guidelines
-        ├── RUBRIC.md        # Official 150-base rubric and bonus criteria
-        ├── EVALUATION_PROMPT.md # Autonomous evaluator subagent prompt
-        ├── submissions/     # Code submissions (videos gitignored)
-        └── evaluations/     # Markdown technical evaluation reports
+├── .gitignore                   # Excludes raw video files; allows curated !media/classes/**
+├── index.html                   # Cumulative leaderboard (compiled from templates/index.pug)
+├── style.css                    # Central minimalist engineering stylesheet
+├── app.js                       # Client-side dynamic ranking & filtering engine
+├── data.js                      # Pre-bundled offline dataset generated by generate_data.py
+├── generate_data.py             # Compiler script: parses CSVs, audits, and classes into data.js
+├── build_templates.js           # Pug compiler generating index.html, <batch>/a*.html, <batch>/c*.html
+├── templates/                   # Pug template sources
+│   ├── layouts/layout.pug       # Central skeleton
+│   ├── partials/                # Header, navigation, modals, and tables
+│   ├── index.pug                # Cumulative standings template
+│   ├── assignment.pug           # Dedicated assignment page template
+│   └── class.pug                # Dedicated workshop page template
+├── classes/                     # Canonical workshop documentation & curricula
+│   └── class-01/
+│       └── CLASS.md             # Canonical curriculum, instructors, and module breakdown
+├── media/classes/               # Curated compressed session recordings (*.mp4)
+│   └── class-01/
+│       └── ROS.mp4              # Compressed FastStart recording (4.4 MB)
+├── skills/                      # Autonomous agent skills
+│   ├── hack-assignment-evaluator/ # Assignment ingestion & evaluation skill
+│   └── hack-class-entry-creator/  # Class & workshop entry creation skill
+└── <batch>/                     # Academic cohort folder (e.g., 2k23/, 2k24/, 2k25/)
+    ├── template.csv             # Empty starter template for grading sheets
+    ├── <assignmentId>.html      # e.g., a1.html (Compiled dedicated page)
+    ├── <classId>.html           # e.g., c1.html (Compiled dedicated page)
+    ├── assignment-<N>/          # Assignment submissions, rubrics, and evaluation reports
+    └── class-<N>/               # Batch-specific class participation
+        ├── attendance.csv       # Batch attendance sheet (roll, status, points, remarks)
+        ├── CLASS.md -> symlink  # Symlink to ../../classes/class-<N>/CLASS.md
+        └── ROS.mp4 -> symlink   # Symlink to ../../media/classes/class-<N>/ROS.mp4
 ```
 
 ---
 
-## Grading Policy (Assignment 1 - Batch 2k25)
+## 3. Scoring & Evaluation Framework
 
-### Base Points (150 Marks Total)
-- **Participation**: **55 Marks** (Awarded for authentic attempts)
-- **In-Time Submission**: **15 Marks** (Includes 5-minute grace period past deadline)
-- **Task 1 (Dual LED Blinker)**: **25 Marks** (Non-blocking `millis()` concurrency vs blocking `delay()`)
-- **Task 2 (Software PWM)**: **25 Marks** (Custom microsecond duty cycle without `analogWrite()`)
-- **Task 3 (Sonar Reader)**: **25 Marks** (Hardware acceleration via interrupts)
-- **Inline Code Comments**: **5 Marks** (Directly in code files)
-- **Simulation Videos**: **Scoring Removed (0 Marks)**
+### Technical Assignments
+- **Hybrid Formula**:
+  $$\\text{Task & Bonus Final} = (\\text{Instructor Mark} \\times 0.6) + (\\text{LLM Subagent Mark} \\times 0.4)$$
+- **Default Evaluator Model**: Gemini 3.8 Flash (Medium Thinking).
+- **Rubric Structure**: Base points pool (typically 150 pts) plus optional advanced bonus pool (+75 pts).
 
-### Bonus Pool (+75 Marks Total - Adds on top of 150)
-- **i.b.1 (Generic $N$-LEDs)**: 10 Marks
-- **i.b.2 (Hardware Registers DDRx/PORTx)**: 15 Marks
-- **i.b.3 (Multitasking Systems)**: 10 Marks
-- **ii.b.1 (Timer Registers PWM)**: 15 Marks
-- **ii.b.2 (Custom PWM Servo Control)**: 10 Marks
-- **iii.b (Smart Dustbin Simulation)**: 15 Marks
+### Classes & Workshops
+- **Base Attendance Award**: **50.00 Points** for verified attendance and active lab participation.
+- **Extensible Assessments**: Schema supports variable points for live quizzes, interactive Q&A challenges, and milestone coding tasks (`attendance_pts`, `quiz_pts`, `bonus_pts`, `total_pts`).
 
 ---
 
-## How to Add or Edit Grades
+## 4. Ingestion & Compilation Workflow
 
-1. Open `2k25/assignment-1/assignment-1.csv` in Excel, Google Sheets, or any text editor.
-2. Edit instructor marks (`task1_inst`, `task2_inst`, etc.) and the `instructor_note` column.
-3. Save the CSV and refresh the web browser (or re-run `python3 generate_data.py` to regenerate `data.js`).
-4. For new assignments, copy `2k25/template.csv` to `2k25/<assignment-name>/<assignment-name>.csv`.
-
----
-
-## Local Development & Preview
-
-Run a simple local HTTP server from the repository root:
+To compile new student submissions or class attendance records:
 
 ```bash
+# 1. Regenerate data.js and recompile all Pug multi-page templates
+python3 generate_data.py
+
+# 2. Start local HTTP preview server
 python3 -m http.server 8080
 ```
 
-Open [http://localhost:8080](http://localhost:8080) in your browser.
+Open [http://localhost:8080](http://localhost:8080) to inspect cumulative rankings, individual assignment pages, and workshop sessions.
+
+---
+
+## 5. Git Branching & Contribution Protocol
+
+- All development, data regeneration, and Playwright verifications must occur on the `dev` branch.
+- Never commit uncompressed video files.
+- Fast-forward merge `dev` into `main` after verification passes:
+  ```bash
+  git checkout dev
+  git add -A
+  git commit -m "feat: add class or assignment entry"
+  git push origin dev
+  git checkout main
+  git merge dev --ff-only
+  git push origin main
+  git checkout dev
+  ```
 
 ---
 

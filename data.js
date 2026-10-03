@@ -91,6 +91,36 @@ const HACK_DATA = {
       }
     }
   ],
+  "classes": [
+    {
+      "id": "c1",
+      "folder": "class-01",
+      "code": "C-01",
+      "batch": "2k24",
+      "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+      "date": "2026-10-03",
+      "time": "4:00 PM \u2013 7:00 PM",
+      "venue": "CSE D401, KUET",
+      "repoUrl": "https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main",
+      "videoUrl": "media/classes/class-01/ROS.mp4",
+      "content": "# Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)\n\n## Session Metadata\n- **Session Code**: `C-01`\n- **Date**: `2026-10-03`\n- **Time**: `4:00 PM \u2013 7:00 PM` (3.0 Hours)\n- **Venue**: `CSE D401, KUET`\n- **Target Batches**: `2K23` & `2K24`\n- **Base Participation Award**: `50.00 Points`\n- **Instructors**:\n  - **Tahmid Hossain Chowdhury Mahin** (Batch 2K22, Hardware Acceleration Club of KUET)\n  - **Isaac Aneek Sarkar** (Hardware Acceleration Club of KUET)\n- **Primary Source Code Repository**: [IsaacAneek/rtos-tutorial-hack (GitHub)](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main)\n- **Demonstration Recording**: `media/classes/class-01/ROS.mp4`\n\n---\n\n## Executive Summary\n\nThis in-depth technical workshop introduced students to the dual paradigms of modern embedded intelligence: distributed robotic middleware via **ROS 2 (Robot Operating System)** and deterministic microsecond concurrency via **RTOS (Real-Time Operating Systems)**.\n\nThrough hands-on demonstrations and code walkthroughs, students analyzed how asynchronous robotic communication primitives coordinate higher-level perception and planning, and how hardware-enforced RTOS schedulers guarantee deterministic deadlines on multi-core microcontroller units (MCUs).\n\n---\n\n## Curriculum & Technical Modules\n\n### Module 1: ROS 2 Distributed Robotics Middleware\n**Instructor**: *Tahmid Hossain Chowdhury Mahin (Batch 2K22)*\n\n- **ROS 2 Architecture & Ecosystem**:\n  - Evolution from ROS 1 to ROS 2: Transition from centralized master (`roscore`) to DDS (Data Distribution Service) decentralized discovery.\n  - Anatomy of a ROS 2 Package: Build systems (`ament_cmake`, `ament_python`), `package.xml` dependency declarations, and structured source trees.\n- **Computation Graph Primitives**:\n  - **Nodes**: Monolithic execution units, lifecycle management (unconfigured, inactive, active, finalized).\n  - **Topics & Anonymous Publish/Subscribe**: Asynchronous many-to-many communication, message interface definition (`.msg`), and QoS (Quality of Service) reliability policies (Best Effort vs. Reliable, transient local durability).\n  - **Services**: Synchronous request/response paradigm for non-continuous, blocking RPC invocations (`.srv`).\n- **Hardware-in-the-Loop (HIL) & Digital Twin Simulation**:\n  - Demonstration of physics-engine integration (Gazebo) coupled with real-time controller nodes.\n  - Future project roadmap: Bridging micro-ROS on microcontrollers to ROS 2 compute hosts over serial/CAN/Ethernet.\n\n---\n\n### Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon\n**Instructor**: *Isaac Aneek Sarkar*\n**Reference Implementation**: [rtos-tutorial-hack](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main)\n\n- **Fundamentals of Hard vs. Soft Real-Time Systems**:\n  - Deterministic execution vs. general-purpose OS nondeterministic latency.\n  - Context switching overhead, interrupt service routines (ISR), and tick-timer mechanics.\n- **Symmetric Multiprocessing (SMP) on Microcontrollers**:\n  - Dual-core task distribution on ESP32 / RP2040 architectures.\n  - Core pinning (`xTaskCreatePinnedToCore`) and inter-core cache coherency considerations.\n- **Task Scheduling & Prioritization**:\n  - **Preemptive Priority Scheduling**: Rate Monotonic Scheduling (RMS), Earliest Deadline First (EDF), and preemptive context swapping.\n  - **Cooperative Scheduling**: Voluntary yield paradigms (`taskYIELD()`), run-to-completion, and minimizing switch overhead for deterministic pipelining.\n- **Concurrency Hazards & Synchronization Primitives**:\n  - **Critical Sections & Race Conditions**: Atomic operations, interrupt masking, and memory barriers.\n  - **Semaphores & Mutexes**: Binary semaphores, counting semaphores, mutexes with priority inheritance to prevent Priority Inversion.\n- **Embedded Security & Production Scalability**:\n  - **Boot Security**: Secure boot chains, hardware cryptographic engines, flash encryption, and verified firmware execution.\n  - **System Scalability**: Memory management algorithms (heap allocation models `heap_1` through `heap_5`), stack watermarking (`uxTaskGetStackHighWaterMark`), and fault isolation.\n\n---\n\n## Instructor Notes & Future Roadmap\n- Students attending this session were awarded **50.00 Base Participation Points**.\n- Future sessions will incorporate live hands-on quizzes, interactive Q&A challenges, and coding checkpoints with variable marks.\n- Next milestone: Deploying custom FreeRTOS firmware interfacing directly with ROS 2 micro-ROS agents over UART.\n",
+      "baseAward": 50.0
+    },
+    {
+      "id": "c1",
+      "folder": "class-01",
+      "code": "C-01",
+      "batch": "2k23",
+      "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+      "date": "2026-10-03",
+      "time": "4:00 PM \u2013 7:00 PM",
+      "venue": "CSE D401, KUET",
+      "repoUrl": "https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main",
+      "videoUrl": "media/classes/class-01/ROS.mp4",
+      "content": "# Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)\n\n## Session Metadata\n- **Session Code**: `C-01`\n- **Date**: `2026-10-03`\n- **Time**: `4:00 PM \u2013 7:00 PM` (3.0 Hours)\n- **Venue**: `CSE D401, KUET`\n- **Target Batches**: `2K23` & `2K24`\n- **Base Participation Award**: `50.00 Points`\n- **Instructors**:\n  - **Tahmid Hossain Chowdhury Mahin** (Batch 2K22, Hardware Acceleration Club of KUET)\n  - **Isaac Aneek Sarkar** (Hardware Acceleration Club of KUET)\n- **Primary Source Code Repository**: [IsaacAneek/rtos-tutorial-hack (GitHub)](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main)\n- **Demonstration Recording**: `media/classes/class-01/ROS.mp4`\n\n---\n\n## Executive Summary\n\nThis in-depth technical workshop introduced students to the dual paradigms of modern embedded intelligence: distributed robotic middleware via **ROS 2 (Robot Operating System)** and deterministic microsecond concurrency via **RTOS (Real-Time Operating Systems)**.\n\nThrough hands-on demonstrations and code walkthroughs, students analyzed how asynchronous robotic communication primitives coordinate higher-level perception and planning, and how hardware-enforced RTOS schedulers guarantee deterministic deadlines on multi-core microcontroller units (MCUs).\n\n---\n\n## Curriculum & Technical Modules\n\n### Module 1: ROS 2 Distributed Robotics Middleware\n**Instructor**: *Tahmid Hossain Chowdhury Mahin (Batch 2K22)*\n\n- **ROS 2 Architecture & Ecosystem**:\n  - Evolution from ROS 1 to ROS 2: Transition from centralized master (`roscore`) to DDS (Data Distribution Service) decentralized discovery.\n  - Anatomy of a ROS 2 Package: Build systems (`ament_cmake`, `ament_python`), `package.xml` dependency declarations, and structured source trees.\n- **Computation Graph Primitives**:\n  - **Nodes**: Monolithic execution units, lifecycle management (unconfigured, inactive, active, finalized).\n  - **Topics & Anonymous Publish/Subscribe**: Asynchronous many-to-many communication, message interface definition (`.msg`), and QoS (Quality of Service) reliability policies (Best Effort vs. Reliable, transient local durability).\n  - **Services**: Synchronous request/response paradigm for non-continuous, blocking RPC invocations (`.srv`).\n- **Hardware-in-the-Loop (HIL) & Digital Twin Simulation**:\n  - Demonstration of physics-engine integration (Gazebo) coupled with real-time controller nodes.\n  - Future project roadmap: Bridging micro-ROS on microcontrollers to ROS 2 compute hosts over serial/CAN/Ethernet.\n\n---\n\n### Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon\n**Instructor**: *Isaac Aneek Sarkar*\n**Reference Implementation**: [rtos-tutorial-hack](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main)\n\n- **Fundamentals of Hard vs. Soft Real-Time Systems**:\n  - Deterministic execution vs. general-purpose OS nondeterministic latency.\n  - Context switching overhead, interrupt service routines (ISR), and tick-timer mechanics.\n- **Symmetric Multiprocessing (SMP) on Microcontrollers**:\n  - Dual-core task distribution on ESP32 / RP2040 architectures.\n  - Core pinning (`xTaskCreatePinnedToCore`) and inter-core cache coherency considerations.\n- **Task Scheduling & Prioritization**:\n  - **Preemptive Priority Scheduling**: Rate Monotonic Scheduling (RMS), Earliest Deadline First (EDF), and preemptive context swapping.\n  - **Cooperative Scheduling**: Voluntary yield paradigms (`taskYIELD()`), run-to-completion, and minimizing switch overhead for deterministic pipelining.\n- **Concurrency Hazards & Synchronization Primitives**:\n  - **Critical Sections & Race Conditions**: Atomic operations, interrupt masking, and memory barriers.\n  - **Semaphores & Mutexes**: Binary semaphores, counting semaphores, mutexes with priority inheritance to prevent Priority Inversion.\n- **Embedded Security & Production Scalability**:\n  - **Boot Security**: Secure boot chains, hardware cryptographic engines, flash encryption, and verified firmware execution.\n  - **System Scalability**: Memory management algorithms (heap allocation models `heap_1` through `heap_5`), stack watermarking (`uxTaskGetStackHighWaterMark`), and fault isolation.\n\n---\n\n## Instructor Notes & Future Roadmap\n- Students attending this session were awarded **50.00 Base Participation Points**.\n- Future sessions will incorporate live hands-on quizzes, interactive Q&A challenges, and coding checkpoints with variable marks.\n- Next milestone: Deploying custom FreeRTOS firmware interfacing directly with ROS 2 micro-ROS agents over UART.\n",
+      "baseAward": 50.0
+    }
+  ],
   "students": [
     {
       "id": "52509028",
@@ -214,7 +244,8 @@ const HACK_DATA = {
             }
           ]
         }
-      ]
+      ],
+      "classes": []
     },
     {
       "id": "52531013",
@@ -330,7 +361,8 @@ const HACK_DATA = {
             }
           ]
         }
-      ]
+      ],
+      "classes": []
     },
     {
       "id": "52503088",
@@ -445,6 +477,271 @@ const HACK_DATA = {
               "content": "int LED1= 13; //led1 pin\nint LED2= 12; //led2 pin\nint X= 1000;  // delay for first led\nint Y= 3000;  //delay for 2nd led\n\nvoid setup()\n{\n  pinMode(LED1, OUTPUT); // pin declear\n  pinMode(LED2, OUTPUT);\n}\n\nvoid loop()\n{\n  digitalWrite(LED1, HIGH); //Blink LED1\n  delay(500); \n  digitalWrite(LED1, LOW);\n  delay(X);                 //wait Xs \n  digitalWrite(LED2, HIGH); //Bink LED2\n  delay(500);\n  digitalWrite(LED2, LOW);\n  delay(Y);                 //wait Ys\n}"
             }
           ]
+        }
+      ],
+      "classes": []
+    },
+    {
+      "id": "2401073",
+      "roll": "2401073",
+      "batch": "2k24",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2407084",
+      "roll": "2407084",
+      "batch": "2k24",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2407094",
+      "roll": "2407094",
+      "batch": "2k24",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2407065",
+      "roll": "2407065",
+      "batch": "2k24",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2407115",
+      "roll": "2407115",
+      "batch": "2k24",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2307033",
+      "roll": "2307033",
+      "batch": "2k23",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2307048",
+      "roll": "2307048",
+      "batch": "2k23",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2307041",
+      "roll": "2307041",
+      "batch": "2k23",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2303043",
+      "roll": "2303043",
+      "batch": "2k23",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2303028",
+      "roll": "2303028",
+      "batch": "2k23",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2309029",
+      "roll": "2309029",
+      "batch": "2k23",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
+        }
+      ]
+    },
+    {
+      "id": "2307006",
+      "roll": "2307006",
+      "batch": "2k23",
+      "assignments": [],
+      "classes": [
+        {
+          "classId": "c1",
+          "code": "C-01",
+          "title": "Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)",
+          "status": "Present",
+          "date": "2026-10-03",
+          "time": "4:00 PM \u2013 7:00 PM",
+          "venue": "CSE D401, KUET",
+          "attendancePts": 50.0,
+          "quizPts": 0.0,
+          "bonusPts": 0.0,
+          "totalPts": 50.0,
+          "remarks": "Attended full workshop session"
         }
       ]
     }

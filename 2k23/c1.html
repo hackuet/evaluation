@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C-01: Technical Workshop 01: Distributed Robotics Architecture (ROS 2) &amp; Real-Time Operating Systems (RTOS) | HACK KUET</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <link rel="stylesheet" href="../style.css?v=4">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <style>
+      svg.chip-icon { width: 36px !important; height: 36px !important; min-width: 36px !important; min-height: 36px !important; max-width: 36px !important; max-height: 36px !important; display: block !important; flex-shrink: 0 !important; }
+      .code-box, pre.code-box { background: #f0f0f0 !important; color: #000000 !important; border: 1px solid #000000; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+      .code-box code, pre.code-box code { color: #000000 !important; background: transparent !important; }
+      .audit-md-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 11px; }
+      .audit-md-table th, .audit-md-table td { border: 1px solid #cccccc; padding: 6px 10px; text-align: left; }
+      .audit-md-table th { background: #f0f0f0; font-weight: 700; }
+    </style>
+  </head>
+  <body data-page="class" data-class-id="c1" data-root-path="../">
+    <div class="container">
+      <header style="border-bottom: 2px solid var(--border); padding-bottom: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div class="logo-title" style="display: flex; align-items: center; gap: 14px;">
+          <svg class="chip-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; max-width: 36px; max-height: 36px; display: block; flex-shrink: 0;">
+            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+            <path d="M9 9h6v6H9z"></path>
+            <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"></path>
+          </svg>
+          <div>
+            <h1 style="font-size: 16px; font-weight: 700; letter-spacing: -0.5px; text-transform: uppercase; margin: 0;">HACK // HARDWARE ACCELERATION CLUB OF KUET</h1>
+            <p style="color: var(--fg-muted); font-size: 11px; margin-top: 2px; margin-bottom: 0;">Objective Technical Evaluation & Rating System</p>
+          </div>
+        </div>
+      </header>
+      <nav class="assignment-nav" id="assignmentNav">
+        <div class="nav-controls-left">
+          <div class="batch-btns-wrap">
+            <div class="batch-btn-group" id="headerBatchBtns">
+              <button class="btn btn-sm batch-btn" type="button" data-batch="2k25">2K25</button>
+              <button class="btn btn-sm batch-btn" type="button" data-batch="2k24">2K24</button>
+              <button class="btn btn-sm batch-btn active" type="button" data-batch="2k23">2K23</button>
+            </div>
+          </div>
+          <div class="assignment-select-wrap">
+            <select class="nav-select" id="assignmentSelect" aria-label="Select Assignment">
+              <option value="../index.html" data-scope="all">CUMULATIVE (ALL ROUNDS)</option>
+              <option value="../2k23/c1.html" data-scope="c1" data-batch="2k23" selected>C-01: DISTRIBUTED ROBOTICS ARCHITECTURE (ROS 2) &amp; REAL-TIME OPERATING SYSTEMS (RTOS)</option>
+            </select>
+          </div>
+        </div>
+        <div class="nav-controls-right" id="navBadges"><span class="badge badge-subagent" id="headerClassBadge">WORKSHOP : C-01</span>
+          <button class="badge" id="btnClassCurriculumModal" type="button">[CURRICULUM & REPO]</button>
+        </div>
+      </nav>
+      <section class="workshop-header-section" style="margin-bottom: 24px;">
+        <div class="callout" style="background: var(--bg-subtle); border-left: 4px solid var(--border);">
+          <div class="workshop-title-row" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+            <div><span class="badge badge-subagent" style="margin-bottom: 6px;">C-01</span>
+              <h2 style="font-size: 16px; font-weight: 700; text-transform: uppercase; margin: 4px 0;">Technical Workshop 01: Distributed Robotics Architecture (ROS 2) &amp; Real-Time Operating Systems (RTOS)</h2>
+              <p style="font-size: 12px; color: var(--fg-muted); margin-top: 4px;">Hands-on Embedded & Robotics Workshop for Batches 2K23 & 2K24</p>
+            </div>
+            <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;"><span class="badge" style="font-weight: 700; background: #000; color: #fff; border-color: #000;">BASE AWARD: 50.00 PTS</span><a class="btn btn-sm" href="https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main" target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-size: 11px; font-weight: 700;">[GITHUB RTOS REPO ↗]</a>
+            </div>
+          </div>
+          <div class="workshop-meta-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-light); font-size: 11px;">
+            <div><strong style="color: var(--fg-dim);">DATE: </strong><span>2026-10-03</span></div>
+            <div><strong style="color: var(--fg-dim);">TIME: </strong><span>4:00 PM – 7:00 PM</span></div>
+            <div><strong style="color: var(--fg-dim);">VENUE: </strong><span>CSE D401, KUET</span></div>
+            <div><strong style="color: var(--fg-dim);">INSTRUCTORS: </strong><span>Tahmid Mahin (2K22), Isaac Aneek</span></div>
+          </div>
+        </div>
+      </section>
+      <!-- Custom Video Player Container-->
+      <section class="workshop-video-section" style="margin-bottom: 24px;">
+        <div class="video-card" style="border: 1px solid var(--border); background: var(--bg);">
+          <div class="video-header-bar" style="background: var(--bg-alt); padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700;"><span>[SESSION RECORDING: ROS 2 SIMULATION & RTOS DEMO]</span><span style="color: var(--fg-muted); font-size: 10px;">H.264 FastStart Stream</span></div>
+          <div class="video-wrapper" style="position: relative; width: 100%; background: #000; line-height: 0;">
+            <video id="classVideoPlayer" controls preload="metadata" style="width: 100%; max-height: 460px; display: block; margin: 0 auto;">
+              <source src="../media/classes/class-01/ROS.mp4" type="video/mp4">Your browser does not support HTML5 video streaming.
+            </video>
+          </div>
+          <div class="video-footer-bar" style="padding: 10px 12px; background: var(--bg-subtle); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div class="video-timestamps" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;"><span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--fg-muted);">JUMP TO:</span>
+              <button class="btn btn-sm seek-pill" type="button" data-time="0" style="padding: 2px 8px; font-size: 10px; font-weight: 700;">[00:00] ROS 2 Simulation</button>
+              <button class="btn btn-sm seek-pill" type="button" data-time="68" style="padding: 2px 8px; font-size: 10px; font-weight: 700;">[01:08] Node Topics</button>
+              <button class="btn btn-sm seek-pill" type="button" data-time="132" style="padding: 2px 8px; font-size: 10px; font-weight: 700;">[02:12] RTOS Concurrency</button>
+            </div>
+            <div class="video-shortcuts" style="font-size: 10px; color: var(--fg-dim); font-family: var(--font-mono);">[Space: Play/Pause | M: Mute | F: Fullscreen]</div>
+          </div>
+        </div>
+      </section>
+      <!-- Collapsible Curriculum Overview-->
+      <section class="workshop-curriculum-section" style="margin-bottom: 24px;">
+        <details class="callout" style="background: var(--bg); border: 1px solid var(--border); padding: 0;">
+          <summary style="padding: 10px 14px; font-weight: 700; cursor: pointer; background: var(--bg-alt); user-select: none; font-size: 12px;">[+] VIEW TECHNICAL WORKSHOP CURRICULUM & MODULE BREAKDOWN</summary>
+          <div class="curriculum-body" style="padding: 16px; font-size: 12px; line-height: 1.6;">
+            <h3 style="font-size: 13px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Module 1: ROS 2 Distributed Robotics Middleware</h3>
+            <p style="margin-bottom: 6px; color: var(--fg-muted);">Instructor: Tahmid Hossain Chowdhury Mahin (Batch 2K22)</p>
+            <ul style="margin-left: 20px; margin-bottom: 14px;">
+              <li>DDS (Data Distribution Service) decentralized node discovery architecture.</li>
+              <li>Package anatomy, build pipelines (ament_cmake, ament_python), and dependency graphs.</li>
+              <li>Nodes, topics, publisher/subscriber QoS policies (Best Effort vs Reliable).</li>
+              <li>Gazebo digital twin simulation and hardware-in-the-loop (HIL) integration.</li>
+            </ul>
+            <h3 style="font-size: 13px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon</h3>
+            <p style="margin-bottom: 6px; color: var(--fg-muted);">Instructor: Isaac Aneek Sarkar | Repo: IsaacAneek/rtos-tutorial-hack</p>
+            <ul style="margin-left: 20px; margin-bottom: 12px;">
+              <li>Microsecond determinism vs general-purpose OS nondeterministic latency.</li>
+              <li>Symmetric Multiprocessing (SMP) dual-core scheduling and core pinning on microcontrollers.</li>
+              <li>Rate Monotonic Scheduling (RMS) preemptive priorities vs cooperative task yielding.</li>
+              <li>Race conditions, critical sections, binary/counting semaphores, and priority inheritance mutexes.</li>
+              <li>Boot security, secure boot chains, hardware cryptographic acceleration, and heap watermarking.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+      <!-- Attendance & Participation Table-->
+      <section class="workshop-attendance-section">
+        <div class="section-title" style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 13px; font-weight: 700; text-transform: uppercase;">Batch Attendance & Verified Participation Standings</h3><span style="font-size: 11px; color: var(--fg-muted);">Awarded 50.00 base participation points</span>
+        </div>
+        <section id="leaderboardSection">
+          <div class="table-wrap">
+            <table class="rating-table" id="ratingTable">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">Rank</th>
+                  <th style="width: 140px;">Roll</th>
+                  <th style="width: 120px; text-align: right;">Total Score</th>
+                  <th>Task Breakdown & Transparency Notes</th>
+                  <th style="width: 110px; text-align: center;">Audit</th>
+                </tr>
+              </thead>
+              <tbody id="ratingTableBody">
+                <!-- Dynamically populated by app.js-->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+      <footer>
+        <div>&copy; 2026 HACK (Hardware Acceleration Club of KUET)</div>
+      </footer>
+    </div>
+    <!-- Cumulative Student Profile Modal-->
+    <div class="modal-overlay" id="profileModal" style="display: none;">
+      <div class="modal-window">
+        <div class="modal-header-bar">
+          <h2 id="profileModalTitle">Student Profile: Cumulative Standings</h2>
+          <button class="modal-close" id="profileModalCloseBtn">[X]</button>
+        </div>
+        <div class="modal-content-area" id="profileModalBody">
+          <!-- Dynamically populated-->
+        </div>
+      </div>
+    </div>
+    <!-- Detailed Assignment Audit Modal-->
+    <div class="modal-overlay" id="detailModal" style="display: none;">
+      <div class="modal-window">
+        <div class="modal-header-bar">
+          <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+            <button class="btn btn-sm" id="modalBackBtn" style="display: none; flex-shrink: 0;">[< Back]</button>
+            <h2 id="modalTitle" style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Assignment Audit & Code Review</h2>
+          </div>
+          <button class="modal-close" id="modalCloseBtn">[X]</button>
+        </div>
+        <div class="modal-tabs-bar">
+          <button class="m-tab active" data-pane="scorecardPane">Scorecard & Rationale</button>
+          <button class="m-tab" data-pane="codePane">Submitted Code</button>
+          <button class="m-tab" data-pane="critiquePane">AI Subagent Audit</button>
+          <button class="m-tab" data-pane="submissionPane">Submission Metadata</button>
+        </div>
+        <div class="modal-content-area">
+          <!-- Pane 1: Scorecard-->
+          <div class="pane active" id="scorecardPane">
+            <div class="callout" id="modalInstructorCallout">
+              <h4>Instructor Transparency Note (Why I Marked How):</h4>
+              <p id="modalInstructorNoteText">...</p>
+            </div>
+            <div class="table-wrap" style="margin-top: 10px; margin-bottom: 0;">
+              <table class="score-detail-table">
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th style="width: 50px;">Max</th>
+                    <th style="width: 80px;">Inst (60%)</th>
+                    <th style="width: 80px;">LLM (40%)</th>
+                    <th style="width: 80px;">Final</th>
+                    <th>Marking Rationale & Remarks</th>
+                  </tr>
+                </thead>
+                <tbody id="modalScoreTableBody">
+                  <!-- Dynamically populated-->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Pane 2: Code Viewer-->
+          <div class="pane" id="codePane">
+            <div class="file-select-btns" id="modalFileTabs">
+              <!-- Dynamically populated-->
+            </div>
+            <div class="code-box" id="modalCodeDisplay">// No code selected</div>
+          </div>
+          <!-- Pane 3: Subagent Critique-->
+          <div class="pane" id="critiquePane">
+            <div id="modalCritiqueDisplay">
+              <!-- Dynamically populated with student's specific evaluation report-->
+            </div>
+          </div>
+          <!-- Pane 4: Submission Metadata-->
+          <div class="pane" id="submissionPane">
+            <div class="callout">
+              <h4>Submission Message & Notes:</h4>
+              <p id="modalStudentCommentText">"..."</p>
+            </div>
+            <div class="callout">
+              <h4>Google Drive Submission URL:</h4>
+              <p><a id="modalDriveLinkAnchor" href="#" target="_blank" style="color: #000; word-break: break-all;"></a></p>
+              <div id="modalDriveWarning" style="margin-top: 8px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Rubric Modal-->
+    <div class="modal-overlay" id="rubricModal" style="display: none;">
+      <div class="modal-window">
+        <div class="modal-header-bar">
+          <h2 id="rubricModalTitle">Official Assignment Rubric</h2>
+          <button class="modal-close" id="rubricCloseBtn">[X]</button>
+        </div>
+        <div class="modal-content-area" id="rubricModalContent">
+          <!-- Dynamically rendered-->
+        </div>
+      </div>
+    </div>
+    <!-- Class Details Modal-->
+    <div class="modal-overlay" id="classDetailModal" style="display: none;">
+      <div class="modal-window">
+        <div class="modal-header-bar">
+          <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+            <button class="btn btn-sm" id="classModalBackBtn" style="display: none; flex-shrink: 0;">[< Back]</button>
+            <h2 id="classModalTitle" style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Workshop Details & Session Recording</h2>
+          </div>
+          <button class="modal-close" id="classModalCloseBtn">[X]</button>
+        </div>
+        <div class="modal-content-area" id="classModalBody">
+          <!-- Dynamically populated by app.js-->
+        </div>
+      </div>
+    </div>
+    <script src="../data.js?v=4"></script>
+    <script src="../app.js?v=4"></script>
+  </body>
+</html>

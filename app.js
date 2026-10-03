@@ -22,8 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Detect initial scope from body attributes or URL parameters
   const pageType = document.body ? document.body.getAttribute('data-page') : null;
   const pageAssignmentId = document.body ? document.body.getAttribute('data-assignment-id') : null;
+  const pageClassId = document.body ? document.body.getAttribute('data-class-id') : null;
   if (pageType === 'assignment' && pageAssignmentId) {
     activeScope = pageAssignmentId;
+  } else if (pageType === 'class' && pageClassId) {
+    activeScope = pageClassId;
   } else {
     if (urlParams.get('scope')) {
       activeScope = urlParams.get('scope');
@@ -61,12 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateAssignmentDropdown() {
     if (!assignmentSelect) return;
     const batchAssignments = (HACK_DATA.assignments || []).filter(a => !a.batch || a.batch === activeBatch);
+    const batchClasses = (HACK_DATA.classes || []).filter(c => !c.batch || c.batch === activeBatch);
     
     // Clear and rebuild options
     assignmentSelect.innerHTML = '';
     
     const cumOpt = document.createElement('option');
-    cumOpt.value = `${rootPath}index.html`;
+    cumOpt.value = `${rootPath}index.html?batch=${encodeURIComponent(activeBatch)}`;
     cumOpt.setAttribute('data-scope', 'all');
     cumOpt.textContent = 'CUMULATIVE (ALL ROUNDS)';
     if (activeScope === 'all') cumOpt.selected = true;
@@ -81,6 +85,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const cleanTitle = (a.title || '').replace(/^Assignment\s*\d+:\s*/i, '');
       opt.textContent = `${a.code}: ${cleanTitle.toUpperCase()}`;
       if (activeScope === a.id) opt.selected = true;
+      assignmentSelect.appendChild(opt);
+    });
+
+    batchClasses.forEach(c => {
+      const opt = document.createElement('option');
+      const cBatch = c.batch || activeBatch;
+      opt.value = `${rootPath}${cBatch}/${c.id}.html`;
+      opt.setAttribute('data-scope', c.id);
+      opt.setAttribute('data-batch', cBatch);
+      const cleanTitle = (c.title || '').replace(/^Technical Workshop\s*\d+:\s*/i, '');
+      opt.textContent = `${c.code}: ${cleanTitle.toUpperCase()}`;
+      if (activeScope === c.id) opt.selected = true;
       assignmentSelect.appendChild(opt);
     });
   }
@@ -141,6 +157,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const profileModalCloseBtn = document.getElementById('profileModalCloseBtn');
   const profileModalTitle = document.getElementById('profileModalTitle');
   const profileModalBody = document.getElementById('profileModalBody');
+
+  // Class Details Modal Elements
+  const classDetailModal = document.getElementById('classDetailModal');
+  const classModalCloseBtn = document.getElementById('classModalCloseBtn');
+  const classModalBackBtn = document.getElementById('classModalBackBtn');
+  const classModalTitle = document.getElementById('classModalTitle');
+  const classModalBody = document.getElementById('classModalBody');
+  const btnClassCurriculumModal = document.getElementById('btnClassCurriculumModal');
 
   // Detail Modal Elements (Assignment Audit View)
   const detailModal = document.getElementById('detailModal');
@@ -555,22 +579,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Get student's score model for active scope
   function getStudentScoreModel(student) {
-    if (!student.assignments || !Array.isArray(student.assignments)) return null;
+    if (!student) return null;
+    const assignments = Array.isArray(student.assignments) ? student.assignments : [];
+    const classes = Array.isArray(student.classes) ? student.classes : [];
+
+    const isClassScope = (HACK_DATA.classes || []).some(c => c.id === activeScope) || activeScope.startsWith('c');
 
     if (activeScope === 'all') {
-      // Cumulative View: Sum across all completed assignments in array
+      // Cumulative View: Sum across all completed assignments + classes
       let cumTotal = 0;
       let evaluatedCount = 0;
       let lastStatus = 'Evaluated';
       const assignmentSummaries = [];
+      const classSummaries = [];
 
-      student.assignments.forEach(a => {
+      assignments.forEach(a => {
         const ev = evaluateSubmission(a);
         if (ev) {
           cumTotal += ev.computedTotal;
           evaluatedCount++;
           if (ev.status === 'Pending Drive Access') lastStatus = ev.status;
-          const meta = HACK_DATA.assignments.find(metaA => metaA.id === a.assignmentId) || {};
+          const meta = (HACK_DATA.assignments || []).find(metaA => metaA.id === a.assignmentId) || {};
           assignmentSummaries.push({
             id: a.assignmentId,
             code: meta.code || a.assignmentId.toUpperCase(),
@@ -584,20 +613,75 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
+      classes.forEach(c => {
+        cumTotal += (c.totalPts || 0);
+        classSummaries.push({
+          id: c.classId,
+          code: c.code || 'C-01',
+          title: c.title || 'Technical Workshop',
+          status: c.status || 'Present',
+          score: c.totalPts || 50.0,
+          date: c.date,
+          venue: c.venue
+        });
+      });
+
       return {
         isCumulative: true,
         cumulativeScore: Math.round(cumTotal * 100) / 100,
         evaluatedCount: evaluatedCount,
         assignmentSummaries: assignmentSummaries,
-        status: lastStatus,
-        primarySubmission: evaluateSubmission(student.assignments[0])
+        classSummaries: classSummaries,
+        classesCount: classes.length,
+        status: assignments.length > 0 ? lastStatus : (classes.length > 0 ? 'Present' : 'Enrolled'),
+        primarySubmission: assignments.length > 0 ? evaluateSubmission(assignments[0]) : null
       };
+    } else if (isClassScope) {
+      // Single Class Scope View
+      const foundClass = classes.find(c => c.classId === activeScope);
+      const classMeta = (HACK_DATA.classes || []).find(c => c.id === activeScope) || {};
+      if (foundClass) {
+        return {
+          isCumulative: false,
+          isClass: true,
+          assignmentData: {
+            computedTotal: foundClass.totalPts,
+            status: foundClass.status,
+            remarks: foundClass.remarks,
+            classRec: foundClass,
+            computedScores: {
+              participation: { final: foundClass.attendancePts },
+              quiz: { final: foundClass.quizPts },
+              bonus: { final: foundClass.bonusPts }
+            }
+          },
+          status: foundClass.status
+        };
+      } else {
+        return {
+          isCumulative: false,
+          isClass: true,
+          assignmentData: {
+            computedTotal: 0,
+            status: 'Absent',
+            remarks: 'Not recorded in attendance',
+            classRec: null,
+            computedScores: {
+              participation: { final: 0 },
+              quiz: { final: 0 },
+              bonus: { final: 0 }
+            }
+          },
+          status: 'Absent'
+        };
+      }
     } else {
       // Single Assignment View: Look up selected assignment
-      const found = student.assignments.find(a => a.assignmentId === activeScope);
-      const ev = evaluateSubmission(found || student.assignments[0]);
+      const found = assignments.find(a => a.assignmentId === activeScope);
+      const ev = evaluateSubmission(found || assignments[0]);
       return {
         isCumulative: false,
+        isClass: false,
         assignmentData: ev,
         status: ev ? ev.status : 'Unknown'
       };
@@ -653,49 +737,64 @@ document.addEventListener('DOMContentLoaded', () => {
       metricMean.innerHTML = `- <span style="font-size: 11px; font-weight: normal;">/ 150</span>`;
     }
 
-    // 6. Update Table Header, Question Block & Rubric Button based on Scope (Dual-mode)
-    if (activeScope === 'all') {
+    // 6. Update Table Header, Question Block & Rubric Button based on Scope
+    const isClassScope = (HACK_DATA.classes || []).some(c => c.id === activeScope) || activeScope.startsWith("c");
+
+    if (activeScope === "all") {
       // Cumulative Rating View: Rubric and question are assignment-specific, so hide them
-      if (rubricToggleBtn) rubricToggleBtn.style.display = 'none';
-      if (statusFilterSelect) statusFilterSelect.style.display = 'none';
-      if (assignmentQuestionSection) assignmentQuestionSection.style.display = 'none';
+      if (rubricToggleBtn) rubricToggleBtn.style.display = "none";
+      if (statusFilterSelect) statusFilterSelect.style.display = "none";
+      if (assignmentQuestionSection) assignmentQuestionSection.style.display = "none";
 
       if (ratingTableHead) {
         ratingTableHead.innerHTML = `
           <tr>
             <th style="width: 50px;">Rank</th>
             <th style="width: 140px;">Roll</th>
-            <th style="width: 140px; text-align: right;">Cumulative Points</th>
-            <th>Assignments</th>
+            <th style="width: 140px; text-align: right;">Total Points</th>
+            <th>Completed Activities</th>
+            <th style="width: 110px; text-align: center;">Profile</th>
+          </tr>
+        `;
+      }
+    } else if (isClassScope) {
+      // Class Workshop View
+      if (rubricToggleBtn) rubricToggleBtn.style.display = "none";
+      if (statusFilterSelect) statusFilterSelect.style.display = "none";
+      if (assignmentQuestionSection) assignmentQuestionSection.style.display = "none";
+
+      if (ratingTableHead) {
+        ratingTableHead.innerHTML = `
+          <tr>
+            <th style="width: 50px;">Rank</th>
+            <th style="width: 140px;">Roll</th>
+            <th style="width: 130px; text-align: right;">Participation Pts</th>
+            <th>Attendance Status & Session Remarks</th>
             <th style="width: 110px; text-align: center;">Profile</th>
           </tr>
         `;
       }
     } else {
       // Assignment-specific View: Show rubric button and question block
-      const assignMeta = HACK_DATA.assignments.find(a => a.id === activeScope) || { code: activeScope.toUpperCase(), title: 'Assignment' };
+      const assignMeta = HACK_DATA.assignments.find(a => a.id === activeScope) || { code: activeScope.toUpperCase(), title: "Assignment" };
       if (rubricToggleBtn) {
-        rubricToggleBtn.style.display = 'inline-flex';
+        rubricToggleBtn.style.display = "inline-flex";
         rubricToggleBtn.textContent = `[View ${assignMeta.code} Rubric]`;
       }
-      if (statusFilterSelect) statusFilterSelect.style.display = 'inline-block';
+      if (statusFilterSelect) statusFilterSelect.style.display = "inline-block";
 
       if (assignmentQuestionSection && assignmentQuestionBody && assignMeta.question) {
-        assignmentQuestionSection.style.display = 'block';
-        const qTitleEl = document.getElementById('assignmentQuestionTitle') || assignmentQuestionHeader;
-        const cleanTitle = (assignMeta.title || '').replace(/^Assignment\s*\d+:\s*/i, '');
+        assignmentQuestionSection.style.display = "block";
+        const qTitleEl = document.getElementById("assignmentQuestionTitle") || assignmentQuestionHeader;
+        const cleanTitle = (assignMeta.title || "").replace(/^Assignment\s*\d+:\s*/i, "");
         if (qTitleEl) qTitleEl.textContent = `[${assignMeta.code}] ${cleanTitle} (Problem Statement)`;
         
         let formatted = escapeHtml(assignMeta.question);
-        
-        // Convert [url](url) markdown links to clickable anchors
         formatted = formatted.replace(/\[(https?:\/\/[^\s\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--fg); text-decoration: underline;">$1</a>');
-        // Convert any remaining bare URLs
         formatted = formatted.replace(/(^|[^">])(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--fg); text-decoration: underline;">$2</a>');
-        
         assignmentQuestionBody.innerHTML = formatted;
       } else if (assignmentQuestionSection) {
-        assignmentQuestionSection.style.display = 'none';
+        assignmentQuestionSection.style.display = "none";
       }
 
       if (ratingTableHead) {
@@ -744,7 +843,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 7. Render Table Rows
-    if (activeScope === 'all') {
+    if (activeScope === "all") {
       // Render Cumulative Table Rows
       ratingTableBody.innerHTML = list.map(student => {
         const sm = student.scoreModel;
@@ -756,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </td>
             <td class="score-col">
               <div style="font-size: 16px; font-weight: bold;">${sm.cumulativeScore.toFixed(2)}</div>
-              <div style="font-size: 10px; color: var(--fg-muted);">Cumulative Points</div>
+              <div style="font-size: 10px; color: var(--fg-muted);">Total Points</div>
             </td>
             <td>
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -764,10 +863,18 @@ document.addEventListener('DOMContentLoaded', () => {
                   const aRank = (assignmentRankMap[as.id] && assignmentRankMap[as.id][student.id]) || student.computedRank;
                   return `
                     <button class="btn btn-sm switch-scope-btn" data-assign="${as.id}" style="font-weight: 700;" title="Inspect ${as.code} (Score: ${as.score.toFixed(2)}/${as.baseMax})">
-                      ${as.code.replace('A-0', 'A')} #${aRank}
+                      ${as.code.replace("A-0", "A")} #${aRank}
                     </button>
                   `;
-                }).join('')}
+                }).join("")}
+                ${sm.classSummaries.map(cs => {
+                  return `
+                    <button class="btn btn-sm switch-class-btn" data-class="${cs.id}" style="font-weight: 700; background: var(--bg-alt);" title="${cs.title} (Award: ${cs.score.toFixed(2)} pts)">
+                      ${cs.code.replace("C-0", "C")} [${cs.score.toFixed(0)} pts]
+                    </button>
+                  `;
+                }).join("")}
+                ${sm.assignmentSummaries.length === 0 && sm.classSummaries.length === 0 ? '<span style="color: var(--fg-muted); font-size: 11px;">Enrolled</span>' : ""}
               </div>
             </td>
             <td style="text-align: center;">
@@ -775,7 +882,35 @@ document.addEventListener('DOMContentLoaded', () => {
             </td>
           </tr>
         `;
-      }).join('');
+      }).join("");
+    } else if (isClassScope) {
+      // Render Class Attendance Table Rows
+      ratingTableBody.innerHTML = list.map(student => {
+        const ev = student.scoreModel.assignmentData;
+        return `
+          <tr>
+            <td class="rank-col">#${student.computedRank}</td>
+            <td class="student-col">
+              <strong>${student.roll}</strong>
+              <div style="font-size: 10px; color: var(--fg-dim); margin-top: 2px;">Status: ${ev.status}</div>
+            </td>
+            <td class="score-col">
+              <div style="font-size: 15px; font-weight: bold;">${ev.computedTotal.toFixed(2)}</div>
+              <div style="font-size: 10px; color: var(--fg-muted);">pts (50 base)</div>
+            </td>
+            <td>
+              <div class="breakdown-row" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span class="tag-plain" style="font-weight: 700;">STATUS: ${ev.status.toUpperCase()}</span>
+                <span class="tag-plain">ATTENDANCE: ${ev.classRec ? ev.classRec.attendancePts.toFixed(2) : "0.00"}/50</span>
+                ${ev.remarks ? `<span style="font-size: 11px; color: var(--fg-muted);">&ldquo;${escapeHtml(ev.remarks)}&rdquo;</span>` : ""}
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <button class="btn btn-sm view-profile-btn" data-id="${student.id}">[VIEW]</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
     } else {
       // Render Assignment Details Table Rows with Collapsible Transparency
       ratingTableBody.innerHTML = list.map(student => {
@@ -847,43 +982,55 @@ document.addEventListener('DOMContentLoaded', () => {
             </td>
           </tr>
         `;
-      }).join('');
+      }).join("");
     }
 
-    // Attach click listeners to profile buttons (in Cumulative Mode)
-    document.querySelectorAll('.view-profile-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = e.currentTarget.getAttribute('data-id');
+    // Attach click listeners to profile buttons (in Cumulative & Class Mode)
+    document.querySelectorAll(".view-profile-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const id = e.currentTarget.getAttribute("data-id");
         openStudentProfileModal(id);
       });
     });
 
     // Attach click listeners to audit buttons (in Assignment Mode)
-    document.querySelectorAll('.audit-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = e.currentTarget.getAttribute('data-id');
+    document.querySelectorAll(".audit-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const id = e.currentTarget.getAttribute("data-id");
         openAssignmentAuditModal(id, activeScope, false);
       });
     });
 
     // Quick switch to assignment scope when clicking [A1 #1]
-    document.querySelectorAll('.switch-scope-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const assignId = e.currentTarget.getAttribute('data-assign');
+    document.querySelectorAll(".switch-scope-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const assignId = e.currentTarget.getAttribute("data-assign");
         const assignMeta = HACK_DATA.assignments.find(a => a.id === assignId);
         const aBatch = (assignMeta && assignMeta.batch) || activeBatch;
         window.location.href = `${rootPath}${aBatch}/${assignId}.html`;
       });
     });
+
+    // Quick switch to class scope when clicking [C1 50 pts]
+    document.querySelectorAll(".switch-class-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const classId = e.currentTarget.getAttribute("data-class");
+        const classMeta = (HACK_DATA.classes || []).find(c => c.id === classId);
+        const cBatch = (classMeta && classMeta.batch) || activeBatch;
+        window.location.href = `${rootPath}${cBatch}/${classId}.html`;
+      });
+    });
   }
 
-  // Open Cumulative Student Profile Modal (Lists enrolled assignments, NOT micro task breakdown)
+  // Open Cumulative Student Profile Modal (With Activity Filter Tabs)
   function openStudentProfileModal(studentId) {
     const student = HACK_DATA.students.find(s => s.id === studentId);
     if (!student) return;
 
     const sm = getStudentScoreModel(student);
-    const batchAssignments = HACK_DATA.assignments.filter(a => a.batch === activeBatch);
+    const batchAssignments = (HACK_DATA.assignments || []).filter(a => a.batch === student.batch);
+    const batchClasses = (HACK_DATA.classes || []).filter(c => c.batch === student.batch);
+    const studentClasses = student.classes || [];
 
     profileModalTitle.textContent = `Student Profile: Roll ${student.roll}`;
 
@@ -896,90 +1043,206 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 10px; text-transform: uppercase; color: var(--fg-muted);">Cumulative Rating</div>
+          <div style="font-size: 10px; text-transform: uppercase; color: var(--fg-muted);">Total Rating Points</div>
           <div style="font-size: 20px; font-weight: 700;">
             ${sm.cumulativeScore.toFixed(2)} <span style="font-size: 11px; font-weight: normal; color: var(--fg-muted);">pts (Rank #${student.computedRank || 1})</span>
           </div>
         </div>
       </div>
 
-      <div style="margin: 16px 0 8px 0;">
-        <h4 style="text-transform: uppercase; font-size: 12px; font-weight: 700;">Enrolled Assignments Overview (${sm.evaluatedCount} / ${batchAssignments.length} Submitted)</h4>
-        <p style="color: var(--fg-muted); font-size: 11px; margin-top: 2px;">
-          Assignments for Batch ${student.batch}. Click [Inspect Code] to view task-level breakdown, code files, and transparency notes.
-        </p>
+      <!-- Activity Filter Tabs -->
+      <div class="profile-filter-tabs">
+        <button class="profile-filter-btn active" data-filter="all">All Activities (${batchAssignments.length + batchClasses.length})</button>
+        <button class="profile-filter-btn" data-filter="assignments">Assignments (${batchAssignments.length})</button>
+        <button class="profile-filter-btn" data-filter="classes">Classes & Workshops (${batchClasses.length})</button>
       </div>
 
-      <div class="table-wrap" style="margin-top: 10px; margin-bottom: 0;">
-        <table class="score-detail-table">
-          <thead>
-            <tr>
-              <th style="width: 70px; white-space: nowrap;">Code</th>
-              <th>Assignment Title</th>
-              <th style="width: 90px;">Status</th>
-              <th style="width: 100px;">Submitted</th>
-              <th style="width: 110px; text-align: right;">Score</th>
-              <th style="width: 140px; text-align: center;">Action</th>
-            </tr>
-          </thead>
-        <tbody>
-          ${batchAssignments.map(meta => {
-            const sub = student.assignments.find(a => a.assignmentId === meta.id);
-            if (sub) {
-              const ev = evaluateSubmission(sub);
-              return `
-                <tr>
-                  <td style="white-space: nowrap;">
-                    <button class="btn btn-sm profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}" style="padding: 2px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;" title="Inspect ${meta.code} code & audit">
-                      ${meta.code}
-                    </button>
-                  </td>
-                  <td>
-                    <span class="profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}" style="font-weight: 700; cursor: pointer; text-decoration: underline;" title="Inspect ${meta.code}">
-                      ${meta.title}
-                    </span>
-                  </td>
-                  <td><span class="tag-plain">${ev.status}</span></td>
-                  <td style="font-size: 11px; color: var(--fg-muted);">${ev.submissionTime || 'In-time'}</td>
-                  <td style="text-align: right; font-weight: 700;">
-                    ${ev.computedTotal.toFixed(2)} / ${meta.baseMax}
-                    <div style="font-size: 10px; font-weight: normal; color: var(--fg-muted);">${ev.computedPercentage}</div>
-                  </td>
-                  <td style="text-align: center;">
-                    <button class="btn btn-sm profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}">
-                      [Inspect Code]
-                    </button>
-                  </td>
-                </tr>
-              `;
-            } else {
-              return `
-                <tr style="opacity: 0.6; background: var(--bg-subtle);">
-                  <td style="white-space: nowrap;"><strong>${meta.code}</strong></td>
-                  <td>${meta.title}</td>
-                  <td><span style="font-size: 10px; color: var(--fg-muted);">Upcoming</span></td>
-                  <td>--</td>
-                  <td style="text-align: right; color: var(--fg-muted);">-- / ${meta.baseMax}</td>
-                  <td style="text-align: center; font-size: 10px; color: var(--fg-muted);">[Pending Release]</td>
-                </tr>
-              `;
-            }
-          }).join('')}
-        </tbody>
-      </table>
+      <!-- Assignments Section -->
+      <div id="profileAssignmentsSection" style="margin-bottom: 20px;">
+        <div style="margin: 8px 0;">
+          <h4 style="text-transform: uppercase; font-size: 12px; font-weight: 700;">Assignments (${sm.evaluatedCount} / ${batchAssignments.length} Submitted)</h4>
+          <p style="color: var(--fg-muted); font-size: 11px; margin-top: 2px;">
+            Assignments for Batch ${student.batch}. Click [Inspect Code] to view task-level breakdown, code files, and transparency notes.
+          </p>
+        </div>
+
+        <div class="table-wrap" style="margin-top: 8px; margin-bottom: 0;">
+          <table class="score-detail-table">
+            <thead>
+              <tr>
+                <th style="width: 70px; white-space: nowrap;">Code</th>
+                <th>Assignment Title</th>
+                <th style="width: 90px;">Status</th>
+                <th style="width: 100px;">Submitted</th>
+                <th style="width: 110px; text-align: right;">Score</th>
+                <th style="width: 140px; text-align: center;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${batchAssignments.length === 0 ? `
+                <tr><td colspan="6" style="text-align: center; color: var(--fg-muted); padding: 16px;">No assignments scheduled for Batch ${student.batch} yet.</td></tr>
+              ` : batchAssignments.map(meta => {
+                const sub = (student.assignments || []).find(a => a.assignmentId === meta.id);
+                if (sub) {
+                  const ev = evaluateSubmission(sub);
+                  return `
+                    <tr>
+                      <td style="white-space: nowrap;">
+                        <button class="btn btn-sm profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}" style="padding: 2px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;" title="Inspect ${meta.code} code & audit">
+                          ${meta.code}
+                        </button>
+                      </td>
+                      <td>
+                        <span class="profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}" style="font-weight: 700; cursor: pointer; text-decoration: underline;" title="Inspect ${meta.code}">
+                          ${meta.title}
+                        </span>
+                      </td>
+                      <td><span class="tag-plain">${ev.status}</span></td>
+                      <td style="font-size: 11px; color: var(--fg-muted);">${ev.submissionTime || "In-time"}</td>
+                      <td style="text-align: right; font-weight: 700;">
+                        ${ev.computedTotal.toFixed(2)} / ${meta.baseMax}
+                        <div style="font-size: 10px; font-weight: normal; color: var(--fg-muted);">${ev.computedPercentage}</div>
+                      </td>
+                      <td style="text-align: center;">
+                        <button class="btn btn-sm profile-inspect-btn" data-student="${student.id}" data-assign="${meta.id}">
+                          [Inspect Code]
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                } else {
+                  return `
+                    <tr style="opacity: 0.6; background: var(--bg-subtle);">
+                      <td style="white-space: nowrap;"><strong>${meta.code}</strong></td>
+                      <td>${meta.title}</td>
+                      <td><span style="font-size: 10px; color: var(--fg-muted);">Upcoming</span></td>
+                      <td>--</td>
+                      <td style="text-align: right; color: var(--fg-muted);">-- / ${meta.baseMax}</td>
+                      <td style="text-align: center; font-size: 10px; color: var(--fg-muted);">[Pending Release]</td>
+                    </tr>
+                  `;
+                }
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Classes Section -->
+      <div id="profileClassesSection" style="margin-bottom: 16px;">
+        <div style="margin: 8px 0;">
+          <h4 style="text-transform: uppercase; font-size: 12px; font-weight: 700;">Classes & Technical Workshops (${studentClasses.length} / ${batchClasses.length} Attended)</h4>
+          <p style="color: var(--fg-muted); font-size: 11px; margin-top: 2px;">
+            Hands-on classes & technical sessions for Batch ${student.batch}. 50.00 base participation points.
+          </p>
+        </div>
+
+        <div class="table-wrap" style="margin-top: 8px; margin-bottom: 0;">
+          <table class="score-detail-table">
+            <thead>
+              <tr>
+                <th style="width: 70px; white-space: nowrap;">Code</th>
+                <th>Workshop Title</th>
+                <th style="width: 90px;">Status</th>
+                <th style="width: 140px;">Date & Venue</th>
+                <th style="width: 110px; text-align: right;">Points</th>
+                <th style="width: 140px; text-align: center;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${batchClasses.length === 0 ? `
+                <tr><td colspan="6" style="text-align: center; color: var(--fg-muted); padding: 16px;">No classes scheduled for Batch ${student.batch} yet.</td></tr>
+              ` : batchClasses.map(cMeta => {
+                const attended = studentClasses.find(c => c.classId === cMeta.id);
+                if (attended) {
+                  return `
+                    <tr>
+                      <td style="white-space: nowrap;">
+                        <button class="btn btn-sm profile-class-btn" data-class="${cMeta.id}" style="padding: 2px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;" title="View ${cMeta.code} Details">
+                          ${cMeta.code}
+                        </button>
+                      </td>
+                      <td>
+                        <span class="profile-class-btn" data-class="${cMeta.id}" style="font-weight: 700; cursor: pointer; text-decoration: underline;">
+                          ${cMeta.title}
+                        </span>
+                        <div style="font-size: 10px; color: var(--fg-muted);">${escapeHtml(attended.remarks || "")}</div>
+                      </td>
+                      <td><span class="tag-plain" style="font-weight: 700;">${attended.status}</span></td>
+                      <td style="font-size: 11px; color: var(--fg-muted);">${cMeta.date}<br><span style="font-size: 10px;">${cMeta.venue}</span></td>
+                      <td style="text-align: right; font-weight: 700;">
+                        ${attended.totalPts.toFixed(2)} / 50.00
+                        <div style="font-size: 10px; font-weight: normal; color: var(--fg-muted);">Base Participation</div>
+                      </td>
+                      <td style="text-align: center;">
+                        <button class="btn btn-sm profile-class-btn" data-class="${cMeta.id}">
+                          [Class Details]
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                } else {
+                  return `
+                    <tr style="opacity: 0.6; background: var(--bg-subtle);">
+                      <td style="white-space: nowrap;"><strong>${cMeta.code}</strong></td>
+                      <td>${cMeta.title}</td>
+                      <td><span style="font-size: 10px; color: var(--fg-muted);">Absent</span></td>
+                      <td style="font-size: 11px; color: var(--fg-muted);">${cMeta.date}</td>
+                      <td style="text-align: right; color: var(--fg-muted);">0.00 / 50.00</td>
+                      <td style="text-align: center;">
+                        <button class="btn btn-sm profile-class-btn" data-class="${cMeta.id}">[Class Details]</button>
+                      </td>
+                    </tr>
+                  `;
+                }
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
       </div>
     `;
 
-    profileModalBody.querySelectorAll('.profile-inspect-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const sId = e.currentTarget.getAttribute('data-student');
-        const aId = e.currentTarget.getAttribute('data-assign');
-        profileModal.style.display = 'none';
+    // Filter tab button interaction
+    const filterBtns = profileModalBody.querySelectorAll(".profile-filter-btn");
+    const assignSection = profileModalBody.querySelector("#profileAssignmentsSection");
+    const classSection = profileModalBody.querySelector("#profileClassesSection");
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        filterBtns.forEach(b => b.classList.remove("active"));
+        e.currentTarget.classList.add("active");
+        const filterVal = e.currentTarget.getAttribute("data-filter");
+        if (filterVal === "assignments") {
+          if (assignSection) assignSection.style.display = "block";
+          if (classSection) classSection.style.display = "none";
+        } else if (filterVal === "classes") {
+          if (assignSection) assignSection.style.display = "none";
+          if (classSection) classSection.style.display = "block";
+        } else {
+          if (assignSection) assignSection.style.display = "block";
+          if (classSection) classSection.style.display = "block";
+        }
+      });
+    });
+
+    profileModalBody.querySelectorAll(".profile-inspect-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const sId = e.currentTarget.getAttribute("data-student");
+        const aId = e.currentTarget.getAttribute("data-assign");
+        profileModal.style.display = "none";
         openAssignmentAuditModal(sId, aId, true);
       });
     });
 
-    profileModal.style.display = 'flex';
+    profileModalBody.querySelectorAll(".profile-class-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const cId = e.currentTarget.getAttribute("data-class");
+        profileModal.style.display = "none";
+        openClassDetailsModal(cId, true, student.id);
+      });
+    });
+
+    profileModal.style.display = "flex";
   }
 
   // Open Assignment Audit Modal (Detailed task breakdown, code, transparency notes)
@@ -1144,6 +1407,143 @@ document.addEventListener('DOMContentLoaded', () => {
   profileModalCloseBtn.addEventListener('click', () => profileModal.style.display = 'none');
   profileModal.addEventListener('click', (e) => {
     if (e.target === profileModal) profileModal.style.display = 'none';
+  });
+
+  // Open Class Details Modal (Session recording, curriculum, and metadata)
+  function openClassDetailsModal(classId, fromProfile = false, fromStudentId = null) {
+    const classMeta = (HACK_DATA.classes || []).find(c => c.id === classId) || (HACK_DATA.classes && HACK_DATA.classes[0]);
+    if (!classMeta || !classDetailModal) return;
+
+    classModalTitle.textContent = `[${classMeta.code}] ${classMeta.title}`;
+
+    if (fromProfile) {
+      classModalBackBtn.style.display = "inline-block";
+      classModalBackBtn.onclick = () => {
+        classDetailModal.style.display = "none";
+        if (fromStudentId) openStudentProfileModal(fromStudentId);
+      };
+    } else {
+      classModalBackBtn.style.display = "none";
+    }
+
+    classModalBody.innerHTML = `
+      <div class="callout" style="background: var(--bg-subtle); border-left: 4px solid var(--border); margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <span class="badge badge-subagent">${classMeta.code}</span>
+            <div style="font-weight: 700; font-size: 14px; margin-top: 4px;">${escapeHtml(classMeta.title)}</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="badge" style="background: #000; color: #fff; font-weight: 700;">BASE AWARD: 50.00 PTS</span>
+            ${classMeta.repoUrl ? `<div style="margin-top: 6px;"><a href="${classMeta.repoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="font-size: 10px; font-weight: 700;">[GitHub RTOS Repo ↗]</a></div>` : ""}
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-light); font-size: 11px;">
+          <div><strong>DATE:</strong> ${classMeta.date}</div>
+          <div><strong>TIME:</strong> ${classMeta.time}</div>
+          <div><strong>VENUE:</strong> ${classMeta.venue}</div>
+          <div><strong>INSTRUCTORS:</strong> Tahmid Mahin (2K22), Isaac Aneek</div>
+        </div>
+      </div>
+
+      <div class="video-card" style="margin-bottom: 16px;">
+        <div class="video-header-bar">
+          <span>[SESSION RECORDING: ROS 2 SIMULATION & RTOS DEMO]</span>
+          <span style="color: var(--fg-muted); font-size: 10px;">FastStart H.264</span>
+        </div>
+        <div class="video-wrapper" style="position: relative; width: 100%; background: #000;">
+          <video id="modalVideoPlayer" controls preload="metadata" style="width: 100%; max-height: 380px; display: block; margin: 0 auto;">
+            <source src="${rootPath}media/classes/class-01/ROS.mp4" type="video/mp4">
+            Your browser does not support HTML5 video streaming.
+          </video>
+        </div>
+        <div class="video-footer-bar" style="padding: 8px 12px; background: var(--bg-subtle); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <span style="font-size: 10px; font-weight: 700; color: var(--fg-muted);">JUMP TO:</span>
+            <button class="btn btn-sm seek-pill" type="button" data-time="0" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[00:00] ROS 2 Simulation</button>
+            <button class="btn btn-sm seek-pill" type="button" data-time="68" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[01:08] Node Topics</button>
+            <button class="btn btn-sm seek-pill" type="button" data-time="132" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[02:12] RTOS Concurrency</button>
+          </div>
+          <div style="font-size: 10px; color: var(--fg-dim);">[Space: Play/Pause | M: Mute | F: Fullscreen]</div>
+        </div>
+      </div>
+
+      <div class="callout" style="background: var(--bg); font-size: 12px; line-height: 1.6;">
+        <h4 style="font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Curriculum & Technical Modules Overview</h4>
+        <div style="font-size: 11px; color: var(--fg);">
+          <div style="font-weight: 700; margin-top: 6px;">Module 1: ROS 2 Distributed Robotics Middleware (Tahmid Hossain Chowdhury Mahin, 2K22)</div>
+          <p style="color: var(--fg-muted); margin-bottom: 6px;">DDS decentralized node discovery, ament package architecture, publisher/subscriber QoS policies, and Gazebo HIL digital twin simulation.</p>
+          <div style="font-weight: 700; margin-top: 6px;">Module 2: RTOS on Embedded Silicon (Isaac Aneek Sarkar)</div>
+          <p style="color: var(--fg-muted); margin-bottom: 6px;">Microsecond determinism, Symmetric Multiprocessing (SMP) on dual-core MCUs, RMS preemptive priority scheduling vs cooperative task yielding, critical sections, semaphores/mutexes with priority inheritance, and secure boot chains.</p>
+        </div>
+      </div>
+    `;
+
+    classDetailModal.style.display = "flex";
+  }
+
+  if (classModalCloseBtn) {
+    classModalCloseBtn.addEventListener("click", () => classDetailModal.style.display = "none");
+  }
+  if (classDetailModal) {
+    classDetailModal.addEventListener("click", (e) => {
+      if (e.target === classDetailModal) classDetailModal.style.display = "none";
+    });
+  }
+  if (btnClassCurriculumModal) {
+    btnClassCurriculumModal.addEventListener("click", () => {
+      openClassDetailsModal(activeScope.startsWith("c") ? activeScope : "c1", false);
+    });
+  }
+
+  // Global seek-pill click listener (works across class page and modal)
+  document.addEventListener("click", (e) => {
+    const pill = e.target.closest(".seek-pill");
+    if (!pill) return;
+    const time = parseFloat(pill.getAttribute("data-time"));
+    if (isNaN(time)) return;
+
+    let video = pill.closest(".video-card") ? pill.closest(".video-card").querySelector("video") : null;
+    if (!video) {
+      video = document.getElementById("classVideoPlayer") || document.getElementById("modalVideoPlayer");
+    }
+    if (video) {
+      const applySeek = () => {
+        try {
+          video.currentTime = time;
+          video.play().catch(() => {});
+        } catch (err) {}
+      };
+      if (video.readyState >= 1) {
+        applySeek();
+      } else {
+        video.addEventListener("loadedmetadata", applySeek, { once: true });
+        video.addEventListener("canplay", applySeek, { once: true });
+        try { video.load(); } catch (err) {}
+        applySeek();
+      }
+    }
+  });
+
+  // Global video keyboard shortcuts (Space: play/pause, M: mute, F: fullscreen)
+  document.addEventListener("keydown", (e) => {
+    if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) return;
+    const activeVideo = document.getElementById("classVideoPlayer") || document.getElementById("modalVideoPlayer");
+    if (!activeVideo) return;
+
+    if (e.code === "Space") {
+      e.preventDefault();
+      if (activeVideo.paused) activeVideo.play().catch(() => {});
+      else activeVideo.pause();
+    } else if (e.code === "KeyM") {
+      activeVideo.muted = !activeVideo.muted;
+    } else if (e.code === "KeyF") {
+      if (!document.fullscreenElement) {
+        if (activeVideo.requestFullscreen) activeVideo.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
   });
 
   // Open Assignment-Specific Rubric Modal

@@ -1,70 +1,66 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const pug = require('pug');
+const fs = require("fs");
+const path = require("path");
+const pug = require("pug");
 
 const REPO_ROOT = __dirname;
-const TEMPLATES_DIR = path.join(REPO_ROOT, 'templates');
+const TEMPLATES_DIR = path.join(REPO_ROOT, "templates");
 
 // Load data.js
-const dataJsPath = path.join(REPO_ROOT, 'data.js');
+const dataJsPath = path.join(REPO_ROOT, "data.js");
 let hackData = null;
 
 if (fs.existsSync(dataJsPath)) {
-  const content = fs.readFileSync(dataJsPath, 'utf8');
+  const content = fs.readFileSync(dataJsPath, "utf8");
   // Extract JSON after "const HACK_DATA = "
   const match = content.match(/const\s+HACK_DATA\s*=\s*(\{[\s\S]*\});\s*$/);
   if (match) {
     try {
       hackData = JSON.parse(match[1]);
     } catch (e) {
-      console.error('Error parsing HACK_DATA from data.js:', e);
+      console.error("Error parsing HACK_DATA from data.js:", e);
     }
   }
 }
 
 if (!hackData) {
-  console.warn('Could not load data.js, using default fallback metadata.');
+  console.warn("Could not load data.js, using default fallback metadata.");
   hackData = {
-    system: { llmModel: 'Gemini 3.8 Flash (Medium)' },
-    batches: [{ id: '2k25', name: '2k25' }, { id: '2k24', name: '2k24' }, { id: '2k23', name: '2k23' }],
-    assignments: [
-      {
-        id: 'a1',
-        code: 'A-01',
-        title: 'Dual LED, Software PWM & Sonar',
-        llmModel: 'Gemini 3.8 Flash (Medium)',
-        question: ''
-      }
-    ]
+    system: { llmModel: "Gemini 3.8 Flash (Medium)" },
+    batches: [{ id: "2k25", name: "2k25" }, { id: "2k24", name: "2k24" }, { id: "2k23", name: "2k23" }],
+    assignments: [],
+    classes: []
   };
 }
 
-const batches = hackData.batches || [{ id: '2k25', name: '2k25' }];
+const batches = hackData.batches || [{ id: "2k25", name: "2k25" }];
 const assignments = hackData.assignments || [];
-const defaultModel = (hackData.system && hackData.system.llmModel) || 'Gemini 3.8 Flash (Medium)';
+const classes = hackData.classes || [];
+const defaultModel = (hackData.system && hackData.system.llmModel) || "Gemini 3.8 Flash (Medium)";
 
 // Compile Index (Cumulative View)
-const indexTemplate = path.join(TEMPLATES_DIR, 'index.pug');
+const indexTemplate = path.join(TEMPLATES_DIR, "index.pug");
 const indexHtml = pug.renderFile(indexTemplate, {
   pretty: true,
-  rootPath: '',
-  pageType: 'cumulative',
+  rootPath: "",
+  pageType: "cumulative",
   assignmentId: null,
-  pageTitle: 'HACK Technical Leaderboard | Hardware Acceleration Club of KUET',
+  classId: null,
+  pageTitle: "HACK Technical Leaderboard | Hardware Acceleration Club of KUET",
   batches: batches,
-  activeBatch: batches[0] ? batches[0].id : '2k25',
+  activeBatch: batches[0] ? batches[0].id : "2k25",
   assignments: assignments,
+  classes: classes,
   activeModel: defaultModel
 });
 
-fs.writeFileSync(path.join(REPO_ROOT, 'index.html'), indexHtml, 'utf8');
-console.log('✓ Compiled templates/index.pug -> index.html');
+fs.writeFileSync(path.join(REPO_ROOT, "index.html"), indexHtml, "utf8");
+console.log("✓ Compiled templates/index.pug -> index.html");
 
 // Compile each Assignment page (e.g. 2k25/a1.html)
-const assignmentTemplate = path.join(TEMPLATES_DIR, 'assignment.pug');
+const assignmentTemplate = path.join(TEMPLATES_DIR, "assignment.pug");
 assignments.forEach(a => {
-  const batchId = a.batch || '2k25';
+  const batchId = a.batch || "2k25";
   const batchDir = path.join(REPO_ROOT, batchId);
   if (!fs.existsSync(batchDir)) {
     fs.mkdirSync(batchDir, { recursive: true });
@@ -72,21 +68,22 @@ assignments.forEach(a => {
 
   const assignHtml = pug.renderFile(assignmentTemplate, {
     pretty: true,
-    rootPath: '../',
-    pageType: 'assignment',
+    rootPath: "../",
+    pageType: "assignment",
     assignmentId: a.id,
     assignmentCode: a.code,
     assignmentTitle: a.title,
-    questionText: a.question || '',
+    questionText: a.question || "",
     pageTitle: `${a.code}: ${a.title} | HACK KUET`,
     batches: batches,
     activeBatch: batchId,
     assignments: assignments,
+    classes: classes,
     activeModel: a.llmModel || defaultModel
   });
 
   const outFilePath = path.join(batchDir, `${a.id}.html`);
-  fs.writeFileSync(outFilePath, assignHtml, 'utf8');
+  fs.writeFileSync(outFilePath, assignHtml, "utf8");
   console.log(`✓ Compiled templates/assignment.pug -> ${batchId}/${a.id}.html`);
 
   // Remove legacy root-level assignment file if present
@@ -97,3 +94,36 @@ assignments.forEach(a => {
   }
 });
 
+// Compile each Class page (e.g. 2k23/c1.html, 2k24/c1.html)
+const classTemplate = path.join(TEMPLATES_DIR, "class.pug");
+classes.forEach(c => {
+  const batchId = c.batch || "2k23";
+  const batchDir = path.join(REPO_ROOT, batchId);
+  if (!fs.existsSync(batchDir)) {
+    fs.mkdirSync(batchDir, { recursive: true });
+  }
+
+  const classHtml = pug.renderFile(classTemplate, {
+    pretty: true,
+    rootPath: "../",
+    pageType: "class",
+    classId: c.id,
+    classCode: c.code,
+    classTitle: c.title,
+    classDate: c.date,
+    classTime: c.time,
+    classVenue: c.venue,
+    repoUrl: c.repoUrl,
+    videoUrl: c.videoUrl,
+    pageTitle: `${c.code}: ${c.title} | HACK KUET`,
+    batches: batches,
+    activeBatch: batchId,
+    assignments: assignments,
+    classes: classes,
+    activeModel: defaultModel
+  });
+
+  const outFilePath = path.join(batchDir, `${c.id}.html`);
+  fs.writeFileSync(outFilePath, classHtml, "utf8");
+  console.log(`✓ Compiled templates/class.pug -> ${batchId}/${c.id}.html`);
+});

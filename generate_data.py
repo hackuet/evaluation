@@ -161,6 +161,8 @@ def discover_assignments(batches):
             continue
 
         for folder in sorted(os.listdir(batch_path)):
+            if folder.startswith("class"):
+                continue
             assign_path = os.path.join(batch_path, folder)
             if not os.path.isdir(assign_path):
                 continue
@@ -251,11 +253,106 @@ def discover_assignments(batches):
         })
     return assignments
 
+
+def parse_class_md(path):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read()
+    except Exception as e:
+        print(f"Warning: could not read {path}: {e}")
+        return {}
+
+    code = "C-01"
+    m_code = re.search(r"-\s*\*\*Session Code\*\*:\s*`([^`]+)`", content)
+    if m_code: code = m_code.group(1).strip()
+
+    date = "2026-10-03"
+    m_date = re.search(r"-\s*\*\*Date\*\*:\s*`([^`]+)`", content)
+    if m_date: date = m_date.group(1).strip()
+
+    time = "4:00 PM – 7:00 PM"
+    m_time = re.search(r"-\s*\*\*Time\*\*:\s*`([^`]+)`", content)
+    if m_time: time = m_time.group(1).strip()
+
+    venue = "CSE D401, KUET"
+    m_venue = re.search(r"-\s*\*\*Venue\*\*:\s*`([^`]+)`", content)
+    if m_venue: venue = m_venue.group(1).strip()
+
+    title = "Technical Workshop"
+    m_title = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
+    if m_title: title = m_title.group(1).strip()
+
+    repo_url = ""
+    m_repo = re.search(r"-\s*\*\*Primary Source Code Repository\*\*:\s*\[([^\]]+)\]\(([^)]+)\)", content)
+    if m_repo: repo_url = m_repo.group(2).strip()
+
+    video_url = ""
+    m_vid = re.search(r"-\s*\*\*Demonstration Recording\*\*:\s*`([^`]+)`", content)
+    if m_vid: video_url = m_vid.group(1).strip()
+
+    return {
+        "code": code,
+        "title": title,
+        "date": date,
+        "time": time,
+        "venue": venue,
+        "repoUrl": repo_url,
+        "videoUrl": video_url,
+        "content": content
+    }
+
+def discover_classes(batches):
+    """Discover all class sessions across batch directories."""
+    classes = []
+    for b in batches:
+        batch_id = b["id"]
+        batch_path = os.path.join(REPO_ROOT, batch_id)
+        if not os.path.isdir(batch_path):
+            continue
+
+        for folder in sorted(os.listdir(batch_path)):
+            if not folder.startswith("class"):
+                continue
+            class_path = os.path.join(batch_path, folder)
+            if not os.path.isdir(class_path):
+                continue
+
+            class_md_path = os.path.join(class_path, "CLASS.md")
+            class_info = parse_class_md(class_md_path) if os.path.exists(class_md_path) else {}
+
+            num_match = re.search(r"\d+", folder)
+            class_num = num_match.group(0) if num_match else "1"
+            class_id = f"c{int(class_num)}"
+            class_code = class_info.get("code") or f"C-{int(class_num):02d}"
+
+            classes.append({
+                "id": class_id,
+                "folder": folder,
+                "code": class_code,
+                "batch": batch_id,
+                "title": class_info.get("title", f"Class {class_num}"),
+                "date": class_info.get("date", "2026-10-03"),
+                "time": class_info.get("time", "4:00 PM – 7:00 PM"),
+                "venue": class_info.get("venue", "CSE D401, KUET"),
+                "repoUrl": class_info.get("repoUrl", "https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main"),
+                "videoUrl": class_info.get("videoUrl", "media/classes/class-01/ROS.mp4"),
+                "content": class_info.get("content", ""),
+                "baseAward": 50.0
+            })
+    return classes
+
 def main():
     batches = discover_batches()
     assignments_meta = discover_assignments(batches)
+    classes_meta = discover_classes(batches)
 
     students_map = {}
+
+    def to_float(val, default=0.0):
+        try:
+            return float(val)
+        except:
+            return default
 
     # Read CSV files in all batch subdirectories
     for b in batches:
@@ -267,7 +364,59 @@ def main():
                 continue
 
             parts = csv_path.split(os.sep)
-            assign_folder = parts[-2]
+            folder_name = parts[-2]
+
+            # Differentiate Class vs Assignment
+            if folder_name.startswith("class") or basename == "attendance.csv":
+                class_meta = next((c for c in classes_meta if c["batch"] == batch_id and c["folder"] == folder_name), None)
+                if not class_meta:
+                    continue
+
+                with open(csv_path, "r", encoding="utf-8") as fp:
+                    reader = csv.DictReader(fp)
+                    for row in reader:
+                        roll = row.get("roll", "").strip()
+                        if not roll:
+                            continue
+                        row_batch = row.get("batch", batch_id).strip() or batch_id
+                        status = row.get("status", "Present").strip()
+                        att_pts = to_float(row.get("attendance_pts"), 50.0)
+                        quiz_pts = to_float(row.get("quiz_pts"), 0.0)
+                        bonus_pts = to_float(row.get("bonus_pts"), 0.0)
+                        tot_pts = to_float(row.get("total_pts"), att_pts + quiz_pts + bonus_pts)
+                        remarks = row.get("remarks", "Attended class session").strip()
+
+                        if roll not in students_map:
+                            students_map[roll] = {
+                                "id": roll,
+                                "roll": roll,
+                                "batch": row_batch,
+                                "assignments": [],
+                                "classes": []
+                            }
+                        if "classes" not in students_map[roll]:
+                            students_map[roll]["classes"] = []
+
+                        # Avoid duplicate class entries
+                        if not any(c["classId"] == class_meta["id"] for c in students_map[roll]["classes"]):
+                            students_map[roll]["classes"].append({
+                                "classId": class_meta["id"],
+                                "code": class_meta["code"],
+                                "title": class_meta["title"],
+                                "status": status,
+                                "date": class_meta["date"],
+                                "time": class_meta["time"],
+                                "venue": class_meta["venue"],
+                                "attendancePts": att_pts,
+                                "quizPts": quiz_pts,
+                                "bonusPts": bonus_pts,
+                                "totalPts": tot_pts,
+                                "remarks": remarks
+                            })
+                continue
+
+            # Standard Assignment Processing
+            assign_folder = folder_name
             assign_meta = next((a for a in assignments_meta if a["batch"] == batch_id and a["folder"] == assign_folder), None)
             assign_id = assign_meta["id"] if assign_meta else ("a1" if "1" in assign_folder else assign_folder)
 
@@ -284,12 +433,6 @@ def main():
                     drive_link = row.get("drive_link", "").strip()
                     inst_note = row.get("instructor_note", "").strip()
                     std_comment = row.get("student_comment", "").strip()
-
-                    def to_float(val, default=0.0):
-                        try:
-                            return float(val)
-                        except:
-                            return default
 
                     part = to_float(row.get("participation"), 55.0)
                     in_time = to_float(row.get("in_time"), 15.0)
@@ -348,7 +491,8 @@ def main():
                             "id": roll,
                             "roll": roll,
                             "batch": row_batch,
-                            "assignments": []
+                            "assignments": [],
+                            "classes": []
                         }
 
                     students_map[roll]["assignments"].append({
@@ -364,6 +508,11 @@ def main():
                         "codeFiles": code_files
                     })
 
+    # Ensure all students have both assignments and classes arrays initialized
+    for s in students_map.values():
+        if "assignments" not in s: s["assignments"] = []
+        if "classes" not in s: s["classes"] = []
+
     out_data = {
         "system": {
             "name": "HACK Elo Rating Board",
@@ -373,6 +522,7 @@ def main():
         },
         "batches": batches,
         "assignments": assignments_meta,
+        "classes": classes_meta,
         "students": list(students_map.values())
     }
 

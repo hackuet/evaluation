@@ -15,7 +15,7 @@ html(lang="en")
       .audit-md-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 11px; }
       .audit-md-table th, .audit-md-table td { border: 1px solid #cccccc; padding: 6px 10px; text-align: left; }
       .audit-md-table th { background: #f0f0f0; font-weight: 700; }
-  body(data-page=pageType data-assignment-id=assignmentId data-root-path=(rootPath || ''))
+  body(data-page=pageType data-assignment-id=assignmentId data-class-id=classId data-root-path=(rootPath || ''))
     .container
       include ../partials/header.pug
       include ../partials/nav.pug

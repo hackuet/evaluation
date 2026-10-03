@@ -72,3 +72,14 @@
       button.modal-close#rubricCloseBtn [X]
     .modal-content-area#rubricModalContent
       // Dynamically rendered
+
+// Class Details Modal
+.modal-overlay#classDetailModal(style="display: none;")
+  .modal-window
+    .modal-header-bar
+      div(style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;")
+        button.btn.btn-sm#classModalBackBtn(style="display: none; flex-shrink: 0;") [< Back]
+        h2#classModalTitle(style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;") Workshop Details & Session Recording
+      button.modal-close#classModalCloseBtn [X]
+    .modal-content-area#classModalBody
+      // Dynamically populated by app.js
