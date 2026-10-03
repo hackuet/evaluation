@@ -1437,7 +1437,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <div><strong>TIME:</strong> ${classMeta.time}</div>
           <div><strong>VENUE:</strong> ${classMeta.venue}</div>
           <div><strong>INSTRUCTORS:</strong> Tahmid Hossain Chowdhury Mahin (2K22), Isaac Aneek Sarkar</div>
-          <div><strong>VOLUNTEER:</strong> Saleh Sadid Mir</div>
         </div>
       </div>
 
@@ -1492,6 +1491,17 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="font-size: 10px; color: var(--fg-dim);">[Space: Play/Pause | M: Mute | F: Fullscreen]</div>
           </div>
         </div>
+
+        <!-- Session Volunteers (Collapsed at the end) -->
+        <details class="callout" style="margin-top: 14px; background: var(--bg-alt); border: 1px dashed var(--border); padding: 0;">
+          <summary style="padding: 8px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+            <span>VOLUNTEER & SESSION SUPPORT</span>
+            <span style="font-size: 10px; color: var(--fg-muted); font-family: var(--font-mono);">[Click to toggle]</span>
+          </summary>
+          <div style="padding: 10px 12px; border-top: 1px dashed var(--border-light); font-size: 11px;">
+            <strong style="color: var(--fg-dim);">VOLUNTEER:</strong> <span>Saleh Sadid Mir</span>
+          </div>
+        </details>
       </div>
     `;
 
