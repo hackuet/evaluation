@@ -13,7 +13,7 @@ A lightweight, monotonic, CSV-driven technical rating board and evaluation platf
   - **Cumulative Overall View**: Global rankings across all assignments.
   - **Assignment Details View**: Itemized task breakdowns, microsecond timing checks, and collapsible instructor transparency notes.
 - **Hybrid Scoring Formula**:
-  $$\text{Task \& Bonus Final Mark} = (\text{Instructor Mark} \times 0.6) + (\text{LLM Subagent Mark} \times 0.4)$$
+  $$\text{Task and Bonus Final Mark} = (\text{Instructor Mark} \times 0.6) + (\text{LLM Subagent Mark} \times 0.4)$$
   Evaluator LLM: **Gemini 3.8 Flash (Medium Thinking)**.
 - **Automatic Rank Calculation**: Ranks are computed dynamically in real time without hardcoding.
 - **Auditing & Code Inspection**: Embedded terminal-style code viewer for submitted sketches with zero external build dependencies.

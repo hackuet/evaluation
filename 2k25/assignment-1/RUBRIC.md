@@ -6,7 +6,7 @@
 - **Bonus Score (Optional Pool)**: **+75 Marks** (Awarded on top of base score)
 - **Maximum Possible Score**: **225 Marks**
 - **Hybrid Scoring Formula**:
-  $$\text{Task \& Bonus Final Mark} = (\text{Instructor Mark} \times 0.6) + (\text{LLM Subagent Mark} \times 0.4)$$
+  $$\text{Task and Bonus Final Mark} = (\text{Instructor Mark} \times 0.6) + (\text{LLM Subagent Mark} \times 0.4)$$
 - **Objective Code Evaluation Principle**: Code is evaluated strictly on implementation, functionality, hardware optimization, and concurrency without being biased or excused by students' submission notes.
 
 ---

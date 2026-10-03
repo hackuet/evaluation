@@ -34,3 +34,7 @@ node_modules/
 package-lock.json
 package.json
 mobile_test.png
+
+# Local MCP Tools & Artifacts
+artifacts/
+inkscape-mcp/
