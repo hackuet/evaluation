@@ -31,6 +31,7 @@ A lightweight, monotonic, CSV-driven technical rating board and evaluation platf
 ├── generate_data.py         # Data compiler script
 └── 2k25/
     ├── template.csv         # Starter CSV template for future assignments
+    ├── a1.html              # Dedicated Assignment 1 page with distinct URL
     └── assignment-1/
         ├── assignment-1.csv # Editable CSV with human marks and comments (same folder!)
         ├── QUESTION.md      # Original assignment prompt and guidelines

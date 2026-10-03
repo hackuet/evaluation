@@ -6,7 +6,7 @@ html(lang="en")
     title= pageTitle || "HACK Technical Leaderboard | Hardware Acceleration Club of KUET"
     link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap")
     link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css")
-    link(rel="stylesheet" href="style.css?v=4")
+    link(rel="stylesheet" href=`${rootPath || ''}style.css?v=4`)
     script(src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js")
     style.
       svg.chip-icon { width: 36px !important; height: 36px !important; min-width: 36px !important; min-height: 36px !important; max-width: 36px !important; max-height: 36px !important; display: block !important; flex-shrink: 0 !important; }
@@ -15,7 +15,7 @@ html(lang="en")
       .audit-md-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 11px; }
       .audit-md-table th, .audit-md-table td { border: 1px solid #cccccc; padding: 6px 10px; text-align: left; }
       .audit-md-table th { background: #f0f0f0; font-weight: 700; }
-  body(data-page=pageType data-assignment-id=assignmentId)
+  body(data-page=pageType data-assignment-id=assignmentId data-root-path=(rootPath || ''))
     .container
       include ../partials/header.pug
       include ../partials/nav.pug
@@ -26,5 +26,6 @@ html(lang="en")
 
     include ../partials/modals.pug
 
-    script(src="data.js?v=4")
-    script(src="app.js?v=4")
+    script(src=`${rootPath || ''}data.js?v=4`)
+    script(src=`${rootPath || ''}app.js?v=4`)
+

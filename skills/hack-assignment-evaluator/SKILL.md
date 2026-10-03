@@ -123,11 +123,11 @@ After populating submissions, running audits, and updating the assignment CSV:
    ```bash
    python3 generate_data.py
    ```
-   This compiles `data.js`, `index.html` (cumulative leaderboard), and `<assignmentId>.html` (dedicated assignment page with distinct URL).
+   This compiles `data.js`, `index.html` (cumulative leaderboard), and `<batch>/<assignmentId>.html` (dedicated assignment page with distinct URL, e.g. `2k25/a1.html`).
 
 2. **Verify Privacy Mandate**:
    ```bash
-   rg -i "mail|[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+" 2k*/ data.js index.html *.html
+   rg -i "mail|[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+" 2k*/ data.js index.html
    ```
    Must return zero occurrences of email addresses or names.
 
@@ -135,7 +135,7 @@ After populating submissions, running audits, and updating the assignment CSV:
    - Confirm local server is running on port 8080 (`python3 -m http.server 8080`).
    - Run Playwright test script to verify:
      - `index.html` loads cumulative leaderboard.
-     - `a1.html` loads Assignment 1 directly with problem statement.
+     - `2k25/a1.html` loads Assignment 1 directly with problem statement.
      - Scorecard table displays per-task LLM reasoning.
      - AI Subagent Audit tab renders the student's markdown report.
 

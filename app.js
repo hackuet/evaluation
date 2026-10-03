@@ -7,9 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
   let searchQuery = '';
   let statusFilter = 'all';
 
+  const rootPath = (document.body && document.body.getAttribute('data-root-path')) || '';
+
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('batch')) {
     activeBatch = urlParams.get('batch');
+  } else {
+    const batchMatch = window.location.pathname.match(/\/(\d+k\d+)\//);
+    if (batchMatch) {
+      activeBatch = batchMatch[1];
+    }
   }
 
   // Detect initial scope from body attributes or URL parameters
@@ -59,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     assignmentSelect.innerHTML = '';
     
     const cumOpt = document.createElement('option');
-    cumOpt.value = 'index.html';
+    cumOpt.value = `${rootPath}index.html`;
     cumOpt.setAttribute('data-scope', 'all');
     cumOpt.textContent = 'CUMULATIVE (ALL ROUNDS)';
     if (activeScope === 'all') cumOpt.selected = true;
@@ -67,9 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     batchAssignments.forEach(a => {
       const opt = document.createElement('option');
-      opt.value = `${a.id}.html`;
+      const aBatch = a.batch || activeBatch;
+      opt.value = `${rootPath}${aBatch}/${a.id}.html`;
       opt.setAttribute('data-scope', a.id);
-      opt.setAttribute('data-batch', a.batch || activeBatch);
+      opt.setAttribute('data-batch', aBatch);
       const cleanTitle = (a.title || '').replace(/^Assignment\s*\d+:\s*/i, '');
       opt.textContent = `${a.code}: ${cleanTitle.toUpperCase()}`;
       if (activeScope === a.id) opt.selected = true;
@@ -83,9 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const bId = e.currentTarget.getAttribute('data-batch');
         if (!bId) return;
         const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-        if (currentPath !== 'index.html' && currentPath !== '') {
-          // If on a specific assignment page, always navigate to cumulative index.html for the selected batch
-          window.location.href = `index.html?batch=${encodeURIComponent(bId)}`;
+        const isCumulative = (pageType === 'cumulative') || (currentPath === 'index.html' || currentPath === '');
+        if (!isCumulative) {
+          // If on a specific assignment page inside a batch folder, navigate to cumulative index.html for the selected batch
+          window.location.href = `${rootPath}index.html?batch=${encodeURIComponent(bId)}`;
           return;
         }
         if (bId === activeBatch) return;
@@ -857,13 +866,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Quick switch to assignment scope when clicking [Select A-01]
+    // Quick switch to assignment scope when clicking [A1 #1]
     document.querySelectorAll('.switch-scope-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const assignId = e.currentTarget.getAttribute('data-assign');
-        activeScope = assignId;
-        assignmentSelect.value = assignId;
-        render();
+        const assignMeta = HACK_DATA.assignments.find(a => a.id === assignId);
+        const aBatch = (assignMeta && assignMeta.batch) || activeBatch;
+        window.location.href = `${rootPath}${aBatch}/${assignId}.html`;
       });
     });
   }
@@ -1295,10 +1304,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (assignmentSelect) {
     assignmentSelect.addEventListener('change', (e) => {
       const selectedVal = e.target.value;
-      const targetPage = selectedVal.includes('.html') ? selectedVal : (selectedVal === 'all' ? 'index.html' : `${selectedVal}.html`);
-      const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-      if (currentPath === targetPage) return;
-      window.location.href = `${targetPage}?batch=${encodeURIComponent(activeBatch)}`;
+      if (!selectedVal) return;
+      window.location.href = selectedVal;
     });
   }
 

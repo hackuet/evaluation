@@ -6,9 +6,11 @@ nav.assignment-nav#assignmentNav
           button.btn.btn-sm.batch-btn(type="button" data-batch=b.id class=(b.id === activeBatch ? 'active' : ''))= b.id.toUpperCase()
     .assignment-select-wrap
       select.nav-select#assignmentSelect(aria-label="Select Assignment")
-        option(value="index.html" data-scope="all" selected=(pageType === 'cumulative')) CUMULATIVE (ALL ROUNDS)
+        option(value=`${rootPath || ''}index.html` data-scope="all" selected=(pageType === 'cumulative')) CUMULATIVE (ALL ROUNDS)
         each a in (assignments || []).filter(a => !activeBatch || !a.batch || a.batch === activeBatch)
-          option(value=`${a.id}.html` data-scope=a.id data-batch=a.batch selected=(assignmentId === a.id))= `${a.code}: ${a.title.replace(/^Assignment\s*\d+:\s*/i, '').toUpperCase()}`
+          - const aBatch = a.batch || '2k25'
+          - const aPath = `${rootPath || ''}${aBatch}/${a.id}.html`
+          option(value=aPath data-scope=a.id data-batch=aBatch selected=(assignmentId === a.id))= `${a.code}: ${a.title.replace(/^Assignment\s*\d+:\s*/i, '').toUpperCase()}`
   .nav-controls-right#navBadges
     if pageType === 'assignment'
       span.badge.badge-subagent#headerModelBadge= "EVALUATOR : " + (activeModel || "Gemini 3.8 Flash (Medium)")

@@ -48,6 +48,7 @@ const defaultModel = (hackData.system && hackData.system.llmModel) || 'Gemini 3.
 const indexTemplate = path.join(TEMPLATES_DIR, 'index.pug');
 const indexHtml = pug.renderFile(indexTemplate, {
   pretty: true,
+  rootPath: '',
   pageType: 'cumulative',
   assignmentId: null,
   pageTitle: 'HACK Technical Leaderboard | Hardware Acceleration Club of KUET',
@@ -60,11 +61,18 @@ const indexHtml = pug.renderFile(indexTemplate, {
 fs.writeFileSync(path.join(REPO_ROOT, 'index.html'), indexHtml, 'utf8');
 console.log('✓ Compiled templates/index.pug -> index.html');
 
-// Compile each Assignment page (e.g. a1.html)
+// Compile each Assignment page (e.g. 2k25/a1.html)
 const assignmentTemplate = path.join(TEMPLATES_DIR, 'assignment.pug');
 assignments.forEach(a => {
+  const batchId = a.batch || '2k25';
+  const batchDir = path.join(REPO_ROOT, batchId);
+  if (!fs.existsSync(batchDir)) {
+    fs.mkdirSync(batchDir, { recursive: true });
+  }
+
   const assignHtml = pug.renderFile(assignmentTemplate, {
     pretty: true,
+    rootPath: '../',
     pageType: 'assignment',
     assignmentId: a.id,
     assignmentCode: a.code,
@@ -72,12 +80,20 @@ assignments.forEach(a => {
     questionText: a.question || '',
     pageTitle: `${a.code}: ${a.title} | HACK KUET`,
     batches: batches,
-    activeBatch: a.batch || '2k25',
+    activeBatch: batchId,
     assignments: assignments,
     activeModel: a.llmModel || defaultModel
   });
 
-  const outFileName = `${a.id}.html`;
-  fs.writeFileSync(path.join(REPO_ROOT, outFileName), assignHtml, 'utf8');
-  console.log(`✓ Compiled templates/assignment.pug -> ${outFileName}`);
+  const outFilePath = path.join(batchDir, `${a.id}.html`);
+  fs.writeFileSync(outFilePath, assignHtml, 'utf8');
+  console.log(`✓ Compiled templates/assignment.pug -> ${batchId}/${a.id}.html`);
+
+  // Remove legacy root-level assignment file if present
+  const rootOldFile = path.join(REPO_ROOT, `${a.id}.html`);
+  if (fs.existsSync(rootOldFile)) {
+    fs.unlinkSync(rootOldFile);
+    console.log(`✓ Removed legacy root assignment file: ${a.id}.html`);
+  }
 });
+
