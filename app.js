@@ -577,6 +577,63 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  // Helper: Compute full cumulative model across all assignments and workshops for a student
+  function getStudentCumulativeModel(student) {
+    if (!student) return { cumulativeScore: 0, evaluatedCount: 0, assignmentSummaries: [], classSummaries: [] };
+    const assignments = Array.isArray(student.assignments) ? student.assignments : [];
+    const classes = Array.isArray(student.classes) ? student.classes : [];
+
+    let cumTotal = 0;
+    let evaluatedCount = 0;
+    let lastStatus = 'Evaluated';
+    const assignmentSummaries = [];
+    const classSummaries = [];
+
+    assignments.forEach(a => {
+      const ev = evaluateSubmission(a);
+      if (ev) {
+        cumTotal += ev.computedTotal;
+        evaluatedCount++;
+        if (ev.status === 'Pending Drive Access') lastStatus = ev.status;
+        const meta = (HACK_DATA.assignments || []).find(metaA => metaA.id === a.assignmentId) || {};
+        assignmentSummaries.push({
+          id: a.assignmentId,
+          code: meta.code || a.assignmentId.toUpperCase(),
+          title: meta.title || 'Assignment',
+          baseMax: meta.baseMax || 150,
+          score: ev.computedTotal,
+          percentage: ev.computedPercentage,
+          status: ev.status,
+          submissionTime: ev.submissionTime
+        });
+      }
+    });
+
+    classes.forEach(c => {
+      cumTotal += (c.totalPts || 0);
+      classSummaries.push({
+        id: c.classId,
+        code: c.code || 'C-01',
+        title: c.title || 'Technical Workshop',
+        status: c.status || 'Present',
+        score: c.totalPts || 50.0,
+        date: c.date,
+        venue: c.venue
+      });
+    });
+
+    return {
+      isCumulative: true,
+      cumulativeScore: Math.round(cumTotal * 100) / 100,
+      evaluatedCount: evaluatedCount,
+      assignmentSummaries: assignmentSummaries,
+      classSummaries: classSummaries,
+      classesCount: classes.length,
+      status: assignments.length > 0 ? lastStatus : (classes.length > 0 ? 'Present' : 'Enrolled'),
+      primarySubmission: assignments.length > 0 ? evaluateSubmission(assignments[0]) : null
+    };
+  }
+
   // Get student's score model for active scope
   function getStudentScoreModel(student) {
     if (!student) return null;
@@ -586,56 +643,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isClassScope = (HACK_DATA.classes || []).some(c => c.id === activeScope) || activeScope.startsWith('c');
 
     if (activeScope === 'all') {
-      // Cumulative View: Sum across all completed assignments + classes
-      let cumTotal = 0;
-      let evaluatedCount = 0;
-      let lastStatus = 'Evaluated';
-      const assignmentSummaries = [];
-      const classSummaries = [];
-
-      assignments.forEach(a => {
-        const ev = evaluateSubmission(a);
-        if (ev) {
-          cumTotal += ev.computedTotal;
-          evaluatedCount++;
-          if (ev.status === 'Pending Drive Access') lastStatus = ev.status;
-          const meta = (HACK_DATA.assignments || []).find(metaA => metaA.id === a.assignmentId) || {};
-          assignmentSummaries.push({
-            id: a.assignmentId,
-            code: meta.code || a.assignmentId.toUpperCase(),
-            title: meta.title || 'Assignment',
-            baseMax: meta.baseMax || 150,
-            score: ev.computedTotal,
-            percentage: ev.computedPercentage,
-            status: ev.status,
-            submissionTime: ev.submissionTime
-          });
-        }
-      });
-
-      classes.forEach(c => {
-        cumTotal += (c.totalPts || 0);
-        classSummaries.push({
-          id: c.classId,
-          code: c.code || 'C-01',
-          title: c.title || 'Technical Workshop',
-          status: c.status || 'Present',
-          score: c.totalPts || 50.0,
-          date: c.date,
-          venue: c.venue
-        });
-      });
-
-      return {
-        isCumulative: true,
-        cumulativeScore: Math.round(cumTotal * 100) / 100,
-        evaluatedCount: evaluatedCount,
-        assignmentSummaries: assignmentSummaries,
-        classSummaries: classSummaries,
-        classesCount: classes.length,
-        status: assignments.length > 0 ? lastStatus : (classes.length > 0 ? 'Present' : 'Enrolled'),
-        primarySubmission: assignments.length > 0 ? evaluateSubmission(assignments[0]) : null
-      };
+      return getStudentCumulativeModel(student);
     } else if (isClassScope) {
       // Single Class Scope View
       const foundClass = classes.find(c => c.classId === activeScope);
@@ -1026,7 +1034,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const student = HACK_DATA.students.find(s => s.id === studentId);
     if (!student) return;
 
-    const sm = getStudentScoreModel(student);
+    const sm = getStudentCumulativeModel(student);
     const batchAssignments = (HACK_DATA.assignments || []).filter(a => a.batch === student.batch);
     const batchClasses = (HACK_DATA.classes || []).filter(c => c.batch === student.batch);
     const studentClasses = student.classes || [];
@@ -1440,70 +1448,111 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
 
-      <div class="callout" style="background: var(--bg); font-size: 12px; line-height: 1.6; margin-bottom: 16px; padding: 14px;">
-        <h4 style="font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--border-light); padding-bottom: 6px;">Workshop Curriculum & Technical Modules</h4>
-        <div style="font-size: 11px; color: var(--fg);">
-          <div style="font-weight: 700; margin-top: 6px;">Module 1: ROS 2 Distributed Robotics Middleware (Tahmid Hossain Chowdhury Mahin, 2K22)</div>
-          <p style="color: var(--fg-muted); margin-bottom: 8px;">DDS decentralized node discovery, ament package architecture, publisher/subscriber QoS policies, and Gazebo HIL digital twin simulation.</p>
-          
-          <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-            <div>
-              <strong style="font-size: 11px;">ASSIGNMENT SUBMISSION:</strong>
-              <span style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;">Hands-on Lab Challenge & Code Submission</span>
+      <!-- Workshop Submenus / Tabs -->
+      <div class="class-submenus">
+        <button class="btn btn-sm class-tab-btn class-modal-tab-btn active" type="button" data-tab="curriculum">Session & Curriculum</button>
+        <button class="btn btn-sm class-tab-btn class-modal-tab-btn" type="button" data-tab="quiz-bonus">Quiz & Bonus Challenges</button>
+      </div>
+
+      <!-- Tab 1: Curriculum Content -->
+      <div id="modalCurriculumTabContent" style="display: block;">
+        <div class="callout" style="background: var(--bg); font-size: 12px; line-height: 1.6; margin-bottom: 16px; padding: 14px;">
+          <h4 style="font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--border-light); padding-bottom: 6px;">Workshop Curriculum & Technical Modules</h4>
+          <div style="font-size: 11px; color: var(--fg);">
+            <div style="font-weight: 700; margin-top: 6px;">Module 1: ROS 2 Distributed Robotics Middleware (Tahmid Hossain Chowdhury Mahin, 2K22)</div>
+            <p style="color: var(--fg-muted); margin-bottom: 8px;">DDS decentralized node discovery, ament package architecture, publisher/subscriber QoS policies, and Gazebo HIL digital twin simulation.</p>
+            
+            <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: gap: 8px;">
+              <div>
+                <strong style="font-size: 11px;">ASSIGNMENT SUBMISSION:</strong>
+                <span style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;">Hands-on Lab Challenge & Code Submission</span>
+              </div>
+              <span class="badge" style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;">[NOT PUBLISHED]</span>
             </div>
-            <span class="badge" style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;">[NOT PUBLISHED]</span>
+
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+              <span style="font-weight: 700;">Module 2: RTOS on Embedded Silicon (Isaac Aneek Sarkar)</span>
+              ${classMeta.repoUrl ? `<a href="${classMeta.repoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="font-size: 10px; font-weight: 700; padding: 2px 6px;">[GitHub RTOS Repo ↗]</a>` : ""}
+            </div>
+            <p style="color: var(--fg-muted); margin-bottom: 8px;">Microsecond determinism, Symmetric Multiprocessing (SMP) on dual-core MCUs, RMS preemptive priority scheduling vs cooperative task yielding, critical sections, semaphores/mutexes with priority inheritance, and secure boot chains.</p>
+
+            <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <strong style="font-size: 11px;">ASSIGNMENT SUBMISSION:</strong>
+                <span style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;">Hands-on Lab Challenge & Code Submission</span>
+              </div>
+              <span class="badge" style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;">[NOT PUBLISHED]</span>
+            </div>
           </div>
 
-          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
-            <span style="font-weight: 700;">Module 2: RTOS on Embedded Silicon (Isaac Aneek Sarkar)</span>
-            ${classMeta.repoUrl ? `<a href="${classMeta.repoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="font-size: 10px; font-weight: 700; padding: 2px 6px;">[GitHub RTOS Repo ↗]</a>` : ""}
-          </div>
-          <p style="color: var(--fg-muted); margin-bottom: 8px;">Microsecond determinism, Symmetric Multiprocessing (SMP) on dual-core MCUs, RMS preemptive priority scheduling vs cooperative task yielding, critical sections, semaphores/mutexes with priority inheritance, and secure boot chains.</p>
-
-          <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-            <div>
-              <strong style="font-size: 11px;">ASSIGNMENT SUBMISSION:</strong>
-              <span style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;">Hands-on Lab Challenge & Code Submission</span>
+          <!-- Session Recording Video Container (Inside Curriculum Section, After Modules) -->
+          <div class="video-card" style="margin-top: 14px;">
+            <div class="video-header-bar">
+              <span>[SESSION RECORDING: ROS 2 SIMULATION & RTOS DEMO]</span>
+              <span style="color: var(--fg-muted); font-size: 10px;">FastStart H.264</span>
             </div>
-            <span class="badge" style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;">[NOT PUBLISHED]</span>
+            <div class="video-wrapper" style="position: relative; width: 100%; background: #000;">
+              <video id="modalVideoPlayer" controls preload="metadata" style="width: 100%; max-height: 380px; display: block; margin: 0 auto;">
+                <source src="${rootPath}media/classes/class-01/ROS.mp4" type="video/mp4">
+                Your browser does not support HTML5 video streaming.
+              </video>
+            </div>
+            <div class="video-footer-bar" style="padding: 8px 12px; background: var(--bg-subtle); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span style="font-size: 10px; font-weight: 700; color: var(--fg-muted);">JUMP TO:</span>
+                <button class="btn btn-sm seek-pill" type="button" data-time="0" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[00:00] ROS 2 Simulation</button>
+                <button class="btn btn-sm seek-pill" type="button" data-time="68" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[01:08] Node Topics</button>
+                <button class="btn btn-sm seek-pill" type="button" data-time="132" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[02:12] RTOS Concurrency</button>
+              </div>
+              <div style="font-size: 10px; color: var(--fg-dim);">[Space: Play/Pause | M: Mute | F: Fullscreen]</div>
+            </div>
+          </div>
+
+          <!-- Session Volunteers (Collapsed at the end) -->
+          <details class="callout" style="margin-top: 14px; background: var(--bg-alt); border: 1px dashed var(--border); padding: 0;">
+            <summary style="padding: 8px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+              <span>VOLUNTEER & SESSION SUPPORT</span>
+              <span style="font-size: 10px; color: var(--fg-muted); font-family: var(--font-mono);">[Click to toggle]</span>
+            </summary>
+            <div style="padding: 10px 12px; border-top: 1px dashed var(--border-light); font-size: 11px;">
+              <strong style="color: var(--fg-dim);">VOLUNTEER:</strong> <span>Saleh Sadid Mir</span>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Tab 2: Quiz & Bonus Content (Reserved / Empty for this class) -->
+      <div id="modalQuizBonusTabContent" style="display: none;">
+        <div class="callout" style="padding: 24px; text-align: center; background: var(--bg-subtle); border: 1px dashed var(--border); margin-bottom: 16px;">
+          <div style="font-weight: 700; font-size: 13px; text-transform: uppercase; margin-bottom: 6px;">[QUIZ & BONUS POOL: NOT SCHEDULED]</div>
+          <p style="font-size: 12px; color: var(--fg-muted); max-width: 520px; margin: 0 auto; line-height: 1.5;">
+            No live quizzes or interactive bonus problem sets were scheduled for this introductory workshop session. All 50.00 base participation points were awarded for verified session attendance.
+          </p>
+          <div style="margin-top: 14px;">
+            <span class="badge" style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;">STATUS: EMPTY (0 PTS ASSIGNED)</span>
           </div>
         </div>
-
-        <!-- Session Recording Video Container (Inside Curriculum Section, After Modules) -->
-        <div class="video-card" style="margin-top: 14px;">
-          <div class="video-header-bar">
-            <span>[SESSION RECORDING: ROS 2 SIMULATION & RTOS DEMO]</span>
-            <span style="color: var(--fg-muted); font-size: 10px;">FastStart H.264</span>
-          </div>
-          <div class="video-wrapper" style="position: relative; width: 100%; background: #000;">
-            <video id="modalVideoPlayer" controls preload="metadata" style="width: 100%; max-height: 380px; display: block; margin: 0 auto;">
-              <source src="${rootPath}media/classes/class-01/ROS.mp4" type="video/mp4">
-              Your browser does not support HTML5 video streaming.
-            </video>
-          </div>
-          <div class="video-footer-bar" style="padding: 8px 12px; background: var(--bg-subtle); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-              <span style="font-size: 10px; font-weight: 700; color: var(--fg-muted);">JUMP TO:</span>
-              <button class="btn btn-sm seek-pill" type="button" data-time="0" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[00:00] ROS 2 Simulation</button>
-              <button class="btn btn-sm seek-pill" type="button" data-time="68" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[01:08] Node Topics</button>
-              <button class="btn btn-sm seek-pill" type="button" data-time="132" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[02:12] RTOS Concurrency</button>
-            </div>
-            <div style="font-size: 10px; color: var(--fg-dim);">[Space: Play/Pause | M: Mute | F: Fullscreen]</div>
-          </div>
-        </div>
-
-        <!-- Session Volunteers (Collapsed at the end) -->
-        <details class="callout" style="margin-top: 14px; background: var(--bg-alt); border: 1px dashed var(--border); padding: 0;">
-          <summary style="padding: 8px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;">
-            <span>VOLUNTEER & SESSION SUPPORT</span>
-            <span style="font-size: 10px; color: var(--fg-muted); font-family: var(--font-mono);">[Click to toggle]</span>
-          </summary>
-          <div style="padding: 10px 12px; border-top: 1px dashed var(--border-light); font-size: 11px;">
-            <strong style="color: var(--fg-dim);">VOLUNTEER:</strong> <span>Saleh Sadid Mir</span>
-          </div>
-        </details>
       </div>
     `;
+
+    // Attach submenus tab click listeners
+    classModalBody.querySelectorAll(".class-modal-tab-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const targetTab = e.currentTarget.getAttribute("data-tab");
+        classModalBody.querySelectorAll(".class-modal-tab-btn").forEach(b => b.classList.remove("active"));
+        e.currentTarget.classList.add("active");
+
+        const currContent = classModalBody.querySelector("#modalCurriculumTabContent");
+        const qbContent = classModalBody.querySelector("#modalQuizBonusTabContent");
+        if (targetTab === "curriculum") {
+          if (currContent) currContent.style.display = "block";
+          if (qbContent) qbContent.style.display = "none";
+        } else {
+          if (currContent) currContent.style.display = "none";
+          if (qbContent) qbContent.style.display = "block";
+        }
+      });
+    });
 
     classDetailModal.style.display = "flex";
   }
@@ -1548,6 +1597,25 @@ document.addEventListener('DOMContentLoaded', () => {
         try { video.load(); } catch (err) {}
         applySeek();
       }
+    }
+  });
+
+  // Dedicated class page submenus tab switching
+  document.addEventListener("click", (e) => {
+    const tabBtn = e.target.closest(".class-page-tab-btn");
+    if (!tabBtn) return;
+    const targetTab = tabBtn.getAttribute("data-tab");
+    document.querySelectorAll(".class-page-tab-btn").forEach(b => b.classList.remove("active"));
+    tabBtn.classList.add("active");
+
+    const currContent = document.getElementById("pageCurriculumTabContent");
+    const qbContent = document.getElementById("pageQuizBonusTabContent");
+    if (targetTab === "curriculum") {
+      if (currContent) currContent.style.display = "block";
+      if (qbContent) qbContent.style.display = "none";
+    } else {
+      if (currContent) currContent.style.display = "none";
+      if (qbContent) qbContent.style.display = "block";
     }
   });
 

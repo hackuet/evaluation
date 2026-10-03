@@ -1209,6 +1209,37 @@ footer {
   border-color: #000000 !important;
 }
 
+/* Class Submenus / Tabs */
+.class-submenus {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 16px 0;
+  flex-wrap: wrap;
+}
+
+.class-tab-btn {
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+
+.class-tab-btn:hover {
+  background: var(--bg-alt);
+}
+
+.class-tab-btn.active {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
 /* Workshop & Custom Video Player */
 .video-card {
   border: 1px solid var(--border);

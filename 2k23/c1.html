@@ -67,8 +67,13 @@
           </div>
         </div>
       </section>
+      <!-- Workshop Submenus / Tabs-->
+      <div class="class-submenus" style="margin-bottom: 16px;">
+        <button class="btn btn-sm class-tab-btn class-page-tab-btn active" type="button" data-tab="curriculum">Session & Curriculum</button>
+        <button class="btn btn-sm class-tab-btn class-page-tab-btn" type="button" data-tab="quiz-bonus">Quiz & Bonus Challenges</button>
+      </div>
       <!-- Workshop Curriculum & Video Section (Collapsible)-->
-      <section class="workshop-curriculum-section" style="margin-bottom: 24px;">
+      <section class="workshop-curriculum-section" id="pageCurriculumTabContent" style="margin-bottom: 24px; display: block;">
         <details class="question-details" open>
           <summary class="question-summary"><span class="question-title" style="text-transform: uppercase;">WORKSHOP CURRICULUM & TECHNICAL MODULES</span><span class="question-toggle-hint">[Click to toggle]</span></summary>
           <div class="curriculum-body" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-light); font-size: 12px; line-height: 1.6;">
@@ -120,6 +125,14 @@
             </details>
           </div>
         </details>
+      </section>
+      <!-- Quiz & Bonus Section (Tab 2: Reserved / Empty for this class)-->
+      <section id="pageQuizBonusTabContent" style="display: none; margin-bottom: 24px;">
+        <div class="callout" style="padding: 24px; text-align: center; background: var(--bg-subtle); border: 1px dashed var(--border);">
+          <div style="font-weight: 700; font-size: 13px; text-transform: uppercase; margin-bottom: 6px;">[QUIZ & BONUS POOL: NOT SCHEDULED]</div>
+          <p style="font-size: 12px; color: var(--fg-muted); max-width: 520px; margin: 0 auto; line-height: 1.5;">No live quizzes or interactive bonus problem sets were scheduled for this introductory workshop session. All 50.00 base participation points were awarded for verified session attendance.</p>
+          <div style="margin-top: 14px;"><span class="badge" style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;">STATUS: EMPTY (0 PTS ASSIGNED)</span></div>
+        </div>
       </section>
       <!-- Attendance & Participation Table-->
       <section class="workshop-attendance-section">
