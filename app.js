@@ -860,10 +860,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 ${sm.assignmentSummaries.map(as => {
-                  const aRank = (assignmentRankMap[as.id] && assignmentRankMap[as.id][student.id]) || student.computedRank;
                   return `
                     <button class="btn btn-sm switch-scope-btn" data-assign="${as.id}" style="font-weight: 700;" title="Inspect ${as.code} (Score: ${as.score.toFixed(2)}/${as.baseMax})">
-                      ${as.code.replace("A-0", "A")} #${aRank}
+                      ${as.code.replace("A-0", "A")} [${as.score.toFixed(2)} pts]
                     </button>
                   `;
                 }).join("")}
@@ -1428,53 +1427,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
     classModalBody.innerHTML = `
       <div class="callout" style="background: var(--bg-subtle); border-left: 4px solid var(--border); margin-bottom: 16px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
-          <div>
-            <span class="badge badge-subagent">${classMeta.code}</span>
-            <div style="font-weight: 700; font-size: 14px; margin-top: 4px;">${escapeHtml(classMeta.title)}</div>
-          </div>
-          <div style="text-align: right;">
-            <span class="badge" style="background: #000; color: #fff; font-weight: 700;">BASE AWARD: 50.00 PTS</span>
-            ${classMeta.repoUrl ? `<div style="margin-top: 6px;"><a href="${classMeta.repoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="font-size: 10px; font-weight: 700;">[GitHub RTOS Repo ↗]</a></div>` : ""}
-          </div>
+        <div>
+          <span class="badge badge-subagent">${classMeta.code}</span>
+          <div style="font-weight: 700; font-size: 14px; margin-top: 4px;">${escapeHtml(classMeta.title)}</div>
+          <p style="font-size: 11px; color: var(--fg-muted); margin-top: 4px;">Hands-on Embedded & Robotics Workshop for Batches 2K23 & 2K24</p>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-light); font-size: 11px;">
           <div><strong>DATE:</strong> ${classMeta.date}</div>
           <div><strong>TIME:</strong> ${classMeta.time}</div>
           <div><strong>VENUE:</strong> ${classMeta.venue}</div>
-          <div><strong>INSTRUCTORS:</strong> Tahmid Mahin (2K22), Isaac Aneek</div>
+          <div><strong>INSTRUCTORS:</strong> Tahmid Hossain Chowdhury Mahin (2K22), Isaac Aneek Sarkar</div>
+          <div><strong>VOLUNTEER:</strong> Saleh Sadid Mir</div>
         </div>
       </div>
 
-      <div class="video-card" style="margin-bottom: 16px;">
-        <div class="video-header-bar">
-          <span>[SESSION RECORDING: ROS 2 SIMULATION & RTOS DEMO]</span>
-          <span style="color: var(--fg-muted); font-size: 10px;">FastStart H.264</span>
-        </div>
-        <div class="video-wrapper" style="position: relative; width: 100%; background: #000;">
-          <video id="modalVideoPlayer" controls preload="metadata" style="width: 100%; max-height: 380px; display: block; margin: 0 auto;">
-            <source src="${rootPath}media/classes/class-01/ROS.mp4" type="video/mp4">
-            Your browser does not support HTML5 video streaming.
-          </video>
-        </div>
-        <div class="video-footer-bar" style="padding: 8px 12px; background: var(--bg-subtle); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-            <span style="font-size: 10px; font-weight: 700; color: var(--fg-muted);">JUMP TO:</span>
-            <button class="btn btn-sm seek-pill" type="button" data-time="0" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[00:00] ROS 2 Simulation</button>
-            <button class="btn btn-sm seek-pill" type="button" data-time="68" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[01:08] Node Topics</button>
-            <button class="btn btn-sm seek-pill" type="button" data-time="132" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[02:12] RTOS Concurrency</button>
-          </div>
-          <div style="font-size: 10px; color: var(--fg-dim);">[Space: Play/Pause | M: Mute | F: Fullscreen]</div>
-        </div>
-      </div>
-
-      <div class="callout" style="background: var(--bg); font-size: 12px; line-height: 1.6;">
-        <h4 style="font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Curriculum & Technical Modules Overview</h4>
+      <div class="callout" style="background: var(--bg); font-size: 12px; line-height: 1.6; margin-bottom: 16px; padding: 14px;">
+        <h4 style="font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--border-light); padding-bottom: 6px;">Workshop Curriculum & Technical Modules</h4>
         <div style="font-size: 11px; color: var(--fg);">
           <div style="font-weight: 700; margin-top: 6px;">Module 1: ROS 2 Distributed Robotics Middleware (Tahmid Hossain Chowdhury Mahin, 2K22)</div>
-          <p style="color: var(--fg-muted); margin-bottom: 6px;">DDS decentralized node discovery, ament package architecture, publisher/subscriber QoS policies, and Gazebo HIL digital twin simulation.</p>
-          <div style="font-weight: 700; margin-top: 6px;">Module 2: RTOS on Embedded Silicon (Isaac Aneek Sarkar)</div>
-          <p style="color: var(--fg-muted); margin-bottom: 6px;">Microsecond determinism, Symmetric Multiprocessing (SMP) on dual-core MCUs, RMS preemptive priority scheduling vs cooperative task yielding, critical sections, semaphores/mutexes with priority inheritance, and secure boot chains.</p>
+          <p style="color: var(--fg-muted); margin-bottom: 8px;">DDS decentralized node discovery, ament package architecture, publisher/subscriber QoS policies, and Gazebo HIL digital twin simulation.</p>
+          
+          <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <strong style="font-size: 11px;">ASSIGNMENT SUBMISSION:</strong>
+              <span style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;">Hands-on Lab Challenge & Code Submission</span>
+            </div>
+            <span class="badge" style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;">[NOT PUBLISHED]</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+            <span style="font-weight: 700;">Module 2: RTOS on Embedded Silicon (Isaac Aneek Sarkar)</span>
+            ${classMeta.repoUrl ? `<a href="${classMeta.repoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="font-size: 10px; font-weight: 700; padding: 2px 6px;">[GitHub RTOS Repo ↗]</a>` : ""}
+          </div>
+          <p style="color: var(--fg-muted); margin-bottom: 8px;">Microsecond determinism, Symmetric Multiprocessing (SMP) on dual-core MCUs, RMS preemptive priority scheduling vs cooperative task yielding, critical sections, semaphores/mutexes with priority inheritance, and secure boot chains.</p>
+
+          <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <strong style="font-size: 11px;">ASSIGNMENT SUBMISSION:</strong>
+              <span style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;">Hands-on Lab Challenge & Code Submission</span>
+            </div>
+            <span class="badge" style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;">[NOT PUBLISHED]</span>
+          </div>
+        </div>
+
+        <!-- Session Recording Video Container (Inside Curriculum Section, After Modules) -->
+        <div class="video-card" style="margin-top: 14px;">
+          <div class="video-header-bar">
+            <span>[SESSION RECORDING: ROS 2 SIMULATION & RTOS DEMO]</span>
+            <span style="color: var(--fg-muted); font-size: 10px;">FastStart H.264</span>
+          </div>
+          <div class="video-wrapper" style="position: relative; width: 100%; background: #000;">
+            <video id="modalVideoPlayer" controls preload="metadata" style="width: 100%; max-height: 380px; display: block; margin: 0 auto;">
+              <source src="${rootPath}media/classes/class-01/ROS.mp4" type="video/mp4">
+              Your browser does not support HTML5 video streaming.
+            </video>
+          </div>
+          <div class="video-footer-bar" style="padding: 8px 12px; background: var(--bg-subtle); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span style="font-size: 10px; font-weight: 700; color: var(--fg-muted);">JUMP TO:</span>
+              <button class="btn btn-sm seek-pill" type="button" data-time="0" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[00:00] ROS 2 Simulation</button>
+              <button class="btn btn-sm seek-pill" type="button" data-time="68" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[01:08] Node Topics</button>
+              <button class="btn btn-sm seek-pill" type="button" data-time="132" style="padding: 2px 6px; font-size: 10px; font-weight: 700;">[02:12] RTOS Concurrency</button>
+            </div>
+            <div style="font-size: 10px; color: var(--fg-dim);">[Space: Play/Pause | M: Mute | F: Fullscreen]</div>
+          </div>
         </div>
       </div>
     `;

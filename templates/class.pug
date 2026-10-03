@@ -8,10 +8,6 @@ block content
           span.badge.badge-subagent(style="margin-bottom: 6px;")= classCode || "C-01"
           h2(style="font-size: 16px; font-weight: 700; text-transform: uppercase; margin: 4px 0;")= classTitle || "Technical Workshop: ROS 2 & RTOS"
           p(style="font-size: 12px; color: var(--fg-muted); margin-top: 4px;") Hands-on Embedded & Robotics Workshop for Batches 2K23 & 2K24
-        div(style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;")
-          span.badge(style="font-weight: 700; background: #000; color: #fff; border-color: #000;") BASE AWARD: 50.00 PTS
-          if repoUrl
-            a.btn.btn-sm(href=repoUrl target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-size: 11px; font-weight: 700;") [GITHUB RTOS REPO ↗]
 
       .workshop-meta-grid(style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-light); font-size: 11px;")
         div
@@ -25,51 +21,69 @@ block content
           span= classVenue || "CSE D401, KUET"
         div
           strong(style="color: var(--fg-dim);") INSTRUCTORS: 
-          span Tahmid Mahin (2K22), Isaac Aneek
+          span Tahmid Hossain Chowdhury Mahin (2K22), Isaac Aneek Sarkar
+        div
+          strong(style="color: var(--fg-dim);") VOLUNTEER: 
+          span Saleh Sadid Mir
 
-  // Custom Video Player Container
-  section.workshop-video-section(style="margin-bottom: 24px;")
-    .video-card(style="border: 1px solid var(--border); background: var(--bg);")
-      .video-header-bar(style="background: var(--bg-alt); padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700;")
-        span [SESSION RECORDING: ROS 2 SIMULATION & RTOS DEMO]
-        span(style="color: var(--fg-muted); font-size: 10px;") H.264 FastStart Stream
-      
-      .video-wrapper(style="position: relative; width: 100%; background: #000; line-height: 0;")
-        video#classVideoPlayer(controls preload="metadata" style="width: 100%; max-height: 460px; display: block; margin: 0 auto;")
-          source(src=((rootPath || "") + "media/classes/class-01/ROS.mp4") type="video/mp4")
-          | Your browser does not support HTML5 video streaming.
-
-      .video-footer-bar(style="padding: 10px 12px; background: var(--bg-subtle); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;")
-        .video-timestamps(style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;")
-          span(style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--fg-muted);") JUMP TO:
-          button.btn.btn-sm.seek-pill(type="button" data-time="0" style="padding: 2px 8px; font-size: 10px; font-weight: 700;") [00:00] ROS 2 Simulation
-          button.btn.btn-sm.seek-pill(type="button" data-time="68" style="padding: 2px 8px; font-size: 10px; font-weight: 700;") [01:08] Node Topics
-          button.btn.btn-sm.seek-pill(type="button" data-time="132" style="padding: 2px 8px; font-size: 10px; font-weight: 700;") [02:12] RTOS Concurrency
-        .video-shortcuts(style="font-size: 10px; color: var(--fg-dim); font-family: var(--font-mono);")
-          | [Space: Play/Pause | M: Mute | F: Fullscreen]
-
-  // Collapsible Curriculum Overview
+  // Workshop Curriculum & Video Section (Collapsible)
   section.workshop-curriculum-section(style="margin-bottom: 24px;")
-    details.callout(style="background: var(--bg); border: 1px solid var(--border); padding: 0;")
-      summary(style="padding: 10px 14px; font-weight: 700; cursor: pointer; background: var(--bg-alt); user-select: none; font-size: 12px;")
-        | [+] VIEW TECHNICAL WORKSHOP CURRICULUM & MODULE BREAKDOWN
-      .curriculum-body(style="padding: 16px; font-size: 12px; line-height: 1.6;")
-        h3(style="font-size: 13px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;") Module 1: ROS 2 Distributed Robotics Middleware
+    details.question-details(open)
+      summary.question-summary
+        span.question-title(style="text-transform: uppercase;") WORKSHOP CURRICULUM & TECHNICAL MODULES
+        span.question-toggle-hint [Click to toggle]
+      .curriculum-body(style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-light); font-size: 12px; line-height: 1.6;")
+        h4(style="font-size: 13px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;") Module 1: ROS 2 Distributed Robotics Middleware
         p(style="margin-bottom: 6px; color: var(--fg-muted);") Instructor: Tahmid Hossain Chowdhury Mahin (Batch 2K22)
-        ul(style="margin-left: 20px; margin-bottom: 14px;")
+        ul(style="margin-left: 20px; margin-bottom: 12px;")
           li DDS (Data Distribution Service) decentralized node discovery architecture.
           li Package anatomy, build pipelines (ament_cmake, ament_python), and dependency graphs.
           li Nodes, topics, publisher/subscriber QoS policies (Best Effort vs Reliable).
           li Gazebo digital twin simulation and hardware-in-the-loop (HIL) integration.
 
-        h3(style="font-size: 13px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;") Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon
-        p(style="margin-bottom: 6px; color: var(--fg-muted);") Instructor: Isaac Aneek Sarkar | Repo: IsaacAneek/rtos-tutorial-hack
+        .assignment-placeholder(style="margin: 12px 0 18px 0; padding: 12px 14px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;")
+          div
+            strong(style="font-size: 11px;") ASSIGNMENT SUBMISSION:
+            span(style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;") Hands-on Lab Challenge & Code Submission
+          span.badge(style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;") [NOT PUBLISHED]
+
+        h4(style="font-size: 13px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;") Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon
+        div(style="margin-bottom: 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;")
+          span(style="color: var(--fg-muted);") Instructor: Isaac Aneek Sarkar
+          if repoUrl
+            a.btn.btn-sm(href=repoUrl target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-size: 10px; font-weight: 700; padding: 2px 8px;") [GITHUB RTOS REPO ↗]
         ul(style="margin-left: 20px; margin-bottom: 12px;")
           li Microsecond determinism vs general-purpose OS nondeterministic latency.
           li Symmetric Multiprocessing (SMP) dual-core scheduling and core pinning on microcontrollers.
           li Rate Monotonic Scheduling (RMS) preemptive priorities vs cooperative task yielding.
           li Race conditions, critical sections, binary/counting semaphores, and priority inheritance mutexes.
           li Boot security, secure boot chains, hardware cryptographic acceleration, and heap watermarking.
+
+        .assignment-placeholder(style="margin: 12px 0 18px 0; padding: 12px 14px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;")
+          div
+            strong(style="font-size: 11px;") ASSIGNMENT SUBMISSION:
+            span(style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;") Hands-on Lab Challenge & Code Submission
+          span.badge(style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;") [NOT PUBLISHED]
+
+        // Custom Video Player Container (Within Curriculum, After Module Description)
+        .video-card(style="border: 1px solid var(--border); background: var(--bg); margin-top: 18px;")
+          .video-header-bar(style="background: var(--bg-alt); padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700;")
+            span [SESSION RECORDING: ROS 2 SIMULATION & RTOS DEMO]
+            span(style="color: var(--fg-muted); font-size: 10px;") H.264 FastStart Stream
+          
+          .video-wrapper(style="position: relative; width: 100%; background: #000; line-height: 0;")
+            video#classVideoPlayer(controls preload="metadata" style="width: 100%; max-height: 460px; display: block; margin: 0 auto;")
+              source(src=((rootPath || "") + "media/classes/class-01/ROS.mp4") type="video/mp4")
+              | Your browser does not support HTML5 video streaming.
+
+          .video-footer-bar(style="padding: 10px 12px; background: var(--bg-subtle); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;")
+            .video-timestamps(style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;")
+              span(style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--fg-muted);") JUMP TO:
+              button.btn.btn-sm.seek-pill(type="button" data-time="0" style="padding: 2px 8px; font-size: 10px; font-weight: 700;") [00:00] ROS 2 Simulation
+              button.btn.btn-sm.seek-pill(type="button" data-time="68" style="padding: 2px 8px; font-size: 10px; font-weight: 700;") [01:08] Node Topics
+              button.btn.btn-sm.seek-pill(type="button" data-time="132" style="padding: 2px 8px; font-size: 10px; font-weight: 700;") [02:12] RTOS Concurrency
+            .video-shortcuts(style="font-size: 10px; color: var(--fg-dim); font-family: var(--font-mono);")
+              | [Space: Play/Pause | M: Mute | F: Fullscreen]
 
   // Attendance & Participation Table
   section.workshop-attendance-section

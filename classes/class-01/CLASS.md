@@ -10,6 +10,8 @@
 - **Instructors**:
   - **Tahmid Hossain Chowdhury Mahin** (Batch 2K22, Hardware Acceleration Club of KUET)
   - **Isaac Aneek Sarkar** (Hardware Acceleration Club of KUET)
+- **Volunteer**:
+  - **Saleh Sadid Mir** (Hardware Acceleration Club of KUET)
 - **Primary Source Code Repository**: [IsaacAneek/rtos-tutorial-hack (GitHub)](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main)
 - **Demonstration Recording**: `media/classes/class-01/ROS.mp4`
 
@@ -39,6 +41,10 @@ Through hands-on demonstrations and code walkthroughs, students analyzed how asy
   - Demonstration of physics-engine integration (Gazebo) coupled with real-time controller nodes.
   - Future project roadmap: Bridging micro-ROS on microcontrollers to ROS 2 compute hosts over serial/CAN/Ethernet.
 
+#### Module 1 Assignment: ROS 2 Hands-on Lab Challenge & Code Submission
+- **Status**: `[NOT PUBLISHED]`
+- **Details**: Practical ROS 2 node creation, topic publisher/subscriber configuration, and digital twin simulation verification.
+
 ---
 
 ### Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon
@@ -60,6 +66,10 @@ Through hands-on demonstrations and code walkthroughs, students analyzed how asy
 - **Embedded Security & Production Scalability**:
   - **Boot Security**: Secure boot chains, hardware cryptographic engines, flash encryption, and verified firmware execution.
   - **System Scalability**: Memory management algorithms (heap allocation models `heap_1` through `heap_5`), stack watermarking (`uxTaskGetStackHighWaterMark`), and fault isolation.
+
+#### Module 2 Assignment: RTOS Concurrency Lab Challenge & Code Submission
+- **Status**: `[NOT PUBLISHED]`
+- **Details**: Practical implementation lab combining multi-task scheduling, mutex priority inheritance, and FreeRTOS queue pipelines on dual-core hardware.
 
 ---
 
