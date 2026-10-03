@@ -48,24 +48,26 @@ Through hands-on demonstrations and code walkthroughs, students analyzed how asy
 ---
 
 ### Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon
-**Instructor**: *Isaac Aneek Sarkar*
-**Reference Implementation**: [rtos-tutorial-hack](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main)
+**Instructor**: *Isaac Aneek Sarkar*  
+**Reference Implementation**: [rtos-tutorial-hack](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main) (FreeRTOS on ESP32 with ESP-IDF + PlatformIO)
 
-- **Fundamentals of Hard vs. Soft Real-Time Systems**:
-  - Deterministic execution vs. general-purpose OS nondeterministic latency.
-  - Context switching overhead, interrupt service routines (ISR), and tick-timer mechanics.
-- **Symmetric Multiprocessing (SMP) on Microcontrollers**:
-  - Dual-core task distribution on ESP32 / RP2040 architectures.
-  - Core pinning (`xTaskCreatePinnedToCore`) and inter-core cache coherency considerations.
-- **Task Scheduling & Prioritization**:
-  - **Preemptive Priority Scheduling**: Rate Monotonic Scheduling (RMS), Earliest Deadline First (EDF), and preemptive context swapping.
-  - **Cooperative Scheduling**: Voluntary yield paradigms (`taskYIELD()`), run-to-completion, and minimizing switch overhead for deterministic pipelining.
-- **Concurrency Hazards & Synchronization Primitives**:
-  - **Critical Sections & Race Conditions**: Atomic operations, interrupt masking, and memory barriers.
-  - **Semaphores & Mutexes**: Binary semaphores, counting semaphores, mutexes with priority inheritance to prevent Priority Inversion.
-- **Embedded Security & Production Scalability**:
-  - **Boot Security**: Secure boot chains, hardware cryptographic engines, flash encryption, and verified firmware execution.
-  - **System Scalability**: Memory management algorithms (heap allocation models `heap_1` through `heap_5`), stack watermarking (`uxTaskGetStackHighWaterMark`), and fault isolation.
+- **Why RTOS? (Super-loop vs Preemptive Scheduling)**:
+  - Bottlenecks of sequential `while(1)` super-loops: slow tasks (e.g. ML inference) delaying high-frequency (5ms) control loops.
+  - Predictability & determinism (hard vs soft real-time) vs raw execution speed.
+  - Preemptive priority scheduling and FreeRTOS task states: Running, Ready, Blocked, and Suspended.
+- **Delays & Task Sleeping**:
+  - Why busy-waiting with `delay()` burns 100% CPU and blocks concurrent operations.
+  - Non-blocking sleep with `vTaskDelay()` and jitter-free fixed-period loops with `vTaskDelayUntil()`.
+- **Multicore & Symmetric Multiprocessing (SMP)**:
+  - Dual-core Xtensa LX6 architecture on ESP32: Core 0 (PRO_CPU, Wi-Fi/BT) vs Core 1 (APP_CPU).
+  - Dynamic scheduling (`xTaskCreate`) vs Core Pinning (`xTaskCreatePinnedToCore`) and task core affinity (`tskNO_AFFINITY`).
+  - Monitoring task stack usage with `uxTaskGetStackHighWaterMark()`.
+- **Shared Data, Race Conditions & Mutexes**:
+  - Non-atomic multi-byte buffer operations (`shared_buffer`) and corrupted memory hazards between concurrent tasks.
+  - Protecting critical sections with FreeRTOS mutexes (`xSemaphoreCreateMutex`, `xSemaphoreTake`, `xSemaphoreGive`).
+  - Priority inheritance mechanism to mitigate Priority Inversion, timeout handling, and deadlock prevention.
+- **Architectural Scalability**:
+  - Tangled bare-metal state machines (nested flags, manual timers) vs modular RTOS tasks (one task per job, independent timelines).
 
 #### Module 2 Assignment: RTOS Concurrency Lab Challenge & Code Submission
 - **Status**: `[NOT PUBLISHED]`

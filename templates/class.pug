@@ -55,11 +55,13 @@ block content
           if repoUrl
             a.btn.btn-sm(href=repoUrl target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-size: 10px; font-weight: 700; padding: 2px 8px;") [GITHUB RTOS REPO ↗]
         ul(style="margin-left: 20px; margin-bottom: 12px;")
-          li Microsecond determinism vs general-purpose OS nondeterministic latency.
-          li Symmetric Multiprocessing (SMP) dual-core scheduling and core pinning on microcontrollers.
-          li Rate Monotonic Scheduling (RMS) preemptive priorities vs cooperative task yielding.
-          li Race conditions, critical sections, binary/counting semaphores, and priority inheritance mutexes.
-          li Boot security, secure boot chains, hardware cryptographic acceleration, and heap watermarking.
+          li FreeRTOS on ESP32 with ESP-IDF & PlatformIO toolchain.
+          li Super-loop sequential bottlenecks vs preemptive priority task scheduling (Hard vs Soft real-time determinism).
+          li Non-blocking task delays (vTaskDelay, vTaskDelayUntil) vs CPU-burning busy-waiting.
+          li Dual-core Symmetric Multiprocessing (SMP): Core 0 (PRO_CPU) vs Core 1 (APP_CPU) & core pinning (xTaskCreatePinnedToCore).
+          li Shared memory race conditions, non-atomic buffer writes, and critical sections.
+          li Thread synchronization via FreeRTOS mutexes (xSemaphoreTake/xSemaphoreGive), priority inheritance, and deadlock avoidance.
+          li Architectural scalability: Tangled bare-metal state machines vs modular independent RTOS tasks.
 
         .assignment-placeholder(style="margin: 12px 0 18px 0; padding: 12px 14px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;")
           div
