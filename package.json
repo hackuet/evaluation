@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node scripts/build_templates.js",
     "generate": "python3 scripts/generate_data.py",
-    "start": "python3 -m http.server 8080"
+    "start": "python3 -m http.server 8080",
+    "mcp": "python3 scripts/youtube_mcp_server.py"
   },
   "dependencies": {
     "playwright": "^1.63.0"

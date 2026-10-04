@@ -237,3 +237,35 @@ This compiles:
 ### Long Video Rejection (`Upload rejected: Video is too long`)
 - **Cause**: Channel intermediate features are not phone-verified.
 - **Fix**: Complete phone verification at [YouTube Studio Settings](https://studio.youtube.com).
+
+---
+
+## 12. Local MCP Server & Autonomous Agent Skill
+
+This repository includes a local Model Context Protocol (MCP) server and dedicated skill:
+- **Skill Path**: [`.agents/skills/hack-youtube-uploader/SKILL.md`](file:///home/user/Projects/HACK%20Evaluation/.agents/skills/hack-youtube-uploader/SKILL.md)
+- **FastMCP Server**: [`scripts/youtube_mcp_server.py`](file:///home/user/Projects/HACK%20Evaluation/scripts/youtube_mcp_server.py)
+
+### Starting the MCP Server
+```bash
+npm run mcp
+# Or: python3 scripts/youtube_mcp_server.py
+```
+
+### Agent Client Configuration
+Add the local MCP server to your AI coding client (e.g. Antigravity, Cursor, Claude Desktop):
+```json
+{
+  "mcpServers": {
+    "hack-youtube-mcp": {
+      "command": "python3",
+      "args": ["scripts/youtube_mcp_server.py"]
+    }
+  }
+}
+```
+Available tools:
+- `youtube_check_auth`: Audits credentials and token validity.
+- `youtube_upload_video`: Resumable upload with `--update-class` auto-linking.
+- `compress_workshop_video`: FastStart H.264 compression via FFmpeg.
+- `update_class_youtube_meta`: Direct class metadata updater.
