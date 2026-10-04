@@ -36,7 +36,12 @@ A high-density, monotonic, CSV-driven technical rating board, evaluation platfor
 ## 2. Directory Structure
 
 ```
-├── .gitignore                   # Excludes raw video files; allows curated !media/classes/**
+├── CONTRIBUTING.md              # Contribution protocols, privacy rules, and testing workflow
+├── DESIGN.md                    # Canonical design system, monochrome palette, and tokens
+├── YOUTUBE_SETUP.md             # Guide for acquiring OAuth credentials and uploading unlisted videos
+├── AGENTS.md                    # Autonomous agent manual and prompt injection defense
+├── .env.example                 # Environment variable template for API keys and paths
+├── .gitignore                   # Excludes raw video files and secrets (.env, client_secrets.json)
 ├── index.html                   # Cumulative leaderboard (compiled from templates/index.pug)
 ├── style.css                    # Central minimalist engineering stylesheet
 ├── app.js                       # Client-side dynamic ranking & filtering engine
@@ -49,12 +54,15 @@ A high-density, monotonic, CSV-driven technical rating board, evaluation platfor
 │   ├── index.pug                # Cumulative standings template
 │   ├── assignment.pug           # Dedicated assignment page template
 │   └── class.pug                # Dedicated workshop page template
+├── scripts/                     # Helper CLI utilities
+│   ├── upload_unlisted.py       # YouTube Data API v3 unlisted uploader
+│   ├── compress_video.py        # FastStart H.264 video compression tool
+│   └── env_helper.py            # Lightweight environment variable loader
 ├── classes/                     # Canonical workshop documentation & curricula
 │   └── class-01/
-│       └── CLASS.md             # Canonical curriculum, instructors, and module breakdown
+│       ├── CLASS.md             # Canonical curriculum, instructors, and module breakdown
+│       └── meta.json            # Workshop metadata and YouTube video embed links
 ├── media/classes/               # Curated compressed session recordings (*.mp4)
-│   └── class-01/
-│       └── ROS.mp4              # Compressed FastStart recording (4.4 MB)
 ├── skills/                      # Autonomous agent skills
 │   ├── hack-assignment-evaluator/ # Assignment ingestion & evaluation skill
 │   └── hack-class-entry-creator/  # Class & workshop entry creation skill
@@ -102,6 +110,8 @@ Open [http://localhost:8080](http://localhost:8080) to inspect cumulative rankin
 ---
 
 ## 5. Git Branching & Contribution Protocol
+
+Please consult [CONTRIBUTING.md](CONTRIBUTING.md) for full contribution guidelines, privacy mandates, and pre-submission checklists.
 
 - All development, data regeneration, and Playwright verifications must occur on the `dev` branch.
 - Never commit uncompressed video files.
