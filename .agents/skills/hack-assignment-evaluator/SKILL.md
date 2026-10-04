@@ -121,13 +121,13 @@ After populating submissions, running audits, and updating the assignment CSV:
 
 1. **Recompile Data & Multi-Page Pug Templates**:
    ```bash
-   python3 generate_data.py
+   python3 scripts/generate_data.py
    ```
-   This compiles `data.js`, `index.html` (cumulative leaderboard), and `<batch>/<assignmentId>.html` (dedicated assignment page with distinct URL, e.g. `2k25/a1.html`).
+   This compiles `assets/js/data.js`, `index.html` (cumulative leaderboard), and `<batch>/<assignmentId>.html` (dedicated assignment page with distinct URL, e.g. `2k25/a1.html`).
 
 2. **Verify Privacy Mandate**:
    ```bash
-   rg -i "mail|[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+" 2k*/ data.js index.html
+   rg -i "mail|[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+" 2k*/ assets/js/data.js index.html
    ```
    Must return zero occurrences of email addresses or names.
 

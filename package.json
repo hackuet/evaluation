@@ -1,0 +1,17 @@
+{
+  "name": "hack-evaluation",
+  "version": "1.0.0",
+  "description": "Hardware Acceleration Club of KUET (HACK) Technical Evaluation Platform",
+  "scripts": {
+    "build": "node scripts/build_templates.js",
+    "generate": "python3 scripts/generate_data.py",
+    "start": "python3 -m http.server 8080"
+  },
+  "dependencies": {
+    "playwright": "^1.63.0"
+  },
+  "devDependencies": {
+    "pug": "^3.0.4",
+    "pug-cli": "^1.0.0-alpha6"
+  }
+}

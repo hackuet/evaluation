@@ -90,9 +90,9 @@ Use this skill when recording new workshop or class sessions, logging batch-wise
 ### Step 3: Compile Data & Pug Templates
 1. Run the central compiler:
    ```bash
-   python3 generate_data.py
+   python3 scripts/generate_data.py
    ```
-2. Ensure `data.js` and `<batch>/c<N>.html` are generated without syntax errors.
+2. Ensure `assets/js/data.js` and `<batch>/c<N>.html` are generated without syntax errors.
 
 ### Step 4: Verify via Playwright
 1. Ensure HTTP server is running on port 8080.

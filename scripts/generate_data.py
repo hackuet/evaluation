@@ -15,14 +15,14 @@ import json
 import glob
 import subprocess
 
-REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_FILE = os.path.join(REPO_ROOT, "data.js")
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUTPUT_FILE = os.path.join(REPO_ROOT, "assets", "js", "data.js")
 
 VIDEO_EXTS = {".mp4", ".webm", ".mov", ".avi", ".mkv", ".flv", ".wmv"}
 
 def get_code_files(batch, assignment_name, roll):
     """Scan submissions directory for text/code/hardware files (strictly ignoring videos)."""
-    sub_dir = os.path.join(REPO_ROOT, batch, assignment_name, "submissions", roll)
+    sub_dir = os.path.join(REPO_ROOT, "batches", batch, assignment_name, "submissions", roll)
     if not os.path.exists(sub_dir):
         return []
     
@@ -47,7 +47,7 @@ def get_code_files(batch, assignment_name, roll):
 
 def get_evaluation_audit(batch, assignment_name, roll):
     """Read markdown evaluation audit report if present and extract per-component LLM remarks and items."""
-    md_path = os.path.join(REPO_ROOT, batch, assignment_name, "evaluations", f"{roll}.md")
+    md_path = os.path.join(REPO_ROOT, "batches", batch, assignment_name, "evaluations", f"{roll}.md")
     if not os.path.exists(md_path):
         return {"report": None, "remarks": {}, "items": {}}
 
@@ -124,7 +124,7 @@ def get_evaluation_audit(batch, assignment_name, roll):
     }
 
 def discover_batches():
-    """Dynamically scan repository root for academic batch folders (e.g. 2k24, 2k25, 2k26)."""
+    """Dynamically scan batches/ directory for academic batch folders (e.g. 2k24, 2k25, 2k26)."""
     batch_dirs = []
     standard_batches = ["2k25", "2k24", "2k23"]
     found_ids = set()
@@ -137,16 +137,18 @@ def discover_batches():
         })
         found_ids.add(b)
 
-    for item in os.listdir(REPO_ROOT):
-        item_path = os.path.join(REPO_ROOT, item)
-        if os.path.isdir(item_path) and re.match(r"^\d+k\d+$", item):
-            if item not in found_ids:
-                batch_dirs.append({
-                    "id": item,
-                    "name": f"Batch {item}",
-                    "active": False
-                })
-                found_ids.add(item)
+    batches_dir = os.path.join(REPO_ROOT, "batches")
+    if os.path.isdir(batches_dir):
+        for item in os.listdir(batches_dir):
+            item_path = os.path.join(batches_dir, item)
+            if os.path.isdir(item_path) and re.match(r"^\d+k\d+$", item):
+                if item not in found_ids:
+                    batch_dirs.append({
+                        "id": item,
+                        "name": f"Batch {item}",
+                        "active": False
+                    })
+                    found_ids.add(item)
 
     batch_dirs.sort(key=lambda b: b["id"], reverse=True)
     return batch_dirs
@@ -156,7 +158,7 @@ def discover_assignments(batches):
     assignments = []
     for b in batches:
         batch_id = b["id"]
-        batch_path = os.path.join(REPO_ROOT, batch_id)
+        batch_path = os.path.join(REPO_ROOT, "batches", batch_id)
         if not os.path.isdir(batch_path):
             continue
 
@@ -306,7 +308,7 @@ def discover_classes(batches):
     classes = []
     for b in batches:
         batch_id = b["id"]
-        batch_path = os.path.join(REPO_ROOT, batch_id)
+        batch_path = os.path.join(REPO_ROOT, "batches", batch_id)
         if not os.path.isdir(batch_path):
             continue
 
@@ -375,7 +377,7 @@ def main():
     # Read CSV files in all batch subdirectories
     for b in batches:
         batch_id = b["id"]
-        csv_pattern = os.path.join(REPO_ROOT, batch_id, "*", "*.csv")
+        csv_pattern = os.path.join(REPO_ROOT, "batches", batch_id, "*", "*.csv")
         for csv_path in sorted(glob.glob(csv_pattern)):
             basename = os.path.basename(csv_path)
             if basename == "template.csv":
@@ -552,7 +554,7 @@ def main():
     print(f"Successfully generated {OUTPUT_FILE} from CSV sources ({len(students_map)} students processed).")
 
     # Automatically compile Pug templates to HTML pages
-    build_script = os.path.join(REPO_ROOT, "build_templates.js")
+    build_script = os.path.join(REPO_ROOT, "scripts", "build_templates.js")
     if os.path.exists(build_script):
         print("Compiling Pug templates...")
         res = subprocess.run(["node", build_script], capture_output=True, text=True)

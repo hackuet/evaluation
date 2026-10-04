@@ -29,23 +29,25 @@ import argparse
 import subprocess
 from typing import Dict, List, Any, Optional
 
-REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_HYBRID_INST_WEIGHT = 0.6
 DEFAULT_HYBRID_LLM_WEIGHT = 0.4
 
 def discover_batches() -> List[str]:
-    """Scan repo root for batch directories (e.g. 2k24, 2k25, 2k26)."""
+    """Scan repo batches/ directory for batch directories (e.g. 2k24, 2k25, 2k26)."""
     batches = []
-    for item in os.listdir(REPO_ROOT):
-        p = os.path.join(REPO_ROOT, item)
-        if os.path.isdir(p) and re.match(r"^\d+k\d+$", item):
-            batches.append(item)
+    batches_dir = os.path.join(REPO_ROOT, "batches")
+    if os.path.isdir(batches_dir):
+        for item in os.listdir(batches_dir):
+            p = os.path.join(batches_dir, item)
+            if os.path.isdir(p) and re.match(r"^\d+k\d+$", item):
+                batches.append(item)
     batches.sort(reverse=True)
     return batches or ["2k25"]
 
 def discover_assignments(batch: str) -> List[str]:
     """Scan batch folder for assignment directories."""
-    batch_dir = os.path.join(REPO_ROOT, batch)
+    batch_dir = os.path.join(REPO_ROOT, "batches", batch)
     if not os.path.isdir(batch_dir):
         return []
     assigns = []
@@ -60,7 +62,7 @@ def parse_rubric(batch: str, assignment: str) -> Dict[str, Any]:
     Dynamically discover segments and their max marks from meta.json, RUBRIC.md,
     or fallback to standard embedded rubric schema.
     """
-    assign_dir = os.path.join(REPO_ROOT, batch, assignment)
+    assign_dir = os.path.join(REPO_ROOT, "batches", batch, assignment)
     meta_path = os.path.join(assign_dir, "meta.json")
     rubric_path = os.path.join(assign_dir, "RUBRIC.md")
 
@@ -111,7 +113,7 @@ def parse_rubric(batch: str, assignment: str) -> Dict[str, Any]:
 
 def get_submission_files(batch: str, assignment: str, roll: str) -> List[str]:
     """List pregenerated submitted files for a student (excluding video binaries)."""
-    sub_dir = os.path.join(REPO_ROOT, batch, assignment, "submissions", roll)
+    sub_dir = os.path.join(REPO_ROOT, "batches", batch, assignment, "submissions", roll)
     if not os.path.isdir(sub_dir):
         return []
     files = []
@@ -271,7 +273,7 @@ def calculate_hybrid_mark(inst: float, llm: float, inst_weight: float = DEFAULT_
 
 def inspect_student(batch: str, assignment: str, roll: str) -> None:
     """Print an executive segment-by-segment report card in terminal."""
-    assign_dir = os.path.join(REPO_ROOT, batch, assignment)
+    assign_dir = os.path.join(REPO_ROOT, "batches", batch, assignment)
     md_path = os.path.join(assign_dir, "evaluations", f"{roll}.md")
     
     if not os.path.exists(md_path):
@@ -339,7 +341,7 @@ def sync_csv_from_evaluations(batch: str, assignment: str) -> None:
     Read pregenerated evaluation markdown files and synchronize marks & instructor notes
     into the assignment CSV sheet.
     """
-    assign_dir = os.path.join(REPO_ROOT, batch, assignment)
+    assign_dir = os.path.join(REPO_ROOT, "batches", batch, assignment)
     csv_files = glob.glob(os.path.join(assign_dir, "*.csv"))
     csv_path = next((f for f in csv_files if "template" not in os.path.basename(f)), None)
 
@@ -428,7 +430,8 @@ def sync_csv_from_evaluations(batch: str, assignment: str) -> None:
 def recompile_all() -> None:
     """Run generate_data.py to rebuild data.js and recompile Pug templates."""
     print("[*] Recompiling HACK data store and Pug static pages...")
-    res = subprocess.run(["python3", "generate_data.py"], cwd=REPO_ROOT, capture_output=True, text=True)
+    gen_script = os.path.join(REPO_ROOT, "scripts", "generate_data.py")
+    res = subprocess.run(["python3", gen_script], cwd=REPO_ROOT, capture_output=True, text=True)
     print(res.stdout)
     if res.returncode != 0:
         print("[!] Error recompiling:", res.stderr)
@@ -450,7 +453,7 @@ def main():
         if target_roll:
             inspect_student(args.batch, args.assignment, target_roll)
         else:
-            eval_dir = os.path.join(REPO_ROOT, args.batch, args.assignment, "evaluations")
+            eval_dir = os.path.join(REPO_ROOT, "batches", args.batch, args.assignment, "evaluations")
             for md in sorted(glob.glob(os.path.join(eval_dir, "*.md"))):
                 r = os.path.splitext(os.path.basename(md))[0]
                 inspect_student(args.batch, args.assignment, r)

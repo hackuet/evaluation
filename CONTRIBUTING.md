@@ -114,22 +114,24 @@ We enforce a strict **`dev -> main`** branching protocol:
 Whenever CSVs, assignment rubrics, evaluations, or classes are modified:
 
 ```bash
-# Merges CSVs, evaluations, and classes into data.js AND compiles Pug templates
-python3 generate_data.py
+# Merges CSVs, evaluations, and classes into assets/js/data.js AND compiles Pug templates
+npm run generate
+# (or: python3 scripts/generate_data.py)
 ```
 
 This single command:
 1. Discovers all active academic batches (`2k23`, `2k24`, `2k25`, etc.).
 2. Parses assignment grading sheets, rubrics, and evaluation reports.
 3. Parses workshop curricula, attendance records, and YouTube media links.
-4. Generates `data.js`.
-5. Executes `node build_templates.js` to compile `index.html`, `<batch>/a<N>.html`, and `<batch>/c<N>.html`.
+4. Generates `assets/js/data.js`.
+5. Executes `node scripts/build_templates.js` to compile `index.html`, `<batch>/a<N>.html`, and `<batch>/c<N>.html`.
 
 ### Running the Local Test Server
 Launch a lightweight local HTTP server:
 
 ```bash
-python3 -m http.server 8080
+npm start
+# (or: python3 -m http.server 8080)
 ```
 
 Open `http://localhost:8080` in your browser to inspect the application.
@@ -139,15 +141,16 @@ Open `http://localhost:8080` in your browser to inspect the application.
 ## 5. Adding New Academic Content
 
 ### A. Adding a New Assignment (`A-*`)
-1. Create directory `<batch>/assignment-<N>/` (e.g. `2k25/assignment-2/`).
-2. Add the following files:
+1. Create canonical directory `assignments/assignment-<N>/` (e.g. `assignments/assignment-02/`):
    - `QUESTION.md`: The verbatim problem statement.
    - `RUBRIC.md`: Technical criteria, task points, and bonus pools.
    - `EVALUATION_PROMPT.md`: Prompt injection-safe system prompt for LLM evaluation.
-   - `assignment-<N>.csv`: Normalized grading sheet (roll-only).
-   - `submissions/<roll>/`: Student code files.
-   - `evaluations/<roll>.md`: Detailed audit reports.
-3. Recompile via `python3 generate_data.py`.
+2. In the target batch directory `<batch>/assignment-<N>/`:
+   - Symlink `QUESTION.md`, `RUBRIC.md`, and `EVALUATION_PROMPT.md` to `../../assignments/assignment-<N>/`.
+   - Add `assignment-<N>.csv`: Normalized grading sheet (roll-only).
+   - Add `submissions/<roll>/`: Student code files.
+   - Add `evaluations/<roll>.md`: Detailed audit reports.
+3. Recompile via `npm run generate` (or `python3 scripts/generate_data.py`).
 
 ### B. Adding a New Class or Workshop (`C-*`)
 1. Create directory `classes/class-<NN>/` (e.g. `classes/class-02/`).
@@ -156,7 +159,7 @@ Open `http://localhost:8080` in your browser to inspect the application.
    - `meta.json`: Workshop metadata, duration, category, and video embed links.
 3. Record attendance in `<batch>/class-<NN>/class-<NN>.csv`.
 4. Upload recording via `scripts/upload_unlisted.py` (see [`YOUTUBE_SETUP.md`](file:///home/user/Projects/HACK%20Evaluation/YOUTUBE_SETUP.md)).
-5. Recompile via `python3 generate_data.py`.
+5. Recompile via `npm run generate` (or `python3 scripts/generate_data.py`).
 
 ---
 
@@ -173,6 +176,6 @@ Before submitting a pull request or pushing to `dev`, verify that:
   git status --ignored
   ```
 - [ ] **Credentials Check**: `.env` and `client_secrets.json` are untracked and not staged.
-- [ ] **Build Check**: `python3 generate_data.py` executes without errors and all Pug templates compile cleanly.
+- [ ] **Build Check**: `npm run generate` (or `python3 scripts/generate_data.py`) executes without errors and all Pug templates compile cleanly.
 - [ ] **Design Conformance**: All UI elements maintain `border-radius: 0px` and adhere to [`DESIGN.md`](file:///home/user/Projects/HACK%20Evaluation/DESIGN.md).
 - [ ] **Console Cleanliness**: Zero JavaScript errors in browser developer tools upon page navigation and modal inspection.

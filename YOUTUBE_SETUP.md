@@ -206,11 +206,11 @@ When running an upload for the first time:
 After uploading and updating `meta.json`, recompile the static data store and Pug templates:
 
 ```bash
-python3 generate_data.py
+python3 scripts/generate_data.py
 ```
 
 This compiles:
-- `data.js` containing embedded YouTube IDs.
+- `assets/js/data.js` containing embedded YouTube IDs.
 - `index.html` cumulative view.
 - `<batch>/c<N>.html` dedicated workshop pages with responsive YouTube embeds.
 

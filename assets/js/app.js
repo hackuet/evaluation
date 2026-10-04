@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     batchAssignments.forEach(a => {
       const opt = document.createElement('option');
       const aBatch = a.batch || activeBatch;
-      opt.value = `${rootPath}${aBatch}/${a.id}.html`;
+      opt.value = `${rootPath}batches/${aBatch}/${a.id}.html`;
       opt.setAttribute('data-scope', a.id);
       opt.setAttribute('data-batch', aBatch);
       const cleanTitle = (a.title || '').replace(/^Assignment\s*\d+:\s*/i, '');
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     batchClasses.forEach(c => {
       const opt = document.createElement('option');
       const cBatch = c.batch || activeBatch;
-      opt.value = `${rootPath}${cBatch}/${c.id}.html`;
+      opt.value = `${rootPath}batches/${cBatch}/${c.id}.html`;
       opt.setAttribute('data-scope', c.id);
       opt.setAttribute('data-batch', cBatch);
       const cleanTitle = (c.title || '').replace(/^Technical Workshop\s*\d+:\s*/i, '');
@@ -373,10 +373,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return lines;
   }
 
-  // Attempt to load CSV from 2k25/assignment-1/assignment-1.csv dynamically
+  // Attempt to load CSV from batches/2k25/assignment-1/assignment-1.csv dynamically
   async function loadCSVData() {
     try {
-      const res = await fetch(`2k25/assignment-1/assignment-1.csv?_t=${Date.now()}`, {
+      const res = await fetch(`${rootPath}batches/2k25/assignment-1/assignment-1.csv?_t=${Date.now()}`, {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache',
@@ -1014,7 +1014,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const assignId = e.currentTarget.getAttribute("data-assign");
         const assignMeta = HACK_DATA.assignments.find(a => a.id === assignId);
         const aBatch = (assignMeta && assignMeta.batch) || activeBatch;
-        window.location.href = `${rootPath}${aBatch}/${assignId}.html`;
+        window.location.href = `${rootPath}batches/${aBatch}/${assignId}.html`;
       });
     });
 
@@ -1024,7 +1024,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const classId = e.currentTarget.getAttribute("data-class");
         const classMeta = (HACK_DATA.classes || []).find(c => c.id === classId);
         const cBatch = (classMeta && classMeta.batch) || activeBatch;
-        window.location.href = `${rootPath}${cBatch}/${classId}.html`;
+        window.location.href = `${rootPath}batches/${cBatch}/${classId}.html`;
       });
     });
   }

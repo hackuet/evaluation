@@ -3,11 +3,11 @@ const fs = require("fs");
 const path = require("path");
 const pug = require("pug");
 
-const REPO_ROOT = __dirname;
+const REPO_ROOT = path.resolve(__dirname, "..");
 const TEMPLATES_DIR = path.join(REPO_ROOT, "templates");
 
 // Load data.js
-const dataJsPath = path.join(REPO_ROOT, "data.js");
+const dataJsPath = path.join(REPO_ROOT, "assets", "js", "data.js");
 let hackData = null;
 
 if (fs.existsSync(dataJsPath)) {
@@ -57,18 +57,18 @@ const indexHtml = pug.renderFile(indexTemplate, {
 fs.writeFileSync(path.join(REPO_ROOT, "index.html"), indexHtml, "utf8");
 console.log("✓ Compiled templates/index.pug -> index.html");
 
-// Compile each Assignment page (e.g. 2k25/a1.html)
+// Compile each Assignment page (e.g. batches/2k25/a1.html)
 const assignmentTemplate = path.join(TEMPLATES_DIR, "assignment.pug");
 assignments.forEach(a => {
   const batchId = a.batch || "2k25";
-  const batchDir = path.join(REPO_ROOT, batchId);
+  const batchDir = path.join(REPO_ROOT, "batches", batchId);
   if (!fs.existsSync(batchDir)) {
     fs.mkdirSync(batchDir, { recursive: true });
   }
 
   const assignHtml = pug.renderFile(assignmentTemplate, {
     pretty: true,
-    rootPath: "../",
+    rootPath: "../../",
     pageType: "assignment",
     assignmentId: a.id,
     assignmentCode: a.code,
@@ -84,7 +84,7 @@ assignments.forEach(a => {
 
   const outFilePath = path.join(batchDir, `${a.id}.html`);
   fs.writeFileSync(outFilePath, assignHtml, "utf8");
-  console.log(`✓ Compiled templates/assignment.pug -> ${batchId}/${a.id}.html`);
+  console.log(`✓ Compiled templates/assignment.pug -> batches/${batchId}/${a.id}.html`);
 
   // Remove legacy root-level assignment file if present
   const rootOldFile = path.join(REPO_ROOT, `${a.id}.html`);
@@ -94,18 +94,18 @@ assignments.forEach(a => {
   }
 });
 
-// Compile each Class page (e.g. 2k23/c1.html, 2k24/c1.html)
+// Compile each Class page (e.g. batches/2k23/c1.html, batches/2k24/c1.html)
 const classTemplate = path.join(TEMPLATES_DIR, "class.pug");
 classes.forEach(c => {
   const batchId = c.batch || "2k23";
-  const batchDir = path.join(REPO_ROOT, batchId);
+  const batchDir = path.join(REPO_ROOT, "batches", batchId);
   if (!fs.existsSync(batchDir)) {
     fs.mkdirSync(batchDir, { recursive: true });
   }
 
   const classHtml = pug.renderFile(classTemplate, {
     pretty: true,
-    rootPath: "../",
+    rootPath: "../../",
     pageType: "class",
     classId: c.id,
     classCode: c.code,
@@ -128,5 +128,5 @@ classes.forEach(c => {
 
   const outFilePath = path.join(batchDir, `${c.id}.html`);
   fs.writeFileSync(outFilePath, classHtml, "utf8");
-  console.log(`✓ Compiled templates/class.pug -> ${batchId}/${c.id}.html`);
+  console.log(`✓ Compiled templates/class.pug -> batches/${batchId}/${c.id}.html`);
 });

@@ -41,10 +41,9 @@ Thumbs.db
 
 # Node & Packages
 node_modules/
-package-lock.json
-package.json
 mobile_test.png
 
-# Local MCP Tools & Artifacts
+# Local MCP Tools, Scratch & Artifacts
 artifacts/
 inkscape-mcp/
+scratch/
