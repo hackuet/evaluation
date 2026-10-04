@@ -1489,13 +1489,17 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="video-card" style="margin-top: 14px;">
             <div class="video-header-bar">
               <span>[SESSION RECORDING: ROS 2 SIMULATION & RTOS DEMO]</span>
-              <span style="color: var(--fg-muted); font-size: 10px;">FastStart H.264</span>
+              <span style="color: var(--fg-muted); font-size: 10px;">${classMeta.youtubeId ? "YouTube Unlisted Stream" : "FastStart H.264"}</span>
             </div>
             <div class="video-wrapper" style="position: relative; width: 100%; background: #000;">
-              <video id="modalVideoPlayer" controls preload="metadata" style="width: 100%; max-height: 380px; display: block; margin: 0 auto;">
-                <source src="${rootPath}media/classes/class-01/ROS.mp4" type="video/mp4">
-                Your browser does not support HTML5 video streaming.
-              </video>
+              ${classMeta.youtubeId ? `
+                <iframe id="modalYoutubePlayer" src="https://www.youtube.com/embed/${classMeta.youtubeId}?enablejsapi=1" title="Session Recording" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width: 100%; height: 380px; border: 0; display: block;"></iframe>
+              ` : `
+                <video id="modalVideoPlayer" controls preload="metadata" style="width: 100%; max-height: 380px; display: block; margin: 0 auto;">
+                  <source src="${rootPath}media/classes/class-01/ROS.mp4" type="video/mp4">
+                  Your browser does not support HTML5 video streaming.
+                </video>
+              `}
             </div>
             <div class="video-footer-bar" style="padding: 8px 12px; background: var(--bg-subtle); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
               <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
@@ -1578,10 +1582,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const time = parseFloat(pill.getAttribute("data-time"));
     if (isNaN(time)) return;
 
-    let video = pill.closest(".video-card") ? pill.closest(".video-card").querySelector("video") : null;
+    let videoCard = pill.closest(".video-card");
+    let video = videoCard ? videoCard.querySelector("video") : null;
+    let iframe = videoCard ? videoCard.querySelector("iframe") : null;
+
     if (!video) {
       video = document.getElementById("classVideoPlayer") || document.getElementById("modalVideoPlayer");
     }
+    if (!iframe) {
+      iframe = document.getElementById("classYoutubePlayer") || document.getElementById("modalYoutubePlayer");
+    }
+
+    if (iframe && iframe.contentWindow) {
+      try {
+        iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "seekTo", args: [time, true] }), "*");
+        iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
+      } catch (err) {}
+    }
+
     if (video) {
       const applySeek = () => {
         try {

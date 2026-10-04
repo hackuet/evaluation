@@ -12,6 +12,12 @@
 !**/class-*/ROS.mp4
 
 # Python & Environment
+.env
+.env.*
+!.env.example
+client_secrets.json
+token.json
+token.pickle
 .venv/
 venv/
 ENV/

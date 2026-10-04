@@ -325,6 +325,21 @@ def discover_classes(batches):
             class_id = f"c{int(class_num)}"
             class_code = class_info.get("code") or f"C-{int(class_num):02d}"
 
+            # Check for meta.json (batch folder or canonical classes/ folder)
+            meta_json_path = os.path.join(class_path, "meta.json")
+            if not os.path.exists(meta_json_path):
+                canonical_meta = os.path.join(REPO_ROOT, "classes", f"class-{int(class_num):02d}", "meta.json")
+                if os.path.exists(canonical_meta):
+                    meta_json_path = canonical_meta
+
+            meta_extra = {}
+            if os.path.exists(meta_json_path):
+                try:
+                    with open(meta_json_path, "r", encoding="utf-8") as mf:
+                        meta_extra = json.load(mf)
+                except Exception:
+                    pass
+
             classes.append({
                 "id": class_id,
                 "folder": folder,
@@ -336,6 +351,9 @@ def discover_classes(batches):
                 "venue": class_info.get("venue", "CSE D401, KUET"),
                 "repoUrl": class_info.get("repoUrl", "https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main"),
                 "videoUrl": class_info.get("videoUrl", "media/classes/class-01/ROS.mp4"),
+                "youtubeId": meta_extra.get("youtubeId", class_info.get("youtubeId", "")),
+                "youtubeUrl": meta_extra.get("youtubeUrl", class_info.get("youtubeUrl", "")),
+                "youtubeEmbedUrl": meta_extra.get("youtubeEmbedUrl", class_info.get("youtubeEmbedUrl", "")),
                 "content": class_info.get("content", ""),
                 "baseAward": 50.0
             })

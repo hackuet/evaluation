@@ -18,14 +18,16 @@ Use this skill when recording new workshop or class sessions, logging batch-wise
 2. **Batch-Wise Multi-Activity Architecture**:
    - Classes are placed per academic batch: `<batch>/class-<NN>/` (e.g. `2k23/class-01/`, `2k24/class-01/`).
    - Shared technical curriculum `CLASS.md` lives canonically in `classes/class-<NN>/CLASS.md` and is symlinked into each participating batch folder (`CLASS.md -> ../../classes/class-<NN>/CLASS.md`).
-3. **Session Media & Video Compression Protocol**:
-   - Never commit raw or bloated video files.
-   - Curated class recordings must be compressed using `ffmpeg` with H.264 CRF 28 and FastStart streaming:
+3. **Session Media & Unlisted Video Protocol**:
+   - Do NOT commit heavy raw video files to git.
+   - Videos should be hosted as **Unlisted** on YouTube via the YouTube Data API v3, offloading repository bandwidth while keeping videos private and accessible only to participants.
+   - Environment variables are managed via `.env` (gitignored, see `.env.example`).
+   - Use the provided upload helper script (`scripts/upload_unlisted.py`):
      ```bash
-     ffmpeg -i input.mp4 -vcodec libx264 -crf 28 -preset fast -acodec aac -b:a 96k -movflags +faststart media/classes/class-<NN>/<filename>.mp4 -y
+     python3 scripts/upload_unlisted.py <video_file> --title "<Session Title>" --class-code "C-<NN>" --update-class
      ```
-   - Store in `media/classes/class-<NN>/` and symlink into batch class folders.
-   - `.gitignore` allows curated class videos via `!media/classes/**`.
+   - For offline/local fallback, videos can also be compressed locally using `scripts/compress_video.py` (`ffmpeg -vcodec libx264 -crf 28 -movflags +faststart`).
+   - `.gitignore` strictly excludes `.env` and `*.mp4` (with exceptions for curated media).
 4. **Scoring & Quiz Schema**:
    - Base participation award is **50.00 Points** for verified attendance.
    - Schema supports live quizzes, interactive Q&A challenges, and bonus points:
@@ -56,8 +58,19 @@ Use this skill when recording new workshop or class sessions, logging batch-wise
    - Executive summary and structured technical modules with learning outcomes.
    - Instructor notes and future milestone roadmap.
 4. If a recording exists:
-   - Compress to `media/classes/class-<NN>/<name>.mp4`.
-   - Verify size is under 20MB.
+   - **Preferred (Unlisted YouTube Upload)**:
+     Ensure `.env` contains `GOOGLE_CLIENT_SECRETS_FILE` or `YOUTUBE_API_KEY`.
+     Execute the upload helper:
+     ```bash
+     python3 scripts/upload_unlisted.py <raw_video_path> --title "Technical Workshop <NN>: <Title>" --class-code "C-<NN>" --update-class
+     ```
+     This automatically uploads the video as unlisted and writes `youtubeId` and `youtubeEmbedUrl` into `classes/class-<NN>/meta.json`.
+   - **Local Fallback**:
+     If offline, compress with FastStart streaming:
+     ```bash
+     python3 scripts/compress_video.py <input.mp4> media/classes/class-<NN>/<name>.mp4 --crf 28
+     ```
+     Verify compressed size is under 20MB.
 
 ### Step 2: Ingest & Sanitize Attendance CSV
 1. For each participating batch `<batch>` (e.g. `2k23`, `2k24`):
