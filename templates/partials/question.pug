@@ -3,5 +3,15 @@ section.question-section#assignmentQuestionSection(style=(pageType === 'assignme
     summary.question-summary
       span.question-title#assignmentQuestionTitle= assignmentTitle ? `[${assignmentCode}] ${assignmentTitle.replace(/^Assignment\s*\d+:\s*/i, '')} (Problem Statement)` : "ASSIGNMENT PROBLEM STATEMENT / QUESTION"
       span.question-toggle-hint [Click to toggle]
+    #assignmentQuestionMeta(style=(assignmentInstructor || submissionFormUrl ? 'margin-top: 12px; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 11px;' : 'display: none;'))
+      div
+        if assignmentInstructor
+          strong(style="color: var(--fg-dim);") INSTRUCTOR: 
+          span(style="font-weight: 700;")= assignmentInstructor
+          if assignmentClassCode
+            span(style="color: var(--fg-muted); margin-left: 6px;")= `(Session ${assignmentClassCode})`
+      if submissionFormUrl
+        a.btn.btn-sm(href=submissionFormUrl target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-weight: 700; background: #000; color: #fff; border-color: #000;") [SUBMIT VIA GOOGLE FORM ↗]
     .question-body#assignmentQuestionBody= questionText || ""
+
 

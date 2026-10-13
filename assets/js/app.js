@@ -595,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cumTotal += ev.computedTotal;
         evaluatedCount++;
         if (ev.status === 'Pending Drive Access') lastStatus = ev.status;
-        const meta = (HACK_DATA.assignments || []).find(metaA => metaA.id === a.assignmentId) || {};
+        const meta = (HACK_DATA.assignments || []).find(metaA => metaA.id === a.assignmentId && (!metaA.batch || metaA.batch === student.batch)) || (HACK_DATA.assignments || []).find(metaA => metaA.id === a.assignmentId) || {};
         assignmentSummaries.push({
           id: a.assignmentId,
           code: meta.code || a.assignmentId.toUpperCase(),
@@ -647,7 +647,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (isClassScope) {
       // Single Class Scope View
       const foundClass = classes.find(c => c.classId === activeScope);
-      const classMeta = (HACK_DATA.classes || []).find(c => c.id === activeScope) || {};
       if (foundClass) {
         return {
           isCumulative: false,
@@ -686,12 +685,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       // Single Assignment View: Look up selected assignment
       const found = assignments.find(a => a.assignmentId === activeScope);
-      const ev = evaluateSubmission(found || assignments[0]);
+      const ev = evaluateSubmission(found);
       return {
         isCumulative: false,
         isClass: false,
         assignmentData: ev,
-        status: ev ? ev.status : 'Unknown'
+        status: ev ? ev.status : 'Not Submitted'
       };
     }
   }
@@ -700,6 +699,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function render() {
     leaderboardSection.style.display = 'block';
 
+    const isClassScope = (HACK_DATA.classes || []).some(c => c.id === activeScope) || activeScope.startsWith("c");
+
     // 1. Process and map students with calculated scores
     let list = HACK_DATA.students
       .filter(s => s.batch === activeBatch)
@@ -707,6 +708,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ...s,
         scoreModel: getStudentScoreModel(s)
       }));
+
+    // In single-assignment view, only include students who have a submission for this assignment
+    if (activeScope !== 'all' && !isClassScope) {
+      list = list.filter(s => s.scoreModel && s.scoreModel.assignmentData);
+    }
 
     // 2. Filter by search query
     if (searchQuery) {
@@ -723,8 +729,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. AUTOMATIC RANK CALCULATION:
     // Sort descending by score
     list.sort((a, b) => {
-      const scoreA = a.scoreModel.isCumulative ? a.scoreModel.cumulativeScore : a.scoreModel.assignmentData.computedTotal;
-      const scoreB = b.scoreModel.isCumulative ? b.scoreModel.cumulativeScore : b.scoreModel.assignmentData.computedTotal;
+      const scoreA = a.scoreModel.isCumulative ? a.scoreModel.cumulativeScore : (a.scoreModel.assignmentData ? a.scoreModel.assignmentData.computedTotal : 0);
+      const scoreB = b.scoreModel.isCumulative ? b.scoreModel.cumulativeScore : (b.scoreModel.assignmentData ? b.scoreModel.assignmentData.computedTotal : 0);
       return scoreB - scoreA;
     });
 
@@ -746,8 +752,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 6. Update Table Header, Question Block & Rubric Button based on Scope
-    const isClassScope = (HACK_DATA.classes || []).some(c => c.id === activeScope) || activeScope.startsWith("c");
-
     if (activeScope === "all") {
       // Cumulative Rating View: Rubric and question are assignment-specific, so hide them
       if (rubricToggleBtn) rubricToggleBtn.style.display = "none";
@@ -784,7 +788,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else {
       // Assignment-specific View: Show rubric button and question block
-      const assignMeta = HACK_DATA.assignments.find(a => a.id === activeScope) || { code: activeScope.toUpperCase(), title: "Assignment" };
+      const assignMeta = HACK_DATA.assignments.find(a => a.id === activeScope && (!a.batch || a.batch === activeBatch)) || HACK_DATA.assignments.find(a => a.id === activeScope) || { code: activeScope.toUpperCase(), title: "Assignment" };
       if (rubricToggleBtn) {
         rubricToggleBtn.style.display = "inline-flex";
         rubricToggleBtn.textContent = `[View ${assignMeta.code} Rubric]`;
@@ -796,6 +800,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const qTitleEl = document.getElementById("assignmentQuestionTitle") || assignmentQuestionHeader;
         const cleanTitle = (assignMeta.title || "").replace(/^Assignment\s*\d+:\s*/i, "");
         if (qTitleEl) qTitleEl.textContent = `[${assignMeta.code}] ${cleanTitle} (Problem Statement)`;
+
+        const qMetaEl = document.getElementById("assignmentQuestionMeta");
+        if (qMetaEl) {
+          if (assignMeta.instructor || assignMeta.submissionFormUrl) {
+            qMetaEl.style.display = "flex";
+            qMetaEl.innerHTML = `
+              <div>
+                ${assignMeta.instructor ? `<strong style="color: var(--fg-dim);">INSTRUCTOR: </strong><span style="font-weight: 700;">${escapeHtml(assignMeta.instructor)}</span>` : ""}
+                ${assignMeta.classCode ? `<span style="color: var(--fg-muted); margin-left: 6px;">(Session ${escapeHtml(assignMeta.classCode)})</span>` : ""}
+              </div>
+              ${assignMeta.submissionFormUrl ? `<a class="btn btn-sm" href="${escapeHtml(assignMeta.submissionFormUrl)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-weight: 700; background: #000; color: #fff; border-color: #000;">[SUBMIT VIA GOOGLE FORM ↗]</a>` : ""}
+            `;
+          } else {
+            qMetaEl.style.display = "none";
+          }
+        }
         
         let formatted = escapeHtml(assignMeta.question);
         formatted = formatted.replace(/\[(https?:\/\/[^\s\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--fg); text-decoration: underline;">$1</a>');
@@ -819,19 +839,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (list.length === 0) {
-      ratingTableBody.innerHTML = `
-        <tr>
-          <td colspan="5" style="text-align: center; padding: 24px; color: var(--fg-muted);">
-            No records found matching current query.
-          </td>
-        </tr>
-      `;
+      const assignMeta = (activeScope !== "all" && !isClassScope)
+        ? (HACK_DATA.assignments.find(a => a.id === activeScope && (!a.batch || a.batch === activeBatch)) || HACK_DATA.assignments.find(a => a.id === activeScope))
+        : null;
+      if (assignMeta && !searchQuery && statusFilter === "all") {
+        ratingTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 28px 20px; color: var(--fg-muted);">
+              <div style="font-weight: 700; color: var(--fg); font-size: 12px; text-transform: uppercase; margin-bottom: 6px;">
+                [${escapeHtml(assignMeta.code)}] Accepting Submissions — Batch ${escapeHtml(activeBatch.toUpperCase())}
+              </div>
+              <div style="font-size: 11px; margin-bottom: 12px;">
+                No student submissions have been evaluated yet for this assignment.${assignMeta.instructor ? ` Assigned by Instructor <strong>${escapeHtml(assignMeta.instructor)}</strong>.` : ""}
+              </div>
+              ${assignMeta.submissionFormUrl ? `
+                <a class="btn btn-sm" href="${escapeHtml(assignMeta.submissionFormUrl)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-weight: 700; background: #000; color: #fff; border-color: #000; padding: 4px 12px;">
+                  [SUBMIT VIA GOOGLE FORM ↗]
+                </a>
+              ` : ""}
+            </td>
+          </tr>
+        `;
+      } else {
+        ratingTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 24px; color: var(--fg-muted);">
+              No records found matching current query.
+            </td>
+          </tr>
+        `;
+      }
       return;
     }
 
     // Precompute per-assignment rank map across all students in activeBatch
     const assignmentRankMap = {};
-    HACK_DATA.assignments.forEach(assign => {
+    HACK_DATA.assignments.filter(a => !a.batch || a.batch === activeBatch).forEach(assign => {
       const arr = [];
       HACK_DATA.students
         .filter(s => s.batch === activeBatch)
@@ -920,9 +963,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }).join("");
     } else {
       // Render Assignment Details Table Rows with Collapsible Transparency
+      const assignMeta = HACK_DATA.assignments.find(a => a.id === activeScope && (!a.batch || a.batch === activeBatch)) || HACK_DATA.assignments.find(a => a.id === activeScope) || {};
       ratingTableBody.innerHTML = list.map(student => {
         const ev = student.scoreModel.assignmentData;
         const sc = ev.computedScores;
+        const hasT4 = !!sc.task4;
+        const showBonus = (assignMeta.bonusMax === undefined || assignMeta.bonusMax > 0) && sc.bonus;
 
         return `
           <tr>
@@ -937,13 +983,14 @@ document.addEventListener('DOMContentLoaded', () => {
             </td>
             <td>
               <div class="breakdown-row">
-                <span class="tag-plain">PART: ${sc.participation.final}/55</span>
-                <span class="tag-plain">TIME: ${sc.inTime.final}/15</span>
-                <span class="tag-plain">T1: ${sc.task1.final}/25</span>
-                <span class="tag-plain">T2: ${sc.task2.final}/25</span>
-                <span class="tag-plain">T3: ${sc.task3.final}/25</span>
-                <span class="tag-plain">DOC: ${sc.documentation.final}/5</span>
-                <span class="tag-plain">BONUS: ${sc.bonus.final}/75</span>
+                <span class="tag-plain">PART: ${sc.participation.final}/${sc.participation.max || 55}</span>
+                <span class="tag-plain">TIME: ${sc.inTime.final}/${sc.inTime.max || 15}</span>
+                <span class="tag-plain">T1: ${sc.task1.final}/${sc.task1.max || 25}</span>
+                <span class="tag-plain">T2: ${sc.task2.final}/${sc.task2.max || 25}</span>
+                <span class="tag-plain">T3: ${sc.task3.final}/${sc.task3.max || 25}</span>
+                ${hasT4 ? `<span class="tag-plain">T4: ${sc.task4.final}/${sc.task4.max || 15}</span>` : ""}
+                <span class="tag-plain">DOC: ${sc.documentation.final}/${sc.documentation.max || 5}</span>
+                ${showBonus ? `<span class="tag-plain">BONUS: ${sc.bonus.final}/${sc.bonus.max || 75}</span>` : ""}
               </div>
 
               <!-- Collapsible Transparency Notes -->
@@ -961,25 +1008,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tr>
                     <tr>
                       <td style="padding: 2px 4px;">Task 1</td>
-                      <td style="padding: 2px 4px;">25</td>
+                      <td style="padding: 2px 4px;">${sc.task1.max || 25}</td>
                       <td style="padding: 2px 4px;">${sc.task1.inst}</td>
                       <td style="padding: 2px 4px;">${sc.task1.llm}</td>
                       <td style="padding: 2px 4px;"><strong>${sc.task1.final}</strong></td>
                     </tr>
                     <tr>
                       <td style="padding: 2px 4px;">Task 2</td>
-                      <td style="padding: 2px 4px;">25</td>
+                      <td style="padding: 2px 4px;">${sc.task2.max || 25}</td>
                       <td style="padding: 2px 4px;">${sc.task2.inst}</td>
                       <td style="padding: 2px 4px;">${sc.task2.llm}</td>
                       <td style="padding: 2px 4px;"><strong>${sc.task2.final}</strong></td>
                     </tr>
                     <tr>
                       <td style="padding: 2px 4px;">Task 3</td>
-                      <td style="padding: 2px 4px;">25</td>
+                      <td style="padding: 2px 4px;">${sc.task3.max || 25}</td>
                       <td style="padding: 2px 4px;">${sc.task3.inst}</td>
                       <td style="padding: 2px 4px;">${sc.task3.llm}</td>
                       <td style="padding: 2px 4px;"><strong>${sc.task3.final}</strong></td>
                     </tr>
+                    ${hasT4 ? `
+                    <tr>
+                      <td style="padding: 2px 4px;">Task 4</td>
+                      <td style="padding: 2px 4px;">${sc.task4.max || 15}</td>
+                      <td style="padding: 2px 4px;">${sc.task4.inst}</td>
+                      <td style="padding: 2px 4px;">${sc.task4.llm}</td>
+                      <td style="padding: 2px 4px;"><strong>${sc.task4.final}</strong></td>
+                    </tr>` : ""}
                   </table>
                 </div>
               </details>
@@ -1012,7 +1067,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll(".switch-scope-btn").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const assignId = e.currentTarget.getAttribute("data-assign");
-        const assignMeta = HACK_DATA.assignments.find(a => a.id === assignId);
+        const assignMeta = HACK_DATA.assignments.find(a => a.id === assignId && a.batch === activeBatch) || HACK_DATA.assignments.find(a => a.id === assignId);
         const aBatch = (assignMeta && assignMeta.batch) || activeBatch;
         window.location.href = `${rootPath}batches/${aBatch}/${assignId}.html`;
       });
@@ -1022,7 +1077,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll(".switch-class-btn").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const classId = e.currentTarget.getAttribute("data-class");
-        const classMeta = (HACK_DATA.classes || []).find(c => c.id === classId);
+        const classMeta = (HACK_DATA.classes || []).find(c => c.id === classId && c.batch === activeBatch) || (HACK_DATA.classes || []).find(c => c.id === classId);
         const cBatch = (classMeta && classMeta.batch) || activeBatch;
         window.location.href = `${rootPath}batches/${cBatch}/${classId}.html`;
       });
@@ -1118,14 +1173,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tr>
                   `;
                 } else {
+                  const assignUrl = `${rootPath}batches/${student.batch}/${meta.id}.html`;
                   return `
-                    <tr style="opacity: 0.6; background: var(--bg-subtle);">
-                      <td style="white-space: nowrap;"><strong>${meta.code}</strong></td>
-                      <td>${meta.title}</td>
-                      <td><span style="font-size: 10px; color: var(--fg-muted);">Upcoming</span></td>
-                      <td>--</td>
+                    <tr style="background: var(--bg-subtle);">
+                      <td style="white-space: nowrap;">
+                        <a class="btn btn-sm" href="${assignUrl}" style="padding: 2px 8px; font-weight: 700; text-decoration: none; white-space: nowrap;" title="View ${meta.code}">
+                          ${meta.code}
+                        </a>
+                      </td>
+                      <td>
+                        <a href="${assignUrl}" style="font-weight: 700; color: var(--fg); text-decoration: underline;">
+                          ${escapeHtml(meta.title)}
+                        </a>
+                        ${meta.instructor ? `<div style="font-size: 10px; color: var(--fg-muted);">Instructor: ${escapeHtml(meta.instructor)}</div>` : ""}
+                      </td>
+                      <td><span class="tag-plain" style="font-size: 10px;">${meta.submissionFormUrl ? "Open" : "Upcoming"}</span></td>
+                      <td style="font-size: 11px; color: var(--fg-muted);">--</td>
                       <td style="text-align: right; color: var(--fg-muted);">-- / ${meta.baseMax}</td>
-                      <td style="text-align: center; font-size: 10px; color: var(--fg-muted);">[Pending Release]</td>
+                      <td style="text-align: center;">
+                        ${meta.submissionFormUrl ? `
+                          <a class="btn btn-sm" href="${escapeHtml(meta.submissionFormUrl)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-size: 10px; font-weight: 700;">
+                            [Submit Form ↗]
+                          </a>
+                        ` : `<span style="font-size: 10px; color: var(--fg-muted);">[Pending Release]</span>`}
+                      </td>
                     </tr>
                   `;
                 }
@@ -1258,7 +1329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!student) return;
 
     const targetAssignId = assignmentId || (activeScope === 'all' ? 'a1' : activeScope);
-    const meta = HACK_DATA.assignments.find(a => a.id === targetAssignId) || { code: targetAssignId.toUpperCase(), baseMax: 150 };
+    const meta = HACK_DATA.assignments.find(a => a.id === targetAssignId && (!a.batch || a.batch === student.batch)) || HACK_DATA.assignments.find(a => a.id === targetAssignId) || { code: targetAssignId.toUpperCase(), baseMax: 150 };
     const aSub = student.assignments.find(a => a.assignmentId === targetAssignId) || student.assignments[0];
     const ev = evaluateSubmission(aSub);
     if (!ev) return;
@@ -1320,7 +1391,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('') + `
       <tr style="background: var(--bg-alt); font-weight: bold;">
         <td>TOTAL SCORE (BASE + BONUS)</td>
-        <td>${meta.totalMax || 225}</td>
+        <td>${meta.totalMax || 150}</td>
         <td colspan="2" style="text-align: center;">Me(60%) + LLM(40%)</td>
         <td>${ev.computedTotal.toFixed(2)}</td>
         <td>${ev.computedPercentage} (150 base)</td>
@@ -1418,9 +1489,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Open Class Details Modal (Session recording, curriculum, and metadata)
   function openClassDetailsModal(classId, fromProfile = false, fromStudentId = null) {
-    const classMeta = (HACK_DATA.classes || []).find(c => c.id === classId) || (HACK_DATA.classes && HACK_DATA.classes[0]);
+    const classMeta = (HACK_DATA.classes || []).find(c => c.id === classId && c.batch === activeBatch) || (HACK_DATA.classes || []).find(c => c.id === classId) || (HACK_DATA.classes && HACK_DATA.classes[0]);
     if (!classMeta || !classDetailModal) return;
 
+    const targetBatch = classMeta.batch || activeBatch || '2k23';
     classModalTitle.textContent = `[${classMeta.code}] ${classMeta.title}`;
 
     if (fromProfile) {
@@ -1462,7 +1534,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="font-weight: 700; margin-top: 6px;">Module 1: ROS 2 Distributed Robotics Middleware (Tahmid Hossain Chowdhury Mahin, 2K22)</div>
             <p style="color: var(--fg-muted); margin-bottom: 8px;">DDS decentralized node discovery, ament package architecture, publisher/subscriber QoS policies, and Gazebo HIL digital twin simulation.</p>
             
-            <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: gap: 8px;">
+            <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
               <div>
                 <strong style="font-size: 11px;">ASSIGNMENT SUBMISSION:</strong>
                 <span style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;">Hands-on Lab Challenge & Code Submission</span>
@@ -1476,12 +1548,49 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <p style="color: var(--fg-muted); margin-bottom: 8px;">FreeRTOS on ESP32 (ESP-IDF & PlatformIO): Super-loop bottlenecks vs preemptive priority scheduling, cooperative scheduling with vTaskDelay, dual-core SMP & core pinning, boot sequence, shared buffer race conditions, and scalable multi-task architectures.</p>
 
-            <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-              <div>
-                <strong style="font-size: 11px;">ASSIGNMENT SUBMISSION:</strong>
-                <span style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;">Hands-on Lab Challenge & Code Submission</span>
+            <div style="margin: 10px 0 14px 0; padding: 10px 12px; background: var(--bg-alt); border: 1px solid var(--border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div>
+                  <strong style="font-size: 11px;">ASSIGNMENT SUBMISSION [A-02]:</strong>
+                  <span style="font-size: 11px; font-weight: 700; margin-left: 6px;">HACK RTOS Assignment (Given by Instructor Isaac Aneek Sarkar)</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <span class="badge badge-subagent" style="font-size: 10px; font-weight: 700;">[PUBLISHED — A-02]</span>
+                  <a href="${rootPath}batches/${targetBatch}/a2.html" class="btn btn-sm" style="text-decoration: none; font-size: 10px; font-weight: 700; padding: 2px 8px;">[OPEN A-02 PAGE]</a>
+                  <a href="https://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="text-decoration: none; font-size: 10px; font-weight: 700; padding: 2px 8px; background: #000; color: #fff; border-color: #000;">[SUBMIT VIA GOOGLE FORM ↗]</a>
+                </div>
               </div>
-              <span class="badge" style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;">[NOT PUBLISHED]</span>
+              <details open style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-light);">
+                <summary style="font-size: 11px; font-weight: 700; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center;">
+                  <span>VERBATIM PROBLEM STATEMENT & SUBMISSION GUIDELINES</span>
+                  <span style="font-size: 10px; color: var(--fg-muted); font-family: var(--font-mono);">[Click to toggle]</span>
+                </summary>
+                <pre class="code-box" style="margin-top: 6px; white-space: pre-wrap; font-size: 11px; line-height: 1.5; background: var(--bg); color: var(--fg); padding: 8px 10px; border: 1px solid var(--border-light);">HACK RTOS Assignment
+Task - create deliberate bad code for each problems that RTOS was designed to solve
+Run it on wokwi simulator/or esp32
+Observe the output
+Mitigate the problem using RTOS
+
+The problems topics  are
+1) SMP
+2) Priority based execution
+3) Race condition
+4) Inter task communication
+
+Create a github repository
+Make two folders
+problems/
+solutions/
+
+Upload your codes
+
+Also in the README.md write your observations
+
+You may use AI but dont use it to write the observation. Because that will be your level up stage.
+
+
+https://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform</pre>
+              </details>
             </div>
           </div>
 
@@ -1661,42 +1770,51 @@ document.addEventListener('DOMContentLoaded', () => {
   // Open Assignment-Specific Rubric Modal
   function openRubricModal(assignmentId) {
     const targetAssignId = assignmentId || (activeScope === 'all' ? 'a1' : activeScope);
-    const meta = HACK_DATA.assignments.find(a => a.id === targetAssignId) || HACK_DATA.assignments[0];
+    const meta = HACK_DATA.assignments.find(a => a.id === targetAssignId && (!a.batch || a.batch === activeBatch)) || HACK_DATA.assignments.find(a => a.id === targetAssignId) || HACK_DATA.assignments[0];
     if (!meta) return;
 
     rubricModalTitle.textContent = `[${meta.code}] Rubric & Criteria: ${meta.title}`;
 
+    const rubricObj = meta.rubric || {};
+    const baseKeys = Object.keys(rubricObj).filter(k => !k.startsWith('bonus'));
+    const bonusKeys = Object.keys(rubricObj).filter(k => k.startsWith('bonus'));
+
+    const baseItemsHtml = baseKeys.length > 0
+      ? baseKeys.map(k => {
+          const item = rubricObj[k];
+          return `&bull; <strong>${escapeHtml(item.name || k)}</strong>: ${item.max} Marks${item.desc ? ` (${escapeHtml(item.desc)})` : ''}`;
+        }).join('<br>')
+      : `&bull; <strong>Participation</strong>: 55 Marks<br>&bull; <strong>In-Time Submission</strong>: 15 Marks`;
+
+    const bonusItemsHtml = bonusKeys.map(k => {
+      const item = rubricObj[k];
+      return `&bull; <strong>${escapeHtml(item.name || k)}</strong>: ${item.max} Marks${item.desc ? ` (${escapeHtml(item.desc)})` : ''}`;
+    }).join('<br>');
+
     rubricModalContent.innerHTML = `
       <div class="callout" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
         <div>
-          <span style="font-weight: 700; text-transform: uppercase;">Assignment: ${meta.code}</span>
-          <div style="font-size: 11px; color: var(--fg-muted);">${meta.title}</div>
+          <span style="font-weight: 700; text-transform: uppercase;">Assignment: ${escapeHtml(meta.code)}</span>
+          <div style="font-size: 11px; color: var(--fg-muted);">${escapeHtml(meta.title)}</div>
+          ${meta.instructor ? `<div style="font-size: 11px; margin-top: 2px;"><strong>Instructor:</strong> ${escapeHtml(meta.instructor)}</div>` : ''}
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
           <span class="tag-plain" style="font-weight: 700;">Base Max: ${meta.baseMax} pts</span>
-          <span class="tag-plain" style="font-weight: 700;">Bonus Pool: +${meta.bonusMax} pts</span>
+          ${meta.bonusMax > 0 ? `<span class="tag-plain" style="font-weight: 700;">Bonus Pool: +${meta.bonusMax} pts</span>` : ''}
+          ${meta.submissionFormUrl ? `<a class="btn btn-sm" href="${escapeHtml(meta.submissionFormUrl)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-weight: 700; background: #000; color: #fff; border-color: #000;">[SUBMIT FORM ↗]</a>` : ''}
         </div>
       </div>
 
       <div class="callout">
         <h4>Base Points Breakdown (${meta.baseMax} Marks Total)</h4>
-        <p>&bull; <strong>Participation</strong>: 55 Marks (Full marks for authentic effort)<br>
-           &bull; <strong>In-Time Submission</strong>: 15 Marks (5-minute grace window applied)<br>
-           &bull; <strong>Task 1 (Dual LED Blinker)</strong>: 25 Marks (Non-blocking millis() vs blocking delay)<br>
-           &bull; <strong>Task 2 (Software PWM)</strong>: 25 Marks (Microsecond duty cycle without analogWrite)<br>
-           &bull; <strong>Task 3 (Sonar Reader)</strong>: 25 Marks (Hardware acceleration via interrupts)<br>
-           &bull; <strong>Inline Comments</strong>: 5 Marks (Directly in code files)<br>
-           &bull; <strong>Simulation Video</strong>: Scoring Removed (0 Marks)</p>
+        <p>${baseItemsHtml}</p>
       </div>
+      ${meta.bonusMax > 0 && bonusKeys.length > 0 ? `
       <div class="callout">
         <h4>Bonus Pool (+${meta.bonusMax} Marks Total - Adds on top of ${meta.baseMax})</h4>
-        <p>&bull; <strong>i.b.1 (Generic N-LEDs)</strong>: 10 Marks<br>
-           &bull; <strong>i.b.2 (Hardware Registers DDRx/PORTx)</strong>: 15 Marks<br>
-           &bull; <strong>i.b.3 (Multitasking Systems)</strong>: 10 Marks<br>
-           &bull; <strong>ii.b.1 (Timer Registers PWM)</strong>: 15 Marks<br>
-           &bull; <strong>ii.b.2 (Custom PWM Servo Control)</strong>: 10 Marks<br>
-           &bull; <strong>iii.b (Smart Dustbin Simulation)</strong>: 15 Marks</p>
+        <p>${bonusItemsHtml}</p>
       </div>
+      ` : ''}
       <div class="callout">
         <h4>Hybrid Scoring Formula</h4>
         <p><code>Task & Bonus Final = (Instructor * 0.6) + (LLM * 0.4)</code></p>

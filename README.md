@@ -62,10 +62,16 @@ A high-density, monotonic, CSV-driven technical rating board, evaluation platfor
 │   ├── hack-class-entry-creator/  # Class & workshop entry creation skill
 │   └── hack-youtube-uploader/     # Unlisted YouTube upload & media MCP skill
 ├── assignments/                 # Canonical assignment problem statements & rubrics
-│   └── assignment-01/
-│       ├── QUESTION.md          # Verbatim assignment problem statement
-│       ├── RUBRIC.md            # Official scoring criteria (base + bonus)
-│       └── EVALUATION_PROMPT.md # Prompt injection-proof evaluation rubric
+│   ├── assignment-01/           # A-01: Dual LED, Software PWM & Sonar (2K25)
+│   │   ├── meta.json            # Structured metadata, rubric schema, and max points
+│   │   ├── QUESTION.md          # Verbatim assignment problem statement
+│   │   ├── RUBRIC.md            # Official scoring criteria (base + bonus)
+│   │   └── EVALUATION_PROMPT.md # Prompt injection-proof evaluation rubric
+│   └── assignment-02/           # A-02: HACK RTOS Assignment (2K23 & 2K24)
+│       ├── meta.json            # Structured metadata, instructor, and Google Form URL
+│       ├── QUESTION.md          # Verbatim RTOS assignment problem statement
+│       ├── RUBRIC.md            # Official 150-point RTOS scoring criteria
+│       └── EVALUATION_PROMPT.md # Prompt injection-proof RTOS evaluation rubric
 ├── classes/                     # Canonical workshop documentation & curricula
 │   └── class-01/
 │       ├── CLASS.md             # Canonical curriculum, instructors, and module breakdown
@@ -80,24 +86,19 @@ A high-density, monotonic, CSV-driven technical rating board, evaluation platfor
 └── batches/                     # Academic cohorts (2k23/, 2k24/, 2k25/)
     └── <batch>/
         ├── template.csv         # Empty starter template for grading sheets
-        ├── <assignmentId>.html  # e.g., a1.html (Compiled dedicated page)
+        ├── <assignmentId>.html  # e.g., a1.html, a2.html (Compiled dedicated page)
         ├── <classId>.html       # e.g., c1.html (Compiled dedicated page)
         ├── assignment-<N>/      # Student submissions, evaluations, and grading sheet
         │   ├── assignment-<N>.csv # Normalized grading CSV
-        │   ├── QUESTION.md -> symlink # Symlink to ../../../assignments/assignment-<N>/QUESTION.md
-        │   ├── RUBRIC.md -> symlink   # Symlink to ../../../assignments/assignment-<N>/RUBRIC.md
+        │   ├── meta.json -> symlink   # Symlink to ../../../assignments/assignment-<NN>/meta.json
+        │   ├── QUESTION.md -> symlink # Symlink to ../../../assignments/assignment-<NN>/QUESTION.md
+        │   ├── RUBRIC.md -> symlink   # Symlink to ../../../assignments/assignment-<NN>/RUBRIC.md
         │   ├── submissions/     # Code files per roll
         │   └── evaluations/     # Markdown audit reports per roll
         └── class-<N>/           # Batch-specific class participation
             ├── attendance.csv   # Batch attendance sheet (roll, status, points, remarks)
-            ├── CLASS.md -> symlink # Symlink to ../../../classes/class-<N>/CLASS.md
-            └── ROS.mp4 -> symlink  # Symlink to ../../../media/classes/class-<N>/ROS.mp4
-    │   ├── submissions/         # Code files per roll
-    │   └── evaluations/         # Markdown audit reports per roll
-    └── class-<N>/               # Batch-specific class participation
-        ├── attendance.csv       # Batch attendance sheet (roll, status, points, remarks)
-        ├── CLASS.md -> symlink  # Symlink to ../../classes/class-<N>/CLASS.md
-        └── ROS.mp4 -> symlink   # Symlink to ../../media/classes/class-<N>/ROS.mp4
+            ├── CLASS.md -> symlink # Symlink to ../../../classes/class-<NN>/CLASS.md
+            └── ROS.mp4 -> symlink  # Symlink to ../../../media/classes/class-<NN>/ROS.mp4
 ```
 
 ---

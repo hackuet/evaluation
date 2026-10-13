@@ -63,11 +63,45 @@ block content
           li Race conditions: Shared memory hazards and observing non-atomic buffer corruption.
           li Scalability: Clean multi-task separation vs monolithic super-loop code.
 
-        .assignment-placeholder(style="margin: 12px 0 18px 0; padding: 12px 14px; background: var(--bg-alt); border: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;")
-          div
-            strong(style="font-size: 11px;") ASSIGNMENT SUBMISSION:
-            span(style="font-size: 11px; color: var(--fg-muted); margin-left: 6px;") Hands-on Lab Challenge & Code Submission
-          span.badge(style="background: var(--bg); border: 1px solid var(--border); font-size: 10px; font-weight: 700;") [NOT PUBLISHED]
+        .assignment-placeholder(style="margin: 12px 0 18px 0; padding: 12px 14px; background: var(--bg-alt); border: 1px solid var(--border);")
+          div(style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;")
+            div
+              strong(style="font-size: 11px;") ASSIGNMENT SUBMISSION [A-02]:
+              span(style="font-size: 11px; font-weight: 700; margin-left: 6px;") HACK RTOS Assignment (Given by Instructor Isaac Aneek Sarkar)
+            div(style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;")
+              span.badge.badge-subagent(style="font-size: 10px; font-weight: 700;") [PUBLISHED — A-02]
+              a.btn.btn-sm(href=`${rootPath || ''}batches/${activeBatch || '2k23'}/a2.html` style="text-decoration: none; font-size: 10px; font-weight: 700; padding: 2px 8px;") [OPEN A-02 PAGE]
+              a.btn.btn-sm(href="https://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform" target="_blank" rel="noopener noreferrer" style="text-decoration: none; font-size: 10px; font-weight: 700; padding: 2px 8px; background: #000; color: #fff; border-color: #000;") [SUBMIT VIA GOOGLE FORM ↗]
+          details(open style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-light);")
+            summary(style="font-size: 11px; font-weight: 700; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center;")
+              span VERBATIM PROBLEM STATEMENT & SUBMISSION GUIDELINES
+              span(style="font-size: 10px; color: var(--fg-muted); font-family: var(--font-mono);") [Click to toggle]
+            pre.code-box(style="margin-top: 8px; white-space: pre-wrap; font-size: 11px; line-height: 1.5; background: var(--bg); color: var(--fg); padding: 10px 12px; border: 1px solid var(--border-light);")
+              | HACK RTOS Assignment
+              | Task - create deliberate bad code for each problems that RTOS was designed to solve
+              | Run it on wokwi simulator/or esp32
+              | Observe the output
+              | Mitigate the problem using RTOS
+              |
+              | The problems topics  are
+              | 1) SMP
+              | 2) Priority based execution
+              | 3) Race condition
+              | 4) Inter task communication
+              |
+              | Create a github repository
+              | Make two folders
+              | problems/
+              | solutions/
+              |
+              | Upload your codes
+              |
+              | Also in the README.md write your observations
+              |
+              | You may use AI but dont use it to write the observation. Because that will be your level up stage.
+              |
+              |
+              | https://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform
 
         // Custom Video Player Container (Within Curriculum, After Module Description)
         .video-card(style="border: 1px solid var(--border); background: var(--bg); margin-top: 18px;")

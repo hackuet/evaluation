@@ -1,0 +1,74 @@
+{
+  "id": "a1",
+  "code": "A-01",
+  "title": "Assignment 1: Dual LED, Software PWM & Sonar",
+  "instructor": "HACK Technical Evaluation Team",
+  "status": "Active",
+  "llmModel": "Gemini 3.8 Flash (Medium)",
+  "deadline": "2026-10-01 23:59",
+  "baseMax": 150,
+  "bonusMax": 75,
+  "totalMax": 225,
+  "rubric": {
+    "participation": {
+      "max": 55,
+      "name": "Participation",
+      "desc": "Full marks for submitting an authentic attempt."
+    },
+    "inTime": {
+      "max": 15,
+      "name": "In-Time (5m grace)",
+      "desc": "Submitted on or before 10/01/2026 11:59 PM (with 5-minute grace window)."
+    },
+    "task1": {
+      "max": 25,
+      "name": "Task 1: Dual LED Blinker",
+      "desc": "Non-blocking millis() independent intervals vs blocking delay()."
+    },
+    "task2": {
+      "max": 25,
+      "name": "Task 2: Software PWM",
+      "desc": "Microsecond duty cycle pwm(pin, value) without analogWrite()."
+    },
+    "task3": {
+      "max": 25,
+      "name": "Task 3: Sonar Reader (HW Accel)",
+      "desc": "HC-SR04 reading without pulseIn(); hardware interrupts for full credit."
+    },
+    "documentation": {
+      "max": 5,
+      "name": "Inline Comments",
+      "desc": "Clear variable naming, pin documentation, and inline comments directly in code files."
+    },
+    "bonus_ib1": {
+      "max": 10,
+      "name": "i.b.1: Generic N-LEDs (Bonus)",
+      "desc": "Scalable data structure to handle arbitrary N LEDs and intervals dynamically."
+    },
+    "bonus_ib2": {
+      "max": 15,
+      "name": "i.b.2: Hardware Port Opt. (Bonus)",
+      "desc": "Direct AVR port register manipulation (DDRx/PORTx/PINx) or timer toggles."
+    },
+    "bonus_ib3": {
+      "max": 10,
+      "name": "i.b.3: Multitasking Systems (Bonus)",
+      "desc": "Structured multitasking architecture: state machine, scheduler, or FreeRTOS."
+    },
+    "bonus_iib1": {
+      "max": 15,
+      "name": "ii.b.1: HW PWM Acceleration (Bonus)",
+      "desc": "Zero-CPU hardware PWM generation configuring MCU timer registers."
+    },
+    "bonus_iib2": {
+      "max": 10,
+      "name": "ii.b.2: Custom PWM Servo (Bonus)",
+      "desc": "Precision 50Hz PWM pulse train (1.0ms to 2.0ms) driving a servo without <Servo.h>."
+    },
+    "bonus_iiib": {
+      "max": 15,
+      "name": "iii.b: Smart Dustbin Sim (Bonus)",
+      "desc": "Complete integrated simulation in Wokwi/Tinkercad linking sonar trigger to servo actuation."
+    }
+  }
+}

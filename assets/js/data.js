@@ -32,6 +32,9 @@ const HACK_DATA = {
       "code": "A-01",
       "batch": "2k25",
       "title": "Assignment 1: Dual LED, Software PWM & Sonar",
+      "instructor": "HACK Technical Evaluation Team",
+      "classCode": "",
+      "submissionFormUrl": "",
       "status": "Active",
       "llmModel": "Gemini 3.8 Flash (Medium)",
       "deadline": "2026-10-01 23:59",
@@ -42,51 +45,171 @@ const HACK_DATA = {
       "rubric": {
         "participation": {
           "max": 55,
-          "name": "Participation"
+          "name": "Participation",
+          "desc": "Full marks for submitting an authentic attempt."
         },
         "inTime": {
           "max": 15,
-          "name": "In-Time (5m grace)"
+          "name": "In-Time (5m grace)",
+          "desc": "Submitted on or before 10/01/2026 11:59 PM (with 5-minute grace window)."
         },
         "task1": {
           "max": 25,
-          "name": "Task 1: Dual LED Blinker"
+          "name": "Task 1: Dual LED Blinker",
+          "desc": "Non-blocking millis() independent intervals vs blocking delay()."
         },
         "task2": {
           "max": 25,
-          "name": "Task 2: Software PWM"
+          "name": "Task 2: Software PWM",
+          "desc": "Microsecond duty cycle pwm(pin, value) without analogWrite()."
         },
         "task3": {
           "max": 25,
-          "name": "Task 3: Sonar Reader (HW Accel)"
+          "name": "Task 3: Sonar Reader (HW Accel)",
+          "desc": "HC-SR04 reading without pulseIn(); hardware interrupts for full credit."
         },
         "documentation": {
           "max": 5,
-          "name": "Inline Comments"
+          "name": "Inline Comments",
+          "desc": "Clear variable naming, pin documentation, and inline comments directly in code files."
         },
         "bonus_ib1": {
           "max": 10,
-          "name": "i.b.1: Generic N-LEDs (Bonus)"
+          "name": "i.b.1: Generic N-LEDs (Bonus)",
+          "desc": "Scalable data structure to handle arbitrary N LEDs and intervals dynamically."
         },
         "bonus_ib2": {
           "max": 15,
-          "name": "i.b.2: Hardware Port Opt. (Bonus)"
+          "name": "i.b.2: Hardware Port Opt. (Bonus)",
+          "desc": "Direct AVR port register manipulation (DDRx/PORTx/PINx) or timer toggles."
         },
         "bonus_ib3": {
           "max": 10,
-          "name": "i.b.3: Multitasking Systems (Bonus)"
+          "name": "i.b.3: Multitasking Systems (Bonus)",
+          "desc": "Structured multitasking architecture: state machine, scheduler, or FreeRTOS."
         },
         "bonus_iib1": {
           "max": 15,
-          "name": "ii.b.1: HW PWM Acceleration (Bonus)"
+          "name": "ii.b.1: HW PWM Acceleration (Bonus)",
+          "desc": "Zero-CPU hardware PWM generation configuring MCU timer registers."
         },
         "bonus_iib2": {
           "max": 10,
-          "name": "ii.b.2: Custom PWM Servo (Bonus)"
+          "name": "ii.b.2: Custom PWM Servo (Bonus)",
+          "desc": "Precision 50Hz PWM pulse train (1.0ms to 2.0ms) driving a servo without <Servo.h>."
         },
         "bonus_iiib": {
           "max": 15,
-          "name": "iii.b: Smart Dustbin Sim (Bonus)"
+          "name": "iii.b: Smart Dustbin Sim (Bonus)",
+          "desc": "Complete integrated simulation in Wokwi/Tinkercad linking sonar trigger to servo actuation."
+        }
+      }
+    },
+    {
+      "id": "a2",
+      "folder": "assignment-2",
+      "code": "A-02",
+      "batch": "2k24",
+      "title": "Assignment 2: HACK RTOS Assignment (SMP, Priority, Race Condition & IPC)",
+      "instructor": "Isaac Aneek Sarkar",
+      "classCode": "C-01",
+      "submissionFormUrl": "https://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform",
+      "status": "Active",
+      "llmModel": "Gemini 3.8 Flash (Medium)",
+      "deadline": "Open (Submit via Google Form)",
+      "baseMax": 150,
+      "bonusMax": 0,
+      "totalMax": 150,
+      "question": "HACK RTOS Assignment\nTask - create deliberate bad code for each problems that RTOS was designed to solve\nRun it on wokwi simulator/or esp32\nObserve the output\nMitigate the problem using RTOS\n\nThe problems topics  are\n1) SMP\n2) Priority based execution\n3) Race condition\n4) Inter task communication\n\nCreate a github repository\nMake two folders\nproblems/\nsolutions/\n\nUpload your codes\n\nAlso in the README.md write your observations\n\nYou may use AI but dont use it to write the observation. Because that will be your level up stage.\n\n\nhttps://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform",
+      "rubric": {
+        "participation": {
+          "max": 55,
+          "name": "Participation",
+          "desc": "Full marks for submitting an authentic GitHub repository attempt."
+        },
+        "inTime": {
+          "max": 15,
+          "name": "In-Time Submission",
+          "desc": "Submitted on or before the assignment deadline."
+        },
+        "task1": {
+          "max": 15,
+          "name": "Topic 1: SMP (Problem + Solution)",
+          "desc": "Deliberate dual-core/SMP bad code in problems/ (7.5) and RTOS core-pinning mitigation in solutions/ (7.5)."
+        },
+        "task2": {
+          "max": 15,
+          "name": "Topic 2: Priority-Based Execution",
+          "desc": "Deliberate starvation/blocking code in problems/ (7.5) and preemptive priority RTOS mitigation in solutions/ (7.5)."
+        },
+        "task3": {
+          "max": 15,
+          "name": "Topic 3: Race Condition",
+          "desc": "Deliberate shared memory corruption in problems/ (7.5) and RTOS Mutex/Critical Section mitigation in solutions/ (7.5)."
+        },
+        "task4": {
+          "max": 15,
+          "name": "Topic 4: Inter-Task Communication",
+          "desc": "Deliberate unsafe global sharing in problems/ (7.5) and RTOS Queue/Semaphore/Notification mitigation in solutions/ (7.5)."
+        },
+        "documentation": {
+          "max": 20,
+          "name": "README Observations & Repo Structure",
+          "desc": "problems/ & solutions/ folder structure (5) + authentic student-written Wokwi/ESP32 observations in README.md (15)."
+        }
+      }
+    },
+    {
+      "id": "a2",
+      "folder": "assignment-2",
+      "code": "A-02",
+      "batch": "2k23",
+      "title": "Assignment 2: HACK RTOS Assignment (SMP, Priority, Race Condition & IPC)",
+      "instructor": "Isaac Aneek Sarkar",
+      "classCode": "C-01",
+      "submissionFormUrl": "https://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform",
+      "status": "Active",
+      "llmModel": "Gemini 3.8 Flash (Medium)",
+      "deadline": "Open (Submit via Google Form)",
+      "baseMax": 150,
+      "bonusMax": 0,
+      "totalMax": 150,
+      "question": "HACK RTOS Assignment\nTask - create deliberate bad code for each problems that RTOS was designed to solve\nRun it on wokwi simulator/or esp32\nObserve the output\nMitigate the problem using RTOS\n\nThe problems topics  are\n1) SMP\n2) Priority based execution\n3) Race condition\n4) Inter task communication\n\nCreate a github repository\nMake two folders\nproblems/\nsolutions/\n\nUpload your codes\n\nAlso in the README.md write your observations\n\nYou may use AI but dont use it to write the observation. Because that will be your level up stage.\n\n\nhttps://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform",
+      "rubric": {
+        "participation": {
+          "max": 55,
+          "name": "Participation",
+          "desc": "Full marks for submitting an authentic GitHub repository attempt."
+        },
+        "inTime": {
+          "max": 15,
+          "name": "In-Time Submission",
+          "desc": "Submitted on or before the assignment deadline."
+        },
+        "task1": {
+          "max": 15,
+          "name": "Topic 1: SMP (Problem + Solution)",
+          "desc": "Deliberate dual-core/SMP bad code in problems/ (7.5) and RTOS core-pinning mitigation in solutions/ (7.5)."
+        },
+        "task2": {
+          "max": 15,
+          "name": "Topic 2: Priority-Based Execution",
+          "desc": "Deliberate starvation/blocking code in problems/ (7.5) and preemptive priority RTOS mitigation in solutions/ (7.5)."
+        },
+        "task3": {
+          "max": 15,
+          "name": "Topic 3: Race Condition",
+          "desc": "Deliberate shared memory corruption in problems/ (7.5) and RTOS Mutex/Critical Section mitigation in solutions/ (7.5)."
+        },
+        "task4": {
+          "max": 15,
+          "name": "Topic 4: Inter-Task Communication",
+          "desc": "Deliberate unsafe global sharing in problems/ (7.5) and RTOS Queue/Semaphore/Notification mitigation in solutions/ (7.5)."
+        },
+        "documentation": {
+          "max": 20,
+          "name": "README Observations & Repo Structure",
+          "desc": "problems/ & solutions/ folder structure (5) + authentic student-written Wokwi/ESP32 observations in README.md (15)."
         }
       }
     }
@@ -106,7 +229,7 @@ const HACK_DATA = {
       "youtubeId": "",
       "youtubeUrl": "",
       "youtubeEmbedUrl": "",
-      "content": "# Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)\n\n## Session Metadata\n- **Session Code**: `C-01`\n- **Date**: `2026-10-03`\n- **Time**: `4:00 PM \u2013 7:00 PM` (3.0 Hours)\n- **Venue**: `CSE D401, KUET`\n- **Target Batches**: `2K23` & `2K24`\n- **Base Participation Award**: `50.00 Points`\n- **Instructors**:\n  - **Tahmid Hossain Chowdhury Mahin** (Batch 2K22, Hardware Acceleration Club of KUET)\n  - **Isaac Aneek Sarkar** (Hardware Acceleration Club of KUET)\n- **Volunteer**:\n  - **Saleh Sadid Mir** (Hardware Acceleration Club of KUET)\n- **Primary Source Code Repository**: [IsaacAneek/rtos-tutorial-hack (GitHub)](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main)\n- **Demonstration Recording**: `media/classes/class-01/ROS.mp4`\n\n---\n\n## Executive Summary\n\nThis in-depth technical workshop introduced students to the dual paradigms of modern embedded intelligence: distributed robotic middleware via **ROS 2 (Robot Operating System)** and deterministic microsecond concurrency via **RTOS (Real-Time Operating Systems)**.\n\nThrough hands-on demonstrations and code walkthroughs, students analyzed how asynchronous robotic communication primitives coordinate higher-level perception and planning, and how RTOS schedulers provide predictable task execution on multi-core microcontrollers.\n\n---\n\n## Curriculum & Technical Modules\n\n### Module 1: ROS 2 Distributed Robotics Middleware\n**Instructor**: *Tahmid Hossain Chowdhury Mahin (Batch 2K22)*\n\n- **ROS 2 Architecture & Ecosystem**:\n  - Evolution from ROS 1 to ROS 2: Transition from centralized master (`roscore`) to DDS (Data Distribution Service) decentralized discovery.\n  - Anatomy of a ROS 2 Package: Build systems (`ament_cmake`, `ament_python`), `package.xml` dependency declarations, and structured source trees.\n- **Computation Graph Primitives**:\n  - **Nodes**: Monolithic execution units, lifecycle management (unconfigured, inactive, active, finalized).\n  - **Topics & Anonymous Publish/Subscribe**: Asynchronous many-to-many communication, message interface definition (`.msg`), and QoS (Quality of Service) reliability policies (Best Effort vs. Reliable, transient local durability).\n  - **Services**: Synchronous request/response paradigm for non-continuous, blocking RPC invocations (`.srv`).\n- **Hardware-in-the-Loop (HIL) & Digital Twin Simulation**:\n  - Demonstration of physics-engine integration (Gazebo) coupled with real-time controller nodes.\n  - Future project roadmap: Bridging micro-ROS on microcontrollers to ROS 2 compute hosts over serial/CAN/Ethernet.\n\n#### Module 1 Assignment: ROS 2 Hands-on Lab Challenge & Code Submission\n- **Status**: `[NOT PUBLISHED]`\n- **Details**: Practical ROS 2 node creation, topic publisher/subscriber configuration, and digital twin simulation verification.\n\n---\n\n### Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon\n**Instructor**: *Isaac Aneek Sarkar*  \n**Reference Implementation**: [rtos-tutorial-hack](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main) (FreeRTOS on ESP32 with ESP-IDF + PlatformIO)\n\n- **Why RTOS? (Super-loop vs Preemptive Scheduling)**:\n  - Bottlenecks of sequential `while(1)` super-loops: slow tasks delaying high-frequency operations.\n  - Predictability & real-time responsiveness vs raw execution speed.\n  - Preemptive priority scheduling and FreeRTOS task states: Running, Ready, Blocked, and Suspended.\n- **Cooperative Scheduling & Non-Blocking Delays**:\n  - Why busy-waiting with `delay()` burns CPU and blocks concurrent operations.\n  - Non-blocking task sleep with `vTaskDelay()` and cooperative task yielding.\n- **Multicore & Symmetric Multiprocessing (SMP)**:\n  - Dual-core Xtensa LX6 architecture on ESP32: Core 0 (PRO_CPU) vs Core 1 (APP_CPU).\n  - Dynamic scheduling (`xTaskCreate`) vs Core Pinning (`xTaskCreatePinnedToCore`) and task core affinity.\n- **Boot Sequence & System Lifecycle**:\n  - ESP32 FreeRTOS boot sequence, system startup, and `app_main()` task execution.\n- **Shared Data & Race Conditions**:\n  - Non-atomic buffer operations (`shared_buffer`) and corrupted memory hazards when multiple tasks write concurrently.\n- **Architectural Scalability**:\n  - Tangled bare-metal super-loops vs clean multi-task separation (one task per job, independent timelines).\n\n#### Module 2 Assignment: RTOS Concurrency Lab Challenge & Code Submission\n- **Status**: `[NOT PUBLISHED]`\n- **Details**: Practical implementation lab covering multi-task creation, task prioritization, core pinning, and observing race conditions on dual-core ESP32.\n\n---\n\n## Instructor Notes & Future Roadmap\n- Students attending this session were awarded **50.00 Base Participation Points**.\n- Future sessions will incorporate live hands-on quizzes, interactive Q&A challenges, and coding checkpoints with variable marks.\n- Next milestone: Deploying custom FreeRTOS firmware interfacing directly with ROS 2 micro-ROS agents over UART.\n",
+      "content": "# Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)\n\n## Session Metadata\n- **Session Code**: `C-01`\n- **Date**: `2026-10-03`\n- **Time**: `4:00 PM \u2013 7:00 PM` (3.0 Hours)\n- **Venue**: `CSE D401, KUET`\n- **Target Batches**: `2K23` & `2K24`\n- **Base Participation Award**: `50.00 Points`\n- **Instructors**:\n  - **Tahmid Hossain Chowdhury Mahin** (Batch 2K22, Hardware Acceleration Club of KUET)\n  - **Isaac Aneek Sarkar** (Hardware Acceleration Club of KUET)\n- **Volunteer**:\n  - **Saleh Sadid Mir** (Hardware Acceleration Club of KUET)\n- **Primary Source Code Repository**: [IsaacAneek/rtos-tutorial-hack (GitHub)](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main)\n- **Demonstration Recording**: `media/classes/class-01/ROS.mp4`\n\n---\n\n## Executive Summary\n\nThis in-depth technical workshop introduced students to the dual paradigms of modern embedded intelligence: distributed robotic middleware via **ROS 2 (Robot Operating System)** and deterministic microsecond concurrency via **RTOS (Real-Time Operating Systems)**.\n\nThrough hands-on demonstrations and code walkthroughs, students analyzed how asynchronous robotic communication primitives coordinate higher-level perception and planning, and how RTOS schedulers provide predictable task execution on multi-core microcontrollers.\n\n---\n\n## Curriculum & Technical Modules\n\n### Module 1: ROS 2 Distributed Robotics Middleware\n**Instructor**: *Tahmid Hossain Chowdhury Mahin (Batch 2K22)*\n\n- **ROS 2 Architecture & Ecosystem**:\n  - Evolution from ROS 1 to ROS 2: Transition from centralized master (`roscore`) to DDS (Data Distribution Service) decentralized discovery.\n  - Anatomy of a ROS 2 Package: Build systems (`ament_cmake`, `ament_python`), `package.xml` dependency declarations, and structured source trees.\n- **Computation Graph Primitives**:\n  - **Nodes**: Monolithic execution units, lifecycle management (unconfigured, inactive, active, finalized).\n  - **Topics & Anonymous Publish/Subscribe**: Asynchronous many-to-many communication, message interface definition (`.msg`), and QoS (Quality of Service) reliability policies (Best Effort vs. Reliable, transient local durability).\n  - **Services**: Synchronous request/response paradigm for non-continuous, blocking RPC invocations (`.srv`).\n- **Hardware-in-the-Loop (HIL) & Digital Twin Simulation**:\n  - Demonstration of physics-engine integration (Gazebo) coupled with real-time controller nodes.\n  - Future project roadmap: Bridging micro-ROS on microcontrollers to ROS 2 compute hosts over serial/CAN/Ethernet.\n\n#### Module 1 Assignment: ROS 2 Hands-on Lab Challenge & Code Submission\n- **Status**: `[NOT PUBLISHED]`\n- **Details**: Practical ROS 2 node creation, topic publisher/subscriber configuration, and digital twin simulation verification.\n\n---\n\n### Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon\n**Instructor**: *Isaac Aneek Sarkar*  \n**Reference Implementation**: [rtos-tutorial-hack](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main) (FreeRTOS on ESP32 with ESP-IDF + PlatformIO)\n\n- **Why RTOS? (Super-loop vs Preemptive Scheduling)**:\n  - Bottlenecks of sequential `while(1)` super-loops: slow tasks delaying high-frequency operations.\n  - Predictability & real-time responsiveness vs raw execution speed.\n  - Preemptive priority scheduling and FreeRTOS task states: Running, Ready, Blocked, and Suspended.\n- **Cooperative Scheduling & Non-Blocking Delays**:\n  - Why busy-waiting with `delay()` burns CPU and blocks concurrent operations.\n  - Non-blocking task sleep with `vTaskDelay()` and cooperative task yielding.\n- **Multicore & Symmetric Multiprocessing (SMP)**:\n  - Dual-core Xtensa LX6 architecture on ESP32: Core 0 (PRO_CPU) vs Core 1 (APP_CPU).\n  - Dynamic scheduling (`xTaskCreate`) vs Core Pinning (`xTaskCreatePinnedToCore`) and task core affinity.\n- **Boot Sequence & System Lifecycle**:\n  - ESP32 FreeRTOS boot sequence, system startup, and `app_main()` task execution.\n- **Shared Data & Race Conditions**:\n  - Non-atomic buffer operations (`shared_buffer`) and corrupted memory hazards when multiple tasks write concurrently.\n- **Architectural Scalability**:\n  - Tangled bare-metal super-loops vs clean multi-task separation (one task per job, independent timelines).\n\n#### Module 2 Assignment (`A-02`): HACK RTOS Assignment\n- **Status**: `[PUBLISHED \u2014 ACTIVE]`\n- **Assigned By**: *Isaac Aneek Sarkar*\n- **Target Batches**: `2K23` & `2K24`\n- **Submission Form**: [Submit via Google Forms](https://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform)\n- **Canonical Specification**: [`assignments/assignment-02/QUESTION.md`](../../assignments/assignment-02/QUESTION.md)\n\n```text\nHACK RTOS Assignment\nTask - create deliberate bad code for each problems that RTOS was designed to solve\nRun it on wokwi simulator/or esp32\nObserve the output\nMitigate the problem using RTOS\n\nThe problems topics  are\n1) SMP\n2) Priority based execution\n3) Race condition\n4) Inter task communication\n\nCreate a github repository\nMake two folders\nproblems/\nsolutions/\n\nUpload your codes\n\nAlso in the README.md write your observations\n\nYou may use AI but dont use it to write the observation. Because that will be your level up stage.\n```\n\n\n---\n\n## Instructor Notes & Future Roadmap\n- Students attending this session were awarded **50.00 Base Participation Points**.\n- Future sessions will incorporate live hands-on quizzes, interactive Q&A challenges, and coding checkpoints with variable marks.\n- Next milestone: Deploying custom FreeRTOS firmware interfacing directly with ROS 2 micro-ROS agents over UART.\n",
       "baseAward": 50.0
     },
     {
@@ -123,7 +246,7 @@ const HACK_DATA = {
       "youtubeId": "",
       "youtubeUrl": "",
       "youtubeEmbedUrl": "",
-      "content": "# Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)\n\n## Session Metadata\n- **Session Code**: `C-01`\n- **Date**: `2026-10-03`\n- **Time**: `4:00 PM \u2013 7:00 PM` (3.0 Hours)\n- **Venue**: `CSE D401, KUET`\n- **Target Batches**: `2K23` & `2K24`\n- **Base Participation Award**: `50.00 Points`\n- **Instructors**:\n  - **Tahmid Hossain Chowdhury Mahin** (Batch 2K22, Hardware Acceleration Club of KUET)\n  - **Isaac Aneek Sarkar** (Hardware Acceleration Club of KUET)\n- **Volunteer**:\n  - **Saleh Sadid Mir** (Hardware Acceleration Club of KUET)\n- **Primary Source Code Repository**: [IsaacAneek/rtos-tutorial-hack (GitHub)](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main)\n- **Demonstration Recording**: `media/classes/class-01/ROS.mp4`\n\n---\n\n## Executive Summary\n\nThis in-depth technical workshop introduced students to the dual paradigms of modern embedded intelligence: distributed robotic middleware via **ROS 2 (Robot Operating System)** and deterministic microsecond concurrency via **RTOS (Real-Time Operating Systems)**.\n\nThrough hands-on demonstrations and code walkthroughs, students analyzed how asynchronous robotic communication primitives coordinate higher-level perception and planning, and how RTOS schedulers provide predictable task execution on multi-core microcontrollers.\n\n---\n\n## Curriculum & Technical Modules\n\n### Module 1: ROS 2 Distributed Robotics Middleware\n**Instructor**: *Tahmid Hossain Chowdhury Mahin (Batch 2K22)*\n\n- **ROS 2 Architecture & Ecosystem**:\n  - Evolution from ROS 1 to ROS 2: Transition from centralized master (`roscore`) to DDS (Data Distribution Service) decentralized discovery.\n  - Anatomy of a ROS 2 Package: Build systems (`ament_cmake`, `ament_python`), `package.xml` dependency declarations, and structured source trees.\n- **Computation Graph Primitives**:\n  - **Nodes**: Monolithic execution units, lifecycle management (unconfigured, inactive, active, finalized).\n  - **Topics & Anonymous Publish/Subscribe**: Asynchronous many-to-many communication, message interface definition (`.msg`), and QoS (Quality of Service) reliability policies (Best Effort vs. Reliable, transient local durability).\n  - **Services**: Synchronous request/response paradigm for non-continuous, blocking RPC invocations (`.srv`).\n- **Hardware-in-the-Loop (HIL) & Digital Twin Simulation**:\n  - Demonstration of physics-engine integration (Gazebo) coupled with real-time controller nodes.\n  - Future project roadmap: Bridging micro-ROS on microcontrollers to ROS 2 compute hosts over serial/CAN/Ethernet.\n\n#### Module 1 Assignment: ROS 2 Hands-on Lab Challenge & Code Submission\n- **Status**: `[NOT PUBLISHED]`\n- **Details**: Practical ROS 2 node creation, topic publisher/subscriber configuration, and digital twin simulation verification.\n\n---\n\n### Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon\n**Instructor**: *Isaac Aneek Sarkar*  \n**Reference Implementation**: [rtos-tutorial-hack](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main) (FreeRTOS on ESP32 with ESP-IDF + PlatformIO)\n\n- **Why RTOS? (Super-loop vs Preemptive Scheduling)**:\n  - Bottlenecks of sequential `while(1)` super-loops: slow tasks delaying high-frequency operations.\n  - Predictability & real-time responsiveness vs raw execution speed.\n  - Preemptive priority scheduling and FreeRTOS task states: Running, Ready, Blocked, and Suspended.\n- **Cooperative Scheduling & Non-Blocking Delays**:\n  - Why busy-waiting with `delay()` burns CPU and blocks concurrent operations.\n  - Non-blocking task sleep with `vTaskDelay()` and cooperative task yielding.\n- **Multicore & Symmetric Multiprocessing (SMP)**:\n  - Dual-core Xtensa LX6 architecture on ESP32: Core 0 (PRO_CPU) vs Core 1 (APP_CPU).\n  - Dynamic scheduling (`xTaskCreate`) vs Core Pinning (`xTaskCreatePinnedToCore`) and task core affinity.\n- **Boot Sequence & System Lifecycle**:\n  - ESP32 FreeRTOS boot sequence, system startup, and `app_main()` task execution.\n- **Shared Data & Race Conditions**:\n  - Non-atomic buffer operations (`shared_buffer`) and corrupted memory hazards when multiple tasks write concurrently.\n- **Architectural Scalability**:\n  - Tangled bare-metal super-loops vs clean multi-task separation (one task per job, independent timelines).\n\n#### Module 2 Assignment: RTOS Concurrency Lab Challenge & Code Submission\n- **Status**: `[NOT PUBLISHED]`\n- **Details**: Practical implementation lab covering multi-task creation, task prioritization, core pinning, and observing race conditions on dual-core ESP32.\n\n---\n\n## Instructor Notes & Future Roadmap\n- Students attending this session were awarded **50.00 Base Participation Points**.\n- Future sessions will incorporate live hands-on quizzes, interactive Q&A challenges, and coding checkpoints with variable marks.\n- Next milestone: Deploying custom FreeRTOS firmware interfacing directly with ROS 2 micro-ROS agents over UART.\n",
+      "content": "# Technical Workshop 01: Distributed Robotics Architecture (ROS 2) & Real-Time Operating Systems (RTOS)\n\n## Session Metadata\n- **Session Code**: `C-01`\n- **Date**: `2026-10-03`\n- **Time**: `4:00 PM \u2013 7:00 PM` (3.0 Hours)\n- **Venue**: `CSE D401, KUET`\n- **Target Batches**: `2K23` & `2K24`\n- **Base Participation Award**: `50.00 Points`\n- **Instructors**:\n  - **Tahmid Hossain Chowdhury Mahin** (Batch 2K22, Hardware Acceleration Club of KUET)\n  - **Isaac Aneek Sarkar** (Hardware Acceleration Club of KUET)\n- **Volunteer**:\n  - **Saleh Sadid Mir** (Hardware Acceleration Club of KUET)\n- **Primary Source Code Repository**: [IsaacAneek/rtos-tutorial-hack (GitHub)](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main)\n- **Demonstration Recording**: `media/classes/class-01/ROS.mp4`\n\n---\n\n## Executive Summary\n\nThis in-depth technical workshop introduced students to the dual paradigms of modern embedded intelligence: distributed robotic middleware via **ROS 2 (Robot Operating System)** and deterministic microsecond concurrency via **RTOS (Real-Time Operating Systems)**.\n\nThrough hands-on demonstrations and code walkthroughs, students analyzed how asynchronous robotic communication primitives coordinate higher-level perception and planning, and how RTOS schedulers provide predictable task execution on multi-core microcontrollers.\n\n---\n\n## Curriculum & Technical Modules\n\n### Module 1: ROS 2 Distributed Robotics Middleware\n**Instructor**: *Tahmid Hossain Chowdhury Mahin (Batch 2K22)*\n\n- **ROS 2 Architecture & Ecosystem**:\n  - Evolution from ROS 1 to ROS 2: Transition from centralized master (`roscore`) to DDS (Data Distribution Service) decentralized discovery.\n  - Anatomy of a ROS 2 Package: Build systems (`ament_cmake`, `ament_python`), `package.xml` dependency declarations, and structured source trees.\n- **Computation Graph Primitives**:\n  - **Nodes**: Monolithic execution units, lifecycle management (unconfigured, inactive, active, finalized).\n  - **Topics & Anonymous Publish/Subscribe**: Asynchronous many-to-many communication, message interface definition (`.msg`), and QoS (Quality of Service) reliability policies (Best Effort vs. Reliable, transient local durability).\n  - **Services**: Synchronous request/response paradigm for non-continuous, blocking RPC invocations (`.srv`).\n- **Hardware-in-the-Loop (HIL) & Digital Twin Simulation**:\n  - Demonstration of physics-engine integration (Gazebo) coupled with real-time controller nodes.\n  - Future project roadmap: Bridging micro-ROS on microcontrollers to ROS 2 compute hosts over serial/CAN/Ethernet.\n\n#### Module 1 Assignment: ROS 2 Hands-on Lab Challenge & Code Submission\n- **Status**: `[NOT PUBLISHED]`\n- **Details**: Practical ROS 2 node creation, topic publisher/subscriber configuration, and digital twin simulation verification.\n\n---\n\n### Module 2: Real-Time Operating Systems (RTOS) on Embedded Silicon\n**Instructor**: *Isaac Aneek Sarkar*  \n**Reference Implementation**: [rtos-tutorial-hack](https://github.com/IsaacAneek/rtos-tutorial-hack/tree/main) (FreeRTOS on ESP32 with ESP-IDF + PlatformIO)\n\n- **Why RTOS? (Super-loop vs Preemptive Scheduling)**:\n  - Bottlenecks of sequential `while(1)` super-loops: slow tasks delaying high-frequency operations.\n  - Predictability & real-time responsiveness vs raw execution speed.\n  - Preemptive priority scheduling and FreeRTOS task states: Running, Ready, Blocked, and Suspended.\n- **Cooperative Scheduling & Non-Blocking Delays**:\n  - Why busy-waiting with `delay()` burns CPU and blocks concurrent operations.\n  - Non-blocking task sleep with `vTaskDelay()` and cooperative task yielding.\n- **Multicore & Symmetric Multiprocessing (SMP)**:\n  - Dual-core Xtensa LX6 architecture on ESP32: Core 0 (PRO_CPU) vs Core 1 (APP_CPU).\n  - Dynamic scheduling (`xTaskCreate`) vs Core Pinning (`xTaskCreatePinnedToCore`) and task core affinity.\n- **Boot Sequence & System Lifecycle**:\n  - ESP32 FreeRTOS boot sequence, system startup, and `app_main()` task execution.\n- **Shared Data & Race Conditions**:\n  - Non-atomic buffer operations (`shared_buffer`) and corrupted memory hazards when multiple tasks write concurrently.\n- **Architectural Scalability**:\n  - Tangled bare-metal super-loops vs clean multi-task separation (one task per job, independent timelines).\n\n#### Module 2 Assignment (`A-02`): HACK RTOS Assignment\n- **Status**: `[PUBLISHED \u2014 ACTIVE]`\n- **Assigned By**: *Isaac Aneek Sarkar*\n- **Target Batches**: `2K23` & `2K24`\n- **Submission Form**: [Submit via Google Forms](https://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform)\n- **Canonical Specification**: [`assignments/assignment-02/QUESTION.md`](../../assignments/assignment-02/QUESTION.md)\n\n```text\nHACK RTOS Assignment\nTask - create deliberate bad code for each problems that RTOS was designed to solve\nRun it on wokwi simulator/or esp32\nObserve the output\nMitigate the problem using RTOS\n\nThe problems topics  are\n1) SMP\n2) Priority based execution\n3) Race condition\n4) Inter task communication\n\nCreate a github repository\nMake two folders\nproblems/\nsolutions/\n\nUpload your codes\n\nAlso in the README.md write your observations\n\nYou may use AI but dont use it to write the observation. Because that will be your level up stage.\n```\n\n\n---\n\n## Instructor Notes & Future Roadmap\n- Students attending this session were awarded **50.00 Base Participation Points**.\n- Future sessions will incorporate live hands-on quizzes, interactive Q&A challenges, and coding checkpoints with variable marks.\n- Next milestone: Deploying custom FreeRTOS firmware interfacing directly with ROS 2 micro-ROS agents over UART.\n",
       "baseAward": 50.0
     }
   ],
@@ -185,6 +308,13 @@ const HACK_DATA = {
               "note": "Exceptional inline documentation explaining hardware pins, timing, and memory allocation.",
               "llmReasoning": "Exceptional inline documentation explaining hardware pins, timing, and memory allocation."
             },
+            "bonus": {
+              "max": 75,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Bonus pool evaluation.",
+              "llmReasoning": "Bonus pool evaluation."
+            },
             "bonus_ib1": {
               "max": 10.0,
               "inst": 0.0,
@@ -226,13 +356,6 @@ const HACK_DATA = {
               "llm": 0.0,
               "note": "Not attempted.",
               "llmReasoning": "Not attempted."
-            },
-            "bonus": {
-              "max": 75,
-              "inst": 0.0,
-              "llm": 0.0,
-              "note": "Bonus pool evaluation.",
-              "llmReasoning": "Bonus pool evaluation."
             }
           },
           "codeFiles": [
@@ -310,6 +433,13 @@ const HACK_DATA = {
               "note": "Clear variable naming, boolean state inversion (`ledstate = !ledstate`), and clean timing logic.",
               "llmReasoning": "Clear variable naming, boolean state inversion (`ledstate = !ledstate`), and clean timing logic."
             },
+            "bonus": {
+              "max": 75,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Bonus pool evaluation.",
+              "llmReasoning": "Bonus pool evaluation."
+            },
             "bonus_ib1": {
               "max": 10.0,
               "inst": 0.0,
@@ -351,13 +481,6 @@ const HACK_DATA = {
               "llm": 0.0,
               "note": "Not attempted.",
               "llmReasoning": "Not attempted."
-            },
-            "bonus": {
-              "max": 75,
-              "inst": 0.0,
-              "llm": 0.0,
-              "note": "Bonus pool evaluation.",
-              "llmReasoning": "Bonus pool evaluation."
             }
           },
           "codeFiles": [
@@ -427,6 +550,13 @@ const HACK_DATA = {
               "note": "Clear pin naming and basic inline comments in [`No_01.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/No_01.ino); tasks 2 and 3 omitted.",
               "llmReasoning": "Clear pin naming and basic inline comments in [`No_01.ino`](file:///home/user/Projects/HACK%20Evaluation/2k25/assignment-1/submissions/52503088/No_01.ino); tasks 2 and 3 omitted."
             },
+            "bonus": {
+              "max": 225.0,
+              "inst": 78.75,
+              "llm": 87.5,
+              "note": "**Final Combined Score: 82.25 / 150 (Base) [54.8%]**",
+              "llmReasoning": "**Final Combined Score: 82.25 / 150 (Base) [54.8%]**"
+            },
             "bonus_ib1": {
               "max": 10.0,
               "inst": 0.0,
@@ -468,13 +598,6 @@ const HACK_DATA = {
               "llm": 0.0,
               "note": "Not attempted.",
               "llmReasoning": "Not attempted."
-            },
-            "bonus": {
-              "max": 225.0,
-              "inst": 78.75,
-              "llm": 87.5,
-              "note": "**Final Combined Score: 82.25 / 150 (Base) [54.8%]**",
-              "llmReasoning": "**Final Combined Score: 82.25 / 150 (Base) [54.8%]**"
             }
           },
           "codeFiles": [

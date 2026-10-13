@@ -85,13 +85,15 @@ def get_evaluation_audit(batch, assignment_name, roll):
                 key = "participation"
             elif "in-time" in component_col or "time" in component_col:
                 key = "inTime"
-            elif "task 1" in component_col or "task1" in component_col:
+            elif "task 1" in component_col or "task1" in component_col or "topic 1" in component_col:
                 key = "task1"
-            elif "task 2" in component_col or "task2" in component_col:
+            elif "task 2" in component_col or "task2" in component_col or "topic 2" in component_col:
                 key = "task2"
-            elif "task 3" in component_col or "task3" in component_col:
+            elif "task 3" in component_col or "task3" in component_col or "topic 3" in component_col:
                 key = "task3"
-            elif "comment" in component_col or "documentation" in component_col or "clarity" in component_col:
+            elif "task 4" in component_col or "task4" in component_col or "topic 4" in component_col:
+                key = "task4"
+            elif "comment" in component_col or "documentation" in component_col or "clarity" in component_col or "readme" in component_col or "observation" in component_col:
                 key = "documentation"
             elif "ii.b.1" in component_col:
                 key = "bonus_iib1"
@@ -174,6 +176,14 @@ def discover_assignments(batches):
             meta_path = os.path.join(assign_path, "meta.json")
             has_csv = len(glob.glob(os.path.join(assign_path, "*.csv"))) > 0
 
+            num_match = re.search(r"\d+", folder)
+            assign_num = num_match.group(0) if num_match else "1"
+
+            if not os.path.exists(meta_path):
+                canonical_meta = os.path.join(REPO_ROOT, "assignments", f"assignment-{int(assign_num):02d}", "meta.json")
+                if os.path.exists(canonical_meta):
+                    meta_path = canonical_meta
+
             if os.path.exists(q_path) or os.path.exists(meta_path) or has_csv:
                 meta = {}
                 if os.path.exists(meta_path):
@@ -183,9 +193,7 @@ def discover_assignments(batches):
                     except Exception as e:
                         print(f"Warning: error loading {meta_path}: {e}")
 
-                num_match = re.search(r"\d+", folder)
-                assign_num = num_match.group(0) if num_match else "1"
-                assign_id = meta.get("id", f"a{assign_num}")
+                assign_id = meta.get("id", f"a{int(assign_num)}")
                 assign_code = meta.get("code", f"A-{int(assign_num):02d}")
 
                 question_text = ""
@@ -199,6 +207,9 @@ def discover_assignments(batches):
                     "code": assign_code,
                     "batch": batch_id,
                     "title": meta.get("title", f"Assignment {assign_num}: Dual LED, Software PWM & Sonar" if assign_num == "1" else f"Assignment {assign_num}"),
+                    "instructor": meta.get("instructor", ""),
+                    "classCode": meta.get("classCode", ""),
+                    "submissionFormUrl": meta.get("submissionFormUrl", ""),
                     "status": meta.get("status", "Active"),
                     "llmModel": meta.get("llmModel", "Gemini 3.8 Flash (Medium)"),
                     "deadline": meta.get("deadline", "2026-10-01 23:59"),
@@ -462,6 +473,8 @@ def main():
                     t2_llm = to_float(row.get("task2_llm"))
                     t3_inst = to_float(row.get("task3_inst"))
                     t3_llm = to_float(row.get("task3_llm"))
+                    t4_inst = to_float(row.get("task4_inst"))
+                    t4_llm = to_float(row.get("task4_llm"))
                     doc_inst = to_float(row.get("docs_inst"))
                     doc_llm = to_float(row.get("docs_llm"))
                     b_inst = to_float(row.get("bonus_inst"))
@@ -471,19 +484,24 @@ def main():
                     audit_data = get_evaluation_audit(row_batch, assign_folder, roll)
                     remarks = audit_data["remarks"]
                     audit_items = audit_data.get("items", {})
+                    rubric_cfg = (assign_meta.get("rubric") if assign_meta else None) or {}
+
+                    def r_max(key, fallback):
+                        return rubric_cfg.get(key, {}).get("max", fallback)
 
                     def get_item_data(key, default_max, default_inst, default_llm, default_reasoning):
+                        max_val = r_max(key, default_max)
                         if key in audit_items:
                             ai = audit_items[key]
                             return {
-                                "max": ai["max"] if ai["max"] > 0 else default_max,
+                                "max": ai["max"] if ai["max"] > 0 else max_val,
                                 "inst": ai["inst"],
                                 "llm": ai["llm"],
                                 "note": ai["remark"] or default_reasoning,
                                 "llmReasoning": ai["remark"] or default_reasoning
                             }
                         return {
-                            "max": default_max,
+                            "max": max_val,
                             "inst": default_inst,
                             "llm": default_llm,
                             "note": remarks.get(key, default_reasoning),
@@ -493,18 +511,22 @@ def main():
                     scores_dict = {
                         "participation": get_item_data("participation", 55, part, part, "Full credit for submitted attempt."),
                         "inTime": get_item_data("inTime", 15, in_time, in_time, "Submitted before deadline."),
-                        "task1": get_item_data("task1", 25, t1_inst, t1_llm, "Non-blocking concurrency evaluation."),
-                        "task2": get_item_data("task2", 25, t2_inst, t2_llm, "Software PWM timing and integer overflow audit."),
-                        "task3": get_item_data("task3", 25, t3_inst, t3_llm, "Hardware-accelerated sonar reader evaluation."),
-                        "documentation": get_item_data("documentation", 5, doc_inst, doc_llm, "Clarity and inline comments evaluation."),
-                        "bonus_ib1": get_item_data("bonus_ib1", 10, 0.0, 0.0, "Generic N-LEDs bonus evaluation."),
-                        "bonus_ib2": get_item_data("bonus_ib2", 15, 0.0, 0.0, "Hardware Port Optimization bonus evaluation."),
-                        "bonus_ib3": get_item_data("bonus_ib3", 10, 0.0, 0.0, "Multitasking Systems bonus evaluation."),
-                        "bonus_iib1": get_item_data("bonus_iib1", 15, 0.0, 0.0, "Hardware PWM Acceleration bonus evaluation."),
-                        "bonus_iib2": get_item_data("bonus_iib2", 10, 0.0, 0.0, "Custom PWM Servo Control bonus evaluation."),
-                        "bonus_iiib": get_item_data("bonus_iiib", 15, 0.0, 0.0, "Smart Dustbin Simulation bonus evaluation."),
-                        "bonus": get_item_data("bonus", 75, b_inst, b_llm, "Bonus pool evaluation.")
+                        "task1": get_item_data("task1", 25, t1_inst, t1_llm, "Task 1 technical evaluation."),
+                        "task2": get_item_data("task2", 25, t2_inst, t2_llm, "Task 2 technical evaluation."),
+                        "task3": get_item_data("task3", 25, t3_inst, t3_llm, "Task 3 technical evaluation."),
+                        "documentation": get_item_data("documentation", 5, doc_inst, doc_llm, "Documentation and observations evaluation."),
+                        "bonus": get_item_data("bonus", assign_meta.get("bonusMax", 75) if assign_meta else 75, b_inst, b_llm, "Bonus pool evaluation.")
                     }
+
+                    if "task4" in rubric_cfg or t4_inst > 0 or t4_llm > 0 or "task4" in audit_items:
+                        scores_dict["task4"] = get_item_data("task4", 15, t4_inst, t4_llm, "Task 4 technical evaluation.")
+
+                    for bk, bdefault in [
+                        ("bonus_ib1", 10), ("bonus_ib2", 15), ("bonus_ib3", 10),
+                        ("bonus_iib1", 15), ("bonus_iib2", 10), ("bonus_iiib", 15)
+                    ]:
+                        if bk in rubric_cfg or bk in audit_items:
+                            scores_dict[bk] = get_item_data(bk, bdefault, 0.0, 0.0, f"{bk} bonus evaluation.")
 
                     if roll not in students_map:
                         students_map[roll] = {

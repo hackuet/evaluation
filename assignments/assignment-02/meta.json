@@ -1,0 +1,51 @@
+{
+  "id": "a2",
+  "code": "A-02",
+  "title": "Assignment 2: HACK RTOS Assignment (SMP, Priority, Race Condition & IPC)",
+  "instructor": "Isaac Aneek Sarkar",
+  "classCode": "C-01",
+  "submissionFormUrl": "https://docs.google.com/forms/d/e/1FAIpQLSeskok1e0ljHgGx7YEnFedLTDW5CGCf4ewJXAUNu8Yg0HOofw/viewform",
+  "status": "Active",
+  "llmModel": "Gemini 3.8 Flash (Medium)",
+  "deadline": "Open (Submit via Google Form)",
+  "baseMax": 150,
+  "bonusMax": 0,
+  "totalMax": 150,
+  "rubric": {
+    "participation": {
+      "max": 55,
+      "name": "Participation",
+      "desc": "Full marks for submitting an authentic GitHub repository attempt."
+    },
+    "inTime": {
+      "max": 15,
+      "name": "In-Time Submission",
+      "desc": "Submitted on or before the assignment deadline."
+    },
+    "task1": {
+      "max": 15,
+      "name": "Topic 1: SMP (Problem + Solution)",
+      "desc": "Deliberate dual-core/SMP bad code in problems/ (7.5) and RTOS core-pinning mitigation in solutions/ (7.5)."
+    },
+    "task2": {
+      "max": 15,
+      "name": "Topic 2: Priority-Based Execution",
+      "desc": "Deliberate starvation/blocking code in problems/ (7.5) and preemptive priority RTOS mitigation in solutions/ (7.5)."
+    },
+    "task3": {
+      "max": 15,
+      "name": "Topic 3: Race Condition",
+      "desc": "Deliberate shared memory corruption in problems/ (7.5) and RTOS Mutex/Critical Section mitigation in solutions/ (7.5)."
+    },
+    "task4": {
+      "max": 15,
+      "name": "Topic 4: Inter-Task Communication",
+      "desc": "Deliberate unsafe global sharing in problems/ (7.5) and RTOS Queue/Semaphore/Notification mitigation in solutions/ (7.5)."
+    },
+    "documentation": {
+      "max": 20,
+      "name": "README Observations & Repo Structure",
+      "desc": "problems/ & solutions/ folder structure (5) + authentic student-written Wokwi/ESP32 observations in README.md (15)."
+    }
+  }
+}
