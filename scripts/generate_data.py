@@ -19,6 +19,11 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTPUT_FILE = os.path.join(REPO_ROOT, "assets", "js", "data.js")
 
 VIDEO_EXTS = {".mp4", ".webm", ".mov", ".avi", ".mkv", ".flv", ".wmv"}
+BINARY_DOC_EXTS = {
+    ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico", ".webp",
+    ".docx", ".doc", ".pdf", ".zip", ".tar", ".gz", ".7z",
+    ".exe", ".bin", ".elf", ".hex"
+}
 
 def get_code_files(batch, assignment_name, roll):
     """Scan submissions directory for text/code/hardware files (strictly ignoring videos)."""
@@ -34,6 +39,12 @@ def get_code_files(batch, assignment_name, roll):
                 continue  # Never include video files
             fpath = os.path.join(root, f)
             rel_name = os.path.relpath(fpath, sub_dir)
+            if ext in BINARY_DOC_EXTS:
+                code_files.append({
+                    "name": rel_name,
+                    "content": f"// [Binary File / Document: {rel_name}]\n// File is stored locally in submissions directory."
+                })
+                continue
             try:
                 with open(fpath, "r", encoding="utf-8", errors="ignore") as fp:
                     content = fp.read()

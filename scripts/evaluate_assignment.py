@@ -243,18 +243,18 @@ def _map_component_to_key(component: str) -> Optional[str]:
         return "task4"
     if "comment" in component or "documentation" in component or "clarity" in component:
         return "documentation"
-    if "i.b.1" in component:
-        return "bonus_ib1"
-    if "i.b.2" in component:
-        return "bonus_ib2"
-    if "i.b.3" in component:
-        return "bonus_ib3"
     if "ii.b.1" in component:
         return "bonus_iib1"
     if "ii.b.2" in component:
         return "bonus_iib2"
     if "iii.b" in component:
         return "bonus_iiib"
+    if "i.b.1" in component:
+        return "bonus_ib1"
+    if "i.b.2" in component:
+        return "bonus_ib2"
+    if "i.b.3" in component:
+        return "bonus_ib3"
     if "bonus" in component and "subtotal" not in component:
         return "bonus"
     return None

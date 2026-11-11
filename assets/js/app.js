@@ -406,8 +406,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const instNote = getVal(r, 'instructor_note');
         const stdComment = getVal(r, 'student_comment');
 
-        const part = parseFloat(getVal(r, 'participation')) || 55;
-        const inTime = parseFloat(getVal(r, 'in_time')) || 15;
+        const partVal = parseFloat(getVal(r, 'participation'));
+        const part = isNaN(partVal) ? 55 : partVal;
+        const inTimeVal = parseFloat(getVal(r, 'in_time'));
+        const inTime = isNaN(inTimeVal) ? 15 : inTimeVal;
         const t1Inst = parseFloat(getVal(r, 'task1_inst')) || 0;
         const t1Llm = parseFloat(getVal(r, 'task1_llm')) || 0;
         const t2Inst = parseFloat(getVal(r, 'task2_inst')) || 0;

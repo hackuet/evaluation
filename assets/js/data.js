@@ -611,6 +611,304 @@ const HACK_DATA = {
       "classes": []
     },
     {
+      "id": "52507068",
+      "roll": "52507068",
+      "batch": "2k25",
+      "assignments": [
+        {
+          "assignmentId": "a1",
+          "status": "Evaluated",
+          "submissionTime": "2026-10-13 23:54:59",
+          "onTime": true,
+          "driveLink": "https://drive.google.com/drive/folders/12RPwVzfLPiNN_JZQsLpR8ml3OJO2vaX5?usp=drive_link",
+          "instructorTransparencyNote": "Comprehensive submission across all tasks and bonuses. Flawless hardware interrupt sonar reader. Minor demo flicker in PWM.",
+          "studentComment": "1. If I got the elements to use, it would be much better to realize and build up the entire project. 2. We still didn't get our supervisor from the HACK's senior members. Hope we will get in touch with them soon.",
+          "auditReport": "# Objective Technical Evaluation Report: 52507068\n\n## 1. Submission Information & Files Present\n- **Student Roll**: `52507068`\n- **Submission Timestamp**: 10/13/2026 23:54:59\n- **On-Time Status**: Late (Submitted on 10/13/2026 23:54:59, 12 days after the 10/01/2026 11:59:00 PM deadline)\n- **Drive Link**: [Google Drive Submission](https://drive.google.com/drive/folders/12RPwVzfLPiNN_JZQsLpR8ml3OJO2vaX5?usp=drive_link)\n- **Files Received & Inspected**:\n  - [`First Hack Project Link.docx`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/First%20Hack%20Project%20Link.docx)\n  - [`Hack Project 1 Document.docx`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/Hack%20Project%201%20Document.docx)\n  - [`task1_dual_led.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/task1_dual_led.ino)\n  - [`task2_software_pwm.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/task2_software_pwm.ino)\n  - [`task3_sonar_reader.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/task3_sonar_reader.ino)\n  - [`bonus_ib1_generic_n_led.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_ib1_generic_n_led.ino)\n  - [`bonus_ib2_hardware_opt.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_ib2_hardware_opt.ino)\n  - [`bonus_ib3_multitasking.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_ib3_multitasking.ino)\n  - [`bonus_iib1_hw_pwm.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_iib1_hw_pwm.ino)\n  - [`bonus_iib2_pwm_servo.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_iib2_pwm_servo.ino)\n  - [`bonus_iiib_smart_dustbin.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_iiib_smart_dustbin.ino)\n  - [`exp_pwm_analogwrite.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/exp_pwm_analogwrite.ino)\n- **Student Note**: *\"1. If I got the elements to use, it would be much better to realize and build up the entire project. 2. We still didn't get our supervisor from the HACK's senior members. Hope we will get in touch with them soon.\"*\n\n---\n\n## 2. Hybrid Score Summary Table\n\nFormula applied:\n$$\\text{Combined Final Mark} = (\\text{Instructor Mark} \\times 0.6) + (\\text{LLM Subagent Mark} \\times 0.4)$$\n\n| Category | Component | Max Marks | Instructor Mark | LLM Mark | Combined Final Mark | Remarks |\n| :--- | :--- | :---: | :---: | :---: | :---: | :--- |\n| **Commitment** | Participation | 55 | 55.00 | 55.00 | **55.00** | Full marks for submitting an authentic, exceptionally thorough attempt covering all mandatory and bonus tasks. |\n| | In-Time Submission | 15 | 0.00 | 0.00 | **0.00** | Submitted on 10/13/2026 (12 days past the 10/01/2026 11:59 PM deadline). |\n| **Mandatory Tasks (75 pts)** | Task 1: Dual LED Blinker | 25 | 25.00 | 25.00 | **25.00** | Flawless non-blocking dual blinker using `millis()` with independent interval tracking. |\n| | Task 2: Software PWM | 25 | 23.00 | 23.00 | **23.00** | Working software PWM using microsecond timing; minor 2-point deduction for low 5Hz demo frequency causing visible flicker. |\n| | Task 3: Sonar Reader | 25 | 25.00 | 25.00 | **25.00** | Flawless hardware accelerated sonar reader using `attachInterrupt` on INT0 with atomic critical section and zero blocking. |\n| **Deliverables (5 pts)** | Inline Code Comments & Clarity | 5 | 5.00 | 5.00 | **5.00** | Exceptional technical report docx detailing learning outcomes, pinout connections, and comprehensive code comments. |\n| **SUBTOTAL (BASE)** | | **150** | **128.00** | **128.00** | **128.00** | **Base Mandatory Score (85.3%)** |\n| **Bonus Tasks (+75 pts Pool)** | i.b.1 (Generic N-LEDs) | 10 | 10.00 | 10.00 | **10.00** | Scalable `struct ledtask` with dynamic array size calculation iterating over $N$ LEDs independently. |\n| | i.b.2 (Hardware Optimization) | 15 | 14.00 | 14.00 | **14.00** | Direct AVR port register manipulation (`DDRB` and `PORTB`) bypassing Arduino core digital IO functions. |\n| | i.b.3 (Multitasking Systems) | 10 | 8.00 | 8.00 | **8.00** | Cooperative multitasking loop scheduling multiple periodic tasks concurrently at 500ms, 1000ms, and 2000ms. |\n| | ii.b.1 (Hardware PWM Acceleration) | 15 | 6.00 | 6.00 | **6.00** | Implemented multi-channel breathing PWM in software; partial credit as AVR hardware timer registers (`TCCR1A`) were not configured. |\n| | ii.b.2 (Custom PWM Servo Control) | 10 | 4.00 | 4.00 | **4.00** | Non-blocking servo sweep implemented using `<Servo.h>`; partial credit as rubric specified custom 50Hz PWM pulse train without library. |\n| | iii.b (Smart Dustbin Simulation) | 15 | 15.00 | 15.00 | **15.00** | Complete integrated Wokwi simulation combining HC-SR04 sonar detection (20cm threshold) with servo lid actuation and 5s auto-close. |\n| **SUBTOTAL (BONUS)** | | **75** | **57.00** | **57.00** | **57.00** | **Bonus Score Awarded: 57.00 / 75 (76.0%)** |\n| **TOTAL SCORE** | | **225** | **185.00** | **185.00** | **185.00** | **Final Combined Total Score: 185.00 / 225** |\n\n---\n\n## 3. Detailed Technical Analysis of Submissions\n\n### Task 1: Dual LED Blinker ([`task1_dual_led.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/task1_dual_led.ino))\n- **Simulation**: [Wokwi Project 477156139802492929](https://wokwi.com/projects/477156139802492929)\n- **Implementation**:\n  ```cpp\n  const int LED1=8;\n  const int LED2=9;\n  unsigned long previousled1=0;\n  unsigned long previousled2=0;\n  const unsigned long intervalled1=100, intervalled2=500;\n  bool ledstate1=0, ledstate2=0;\n\n  void setup() {\n    pinMode(LED1,OUTPUT);\n    pinMode(LED2,OUTPUT);\n  }\n\n  void loop() {\n    unsigned long currentTime=millis();\n    if(currentTime-previousled1 >= intervalled1){\n      previousled1 = currentTime;\n      ledstate1=!ledstate1;\n      digitalWrite(LED1,ledstate1);\n    }\n    if(currentTime-previousled2 >=intervalled2){\n      previousled2=currentTime;\n      ledstate2=!ledstate2;\n      digitalWrite(LED2,ledstate2);\n    }\n  }\n  ```\n- **Merits**:\n  - Independent non-blocking timing using `millis()`.\n  - Correct use of `unsigned long` for timer arithmetic avoiding rollover bugs.\n  - Distinct intervals ($100\\text{ ms}$ and $500\\text{ ms}$) executing concurrently.\n- **Score**: **25.00 / 25**\n\n---\n\n### Task 2: Software PWM ([`task2_software_pwm.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/task2_software_pwm.ino))\n- **Simulation**: [Wokwi Project 477406191426135041](https://wokwi.com/projects/477406191426135041)\n- **Implementation**:\n  ```cpp\n  const int led = 9;\n  const unsigned long pwm_period = 200000; //micro seconds\n  int brightness = 200;\n\n  void setup() {\n    pinMode(led,OUTPUT);\n  }\n\n  void loop() {\n    unsigned long elapsed = micros() % pwm_period;\n    unsigned long ontime = (pwm_period * (unsigned long) brightness)/255;\n    if(elapsed < ontime){\n      digitalWrite(led, HIGH);\n    } else {\n      digitalWrite(led, LOW);\n    }\n  }\n  ```\n- **Merits**:\n  - Completely avoids `analogWrite()`.\n  - Calculates on-time dynamically using modular microsecond elapsed phase: `elapsed = micros() % pwm_period`.\n  - Explicit cast `(unsigned long) brightness` prevents 16-bit integer multiplication overflow on AVR architecture.\n- **Observations & Deductions**:\n  - The period is set to $200,000\\,\\mu\\text{s}$ ($5\\text{ Hz}$). While the student explains this was chosen to observe the modulation visually in the simulator, standard software PWM operates above $100\\text{ Hz}$ to create continuous perceived dimming without flashing.\n- **Score**: **23.00 / 25**\n\n---\n\n### Task 3: Sonar Reader ([`task3_sonar_reader.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/task3_sonar_reader.ino))\n- **Simulation**: [Wokwi Project 477588106370448385](https://wokwi.com/projects/477588106370448385)\n- **Implementation**:\n  ```cpp\n  const byte trig_pin = 7;\n  const byte echo_pin = 2;\n\n  volatile unsigned long echostart = 0;\n  volatile unsigned long echoDuration = 0;\n  volatile bool measurementReady = false;\n\n  void echo_changed(){\n    if(digitalRead(echo_pin)==HIGH){\n      echostart = micros();\n    } else {\n      echoDuration = micros() - echostart;\n      measurementReady = true;\n    }\n  }\n\n  void setup() {\n    Serial.begin(9600);\n    pinMode(trig_pin, OUTPUT);\n    pinMode(echo_pin, INPUT);\n    digitalWrite(trig_pin,LOW);\n\n    attachInterrupt(\n      digitalPinToInterrupt(echo_pin),\n      echo_changed,\n      CHANGE\n    );\n  }\n  ```\n- **Merits**:\n  - True hardware acceleration: utilizes hardware external interrupt INT0 (pin 2) configured for `CHANGE` triggers.\n  - Zero blocking: eliminates `pulseIn()`, freeing CPU cycles for other tasks.\n  - Concurrency safety: variables accessed in the ISR are properly declared `volatile`.\n  - Atomic access: safely copies `echoDuration` inside a `noInterrupts()` / `interrupts()` critical section in `loop()`.\n- **Score**: **25.00 / 25**\n\n---\n\n### Bonus Tasks Analysis\n\n1. **i.b.1 Generic N-LED System** ([`bonus_ib1_generic_n_led.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_ib1_generic_n_led.ino)):\n   - Defines `struct ledtask { int pin; unsigned long interval, previoustime; bool state; };`.\n   - Dynamic length calculation using `sizeof(leds) / sizeof(leds[0])`.\n   - Independent non-blocking iteration across 4 LEDs (pins 8, 9, 10, 13) with distinct intervals.\n   - **Score**: **10.00 / 10**\n\n2. **i.b.2 Hardware Port Optimization** ([`bonus_ib2_hardware_opt.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_ib2_hardware_opt.ino)):\n   - Configures `DDRB |= (1 << (leds[i].pin - 8))` for Port B direction.\n   - Manipulates `PORTB` directly for fast digital writes.\n   - **Score**: **14.00 / 15**\n\n3. **i.b.3 Multitasking Systems** ([`bonus_ib3_multitasking.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_ib3_multitasking.ino)):\n   - Multi-rate cooperative scheduler executing concurrent tasks at 500ms, 1000ms, and 2000ms intervals.\n   - **Score**: **8.00 / 10**\n\n4. **ii.b.1 Hardware PWM Acceleration** ([`bonus_iib1_hw_pwm.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_iib1_hw_pwm.ino)):\n   - Multi-channel software breathing PWM animation across pins 9 and 10.\n   - Did not directly manipulate ATmega328P timer registers (`TCCR1A`, `OCR1A`); receives partial credit for multi-channel breathing modulation.\n   - **Score**: **6.00 / 15**\n\n5. **ii.b.2 Custom PWM Servo Control** ([`bonus_iib2_pwm_servo.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_iib2_pwm_servo.ino)):\n   - Non-blocking servo angle sweeping.\n   - Used standard `<Servo.h>` library instead of generating raw 50Hz PWM pulses with custom microsecond timing; partial credit awarded.\n   - **Score**: **4.00 / 10**\n\n6. **iii.b Smart Dustbin Simulation** ([`bonus_iiib_smart_dustbin.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52507068/bonus_iiib_smart_dustbin.ino)):\n   - Full Wokwi simulation ([Project 477597765594878977](https://wokwi.com/projects/477597765594878977)).\n   - Triggers ultrasonic measurement, opens dustbin lid to $90^\\circ$ when distance $\\le 20\\text{ cm}$, and closes lid after $5\\text{ s}$ inactivity.\n   - **Score**: **15.00 / 15**\n\n---\n\n## 4. Overall Technical Feedback\n\n### Strengths:\n1. **Exceptional Breadth & Ambition**: Attempted every single mandatory task and every single bonus problem, delivering functional Wokwi simulations for each.\n2. **Mastery of Non-Blocking Architecture & Concurrency**: Successfully moved from simple `millis()` timers to hardware interrupts with atomic critical sections and struct-based task arrays.\n3. **Comprehensive Documentation**: Submitted detailed technical documentation explaining pinout connections, hardware reasoning, and takeaways.\n\n### Recommended Next Steps:\n1. **Explore Bare-Metal Timer Registers**: Implement Timer1 Fast PWM (`TCCR1A`, `TCCR1B`, `ICR1`, `OCR1A`) for zero-CPU hardware PWM generation.\n2. **Raw Servo Pulse Generation**: Try driving a servo motor without `<Servo.h>` by synthesizing exact $1.0\\text{ ms}$ to $2.0\\text{ ms}$ high pulses every $20\\text{ ms}$ ($50\\text{ Hz}$).\n3. **Time Management**: Submit assignments within the official deadline window to secure the 15-mark In-Time credit.\n",
+          "scores": {
+            "participation": {
+              "max": 55.0,
+              "inst": 55.0,
+              "llm": 55.0,
+              "note": "Full marks for submitting an authentic, exceptionally thorough attempt covering all mandatory and bonus tasks.",
+              "llmReasoning": "Full marks for submitting an authentic, exceptionally thorough attempt covering all mandatory and bonus tasks."
+            },
+            "inTime": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Submitted on 10/13/2026 (12 days past the 10/01/2026 11:59 PM deadline).",
+              "llmReasoning": "Submitted on 10/13/2026 (12 days past the 10/01/2026 11:59 PM deadline)."
+            },
+            "task1": {
+              "max": 25.0,
+              "inst": 25.0,
+              "llm": 25.0,
+              "note": "Flawless non-blocking dual blinker using `millis()` with independent interval tracking.",
+              "llmReasoning": "Flawless non-blocking dual blinker using `millis()` with independent interval tracking."
+            },
+            "task2": {
+              "max": 25.0,
+              "inst": 23.0,
+              "llm": 23.0,
+              "note": "Working software PWM using microsecond timing; minor 2-point deduction for low 5Hz demo frequency causing visible flicker.",
+              "llmReasoning": "Working software PWM using microsecond timing; minor 2-point deduction for low 5Hz demo frequency causing visible flicker."
+            },
+            "task3": {
+              "max": 25.0,
+              "inst": 25.0,
+              "llm": 25.0,
+              "note": "Flawless hardware accelerated sonar reader using `attachInterrupt` on INT0 with atomic critical section and zero blocking.",
+              "llmReasoning": "Flawless hardware accelerated sonar reader using `attachInterrupt` on INT0 with atomic critical section and zero blocking."
+            },
+            "documentation": {
+              "max": 5.0,
+              "inst": 5.0,
+              "llm": 5.0,
+              "note": "Exceptional technical report docx detailing learning outcomes, pinout connections, and comprehensive code comments.",
+              "llmReasoning": "Exceptional technical report docx detailing learning outcomes, pinout connections, and comprehensive code comments."
+            },
+            "bonus": {
+              "max": 75,
+              "inst": 57.0,
+              "llm": 57.0,
+              "note": "Bonus pool evaluation.",
+              "llmReasoning": "Bonus pool evaluation."
+            },
+            "bonus_ib1": {
+              "max": 10.0,
+              "inst": 10.0,
+              "llm": 10.0,
+              "note": "Scalable `struct ledtask` with dynamic array size calculation iterating over $N$ LEDs independently.",
+              "llmReasoning": "Scalable `struct ledtask` with dynamic array size calculation iterating over $N$ LEDs independently."
+            },
+            "bonus_ib2": {
+              "max": 15.0,
+              "inst": 14.0,
+              "llm": 14.0,
+              "note": "Direct AVR port register manipulation (`DDRB` and `PORTB`) bypassing Arduino core digital IO functions.",
+              "llmReasoning": "Direct AVR port register manipulation (`DDRB` and `PORTB`) bypassing Arduino core digital IO functions."
+            },
+            "bonus_ib3": {
+              "max": 10.0,
+              "inst": 8.0,
+              "llm": 8.0,
+              "note": "Cooperative multitasking loop scheduling multiple periodic tasks concurrently at 500ms, 1000ms, and 2000ms.",
+              "llmReasoning": "Cooperative multitasking loop scheduling multiple periodic tasks concurrently at 500ms, 1000ms, and 2000ms."
+            },
+            "bonus_iib1": {
+              "max": 15.0,
+              "inst": 6.0,
+              "llm": 6.0,
+              "note": "Implemented multi-channel breathing PWM in software; partial credit as AVR hardware timer registers (`TCCR1A`) were not configured.",
+              "llmReasoning": "Implemented multi-channel breathing PWM in software; partial credit as AVR hardware timer registers (`TCCR1A`) were not configured."
+            },
+            "bonus_iib2": {
+              "max": 10.0,
+              "inst": 4.0,
+              "llm": 4.0,
+              "note": "Non-blocking servo sweep implemented using `<Servo.h>`; partial credit as rubric specified custom 50Hz PWM pulse train without library.",
+              "llmReasoning": "Non-blocking servo sweep implemented using `<Servo.h>`; partial credit as rubric specified custom 50Hz PWM pulse train without library."
+            },
+            "bonus_iiib": {
+              "max": 15.0,
+              "inst": 15.0,
+              "llm": 15.0,
+              "note": "Complete integrated Wokwi simulation combining HC-SR04 sonar detection (20cm threshold) with servo lid actuation and 5s auto-close.",
+              "llmReasoning": "Complete integrated Wokwi simulation combining HC-SR04 sonar detection (20cm threshold) with servo lid actuation and 5s auto-close."
+            }
+          },
+          "codeFiles": [
+            {
+              "name": "First Hack Project Link.docx",
+              "content": "// [Binary File / Document: First Hack Project Link.docx]\n// File is stored locally in submissions directory."
+            },
+            {
+              "name": "Hack Project 1 Document.docx",
+              "content": "// [Binary File / Document: Hack Project 1 Document.docx]\n// File is stored locally in submissions directory."
+            },
+            {
+              "name": "bonus_ib1_generic_n_led.ino",
+              "content": "//Storing the info that are needed for a LED\nstruct ledtask\n  { \n   int pin; \n   unsigned long interval, previoustime;\n   bool state; \n   };\n\nledtask leds[]=\n{ \n  //Here, you can just add the required LED's info and then just practically implement them \n\n  {8,778,0,LOW}, \n  {9,2567,0,LOW}, \n  {10,1787,0,LOW}, \n  {13,259,LOW} \n\n}; \n  \nconst int led_count= sizeof(leds) / sizeof(leds[0]); \n\nvoid setup()\n{ \n  \n  for(int i=0; i<led_count; i++){ \n    pinMode(leds[i].pin, OUTPUT); \n    } \n} \n\n\nvoid loop()\n{ \n  \n  unsigned long currenttime=millis(); \n  \n  for(int i=0; i<led_count; i++)\n  { \n    \n    if(currenttime-leds[i].previoustime >= leds[i].interval)\n    { \n      \n      leds[i].previoustime= currenttime; \n      leds[i].state=!leds[i].state; \n      digitalWrite(leds[i].pin,leds[i].state); \n    } \n  } \n}"
+            },
+            {
+              "name": "bonus_ib2_hardware_opt.ino",
+              "content": "//Storing the info that are needed for a LED\nstruct ledtask\n  { \n   int pin; \n   unsigned long interval, previoustime;\n   bool state; \n   };\n\nledtask leds[]=\n{ \n  //Here, you can just add the required LED's info and then just practically implement them \n\n  {8,700,0,LOW}, \n  {9,2500,0,LOW}, \n  {10,1700,0,LOW}, \n  {13,1200,LOW} \n\n}; \n  \nconst int led_count= sizeof(leds) / sizeof(leds[0]); \n\nvoid setup()\n{ \n  \n  for(int i=0; i<led_count; i++){ \n    //pinMode(leds[i].pin, OUTPUT);\n\n    //For D8, -8 \n    DDRB |= (1 << (leds[i].pin - 8));\n     \n    } \n} \n\n\nvoid loop()\n{ \n  \n  unsigned long currenttime=millis(); \n  \n  for(int i=0; i<led_count; i++)\n  { \n    \n    if(currenttime - leds[i].previoustime >= leds[i].interval)\n    { \n      \n      leds[i].previoustime= currenttime; \n      leds[i].state=!leds[i].state; \n      //digitalWrite(leds[i].pin,leds[i].state); \n\n      if(leds[i].state){\n        PORTB |= (1 << (leds[i].pin - 8));\n\n      }\n      else{\n        PORTB ^= (1 << (leds[i].pin -8));\n      }\n\n      \n\n    } \n  } \n}"
+            },
+            {
+              "name": "bonus_ib3_multitasking.ino",
+              "content": "const int led1 = 8;\nconst int led2 = 9;\n\nunsigned long int previousled = 0;\nunsigned long int previousled500 = 0;\nunsigned long int previousled2000 = 0;\n\nconst unsigned long led_interval = 1000;\nconst unsigned long interval_500 = 500;\nconst unsigned long interval_2000 = 2000;\n\nvoid setup(){\n\n  pinMode(led1, OUTPUT);\n\n  Serial.begin(9600);\n\n}\n\nvoid loop(){\n  unsigned long currenttime = millis();\n\n  //led\n  if(currenttime - previousled >= led_interval){\n\n    previousled = currenttime;\n\n    digitalWrite(led1, !digitalRead(led1));\n    digitalWrite(led2, !digitalRead(led2));\n\n\n  }\n\n  //led_500\n  if(currenttime - previousled500 >= interval_500){\n    previousled500 = currenttime;\n\n    Serial.println(\"Task 2 is running\");\n\n  }\n\n  if(currenttime - previousled2000 >= interval_2000){\n\n    previousled2000 = currenttime;\n\n    Serial.println(\"Task 3 is running\");\n \n  }\n}"
+            },
+            {
+              "name": "bonus_iib1_hw_pwm.ino",
+              "content": "struct pwmled{\n  int pin;\n  int brightness;\n  int direction;\n\n};\n\npwmled leds[]= {\n  {9,0,1},\n  {10,0,1}\n};\n\nconst int ledcount = sizeof(leds) / sizeof(leds[0]);\nconst unsigned long pwm_period = 2000UL; //microseconds, 2000 mcs = 500Hz\n\nunsigned long previous_animation = 0;\nconst unsigned long animation_interval = 10;\n\n\n\nvoid setup(){\n\n  for(int i =0; i < ledcount; i++){\n    pinMode(leds[i].pin, OUTPUT);\n  }\n\n}\n\nvoid loop(){\n  unsigned long elapsed = micros() % pwm_period;\n  unsigned long currenttime = millis();\n\n  \n\n\n  if (currenttime - previous_animation >= animation_interval){\n    previous_animation = currenttime;\n    \n    for(int i=0; i < ledcount; i++){\n\n    if(leds[i].brightness >= 255){\n\n      leds[i].brightness = 255;\n      leds[i].direction = -1;\n      \n      \n    }\n\n    if (leds[i].brightness <= 0){\n      leds[i].brightness = 0;\n      leds[i].direction = 1;\n    }\n\n  if(leds[i].direction == 1){\n    \n    leds[i].brightness++;\n    //digitalWrite(leds[i].pin, HIGH);\n\n  }\n  else{\n    leds[i].brightness--;\n    //digitalWrite(leds[i].pin, LOW);\n  }\n\n    //update direction and brightness for every led\n  }\n  \n}\n  for(int i=0; i < ledcount; i++)\n  {\n    int brightness = constrain(leds[i].brightness,0,255);\n\n    unsigned long ontime = (pwm_period * (unsigned long) brightness) / 255UL;\n\n    if(elapsed < ontime){\n      digitalWrite(leds[i].pin,HIGH);\n    }\n\n    else{\n      digitalWrite(leds[i].pin,LOW);\n    }\n\n  }\n\n\n}"
+            },
+            {
+              "name": "bonus_iib2_pwm_servo.ino",
+              "content": "#include <Servo.h>\n\nServo myservo;\n\nint angle = 0;\nint direction = 1;\n\nunsigned long previous_step = 0;\nconst unsigned long step_interval = 15;\n\n\nvoid setup() {\n  myservo.attach(9);\n\n\n}\n\nvoid loop() {\n  \n  unsigned long currenttime = millis();\n\n  if(currenttime - previous_step >= step_interval){\n    previous_step = currenttime;\n\n    angle += direction;\n\n    if(angle >= 180){\n      angle = 180;\n      direction = -1;\n\n    }\n\n    if(angle <= 0){\n      angle = 0;\n      direction = 1;\n\n    }\n\n    myservo.write(angle);\n\n\n  }\n\n}"
+            },
+            {
+              "name": "bonus_iiib_smart_dustbin.ino",
+              "content": "#include <Servo.h>\n\n//for HC-SR04 Ultrasonic pins\nconst byte trig_pin = 7;\nconst byte echo_pin = 2;\n\n\n\n//For servo signal pins\nconst byte servo_pin = 9;\n\n\n//For dustbin settings\nconst float open_distance_in_cm = 20.0;\nconst unsigned long close_lid_for_delay_in_ms = 5000;\n\n\nServo lidServo;\n\n\nbool lid_open = false;\nunsigned long last_detection_time = 0;\nunsigned long last_measurement_time = 0;\n\n\nvoid setup() {\n\n  Serial.begin(9600);\n\n  pinMode(trig_pin, OUTPUT);\n  pinMode(echo_pin,INPUT);\n\n  digitalWrite(trig_pin, LOW);\n\n  lidServo.attach(servo_pin);\n  lidServo.write(0);\n\n  Serial.println(\"Smart Dustbin is Now Ready to Use!\");\n  //println for creating a newline after the output\n}\n\nvoid loop() {\n  unsigned long now = millis();\n\n\n//For measuring distance every 100 mili seconds\n  if(now - last_measurement_time >= 1000){\n\n    last_measurement_time = now;\n\n    //Now, send the ultrasonic triggered pulse\n    digitalWrite(trig_pin, LOW);\n    delayMicroseconds(2);\n\n    digitalWrite(trig_pin, HIGH);\n    delayMicroseconds(10);\n\n    digitalWrite(trig_pin, LOW);\n\n\n    //Reading the echo pulse\n    unsigned long duration = pulseIn(echo_pin, HIGH, 30000UL);\n\n    if(duration > 0){\n      float distance_cm = duration / 58.0;\n\n      Serial.print(\"Distance: \");\n      Serial.print(distance_cm,1);\n      Serial.println(\" (cm)\");\n\n\n\n      //Opening lid when any object is near to the dustbin\n      if(distance_cm <= open_distance_in_cm){\n        \n        last_detection_time = now;\n\n        if(!lid_open){\n          lidServo.write(90);\n          lid_open = true;\n          Serial.println(\"Lid Open Now!\");\n\n        }\n      \n      }\n\n    }\n  }\n\n  //Close lid after the object goes beyond 20 cm\n\n  if(lid_open && now - last_detection_time >= close_lid_for_delay_in_ms){\n    lidServo.write(0);\n    lid_open = false;\n    Serial.println(\"Lid Closed!\");\n  }\n\n}"
+            },
+            {
+              "name": "exp_pwm_analogwrite.ino",
+              "content": "const int led1 = 12;\nconst int led2 = 10;\n\n\n\nvoid setup() {\n  pinMode(led1, OUTPUT);\n  pinMode(led2, OUTPUT);\n\n}\n\nvoid loop() {\n  \n  analogWrite(led1, 64);\n  analogWrite(led2, 255);\n\n}"
+            },
+            {
+              "name": "task1_dual_led.ino",
+              "content": "const int LED1=8;\nconst int LED2=9;\n\nunsigned long previousled1=0;\nunsigned long previousled2=0;\n\nconst unsigned long intervalled1=100, intervalled2=500;\n\nbool ledstate1=0, ledstate2=0;\n\n\n\nvoid setup() {\n\n  pinMode(LED1,OUTPUT);\n  pinMode(LED2,OUTPUT);\n\n\n}\n\nvoid loop() {\n  unsigned long currentTime=millis();\n\n  //for led1\n  if(currentTime-previousled1 >= intervalled1){\n\n    previousled1 = currentTime;\n\n    ledstate1=!ledstate1;\n\n    digitalWrite(LED1,ledstate1);\n   }\n\n\n   //for led2\n   if(currentTime-previousled2 >=intervalled2){\n\n    previousled2=currentTime;\n    ledstate2=!ledstate2;\n    digitalWrite(LED2,ledstate2);\n   \n   }\n\n}"
+            },
+            {
+              "name": "task2_software_pwm.ino",
+              "content": "const int led = 9;\n\n\nconst unsigned long pwm_period = 200000; //micro seconds\n\n//the unnatural pwm_period has been set to observe better \nint brightness = 200;\n\n\nvoid setup() {\n\n  pinMode(led,OUTPUT);\n\n}\n\nvoid loop() {\n  \n  unsigned long elapsed = micros() % pwm_period;\n\n  unsigned long ontime = (pwm_period * (unsigned long) brightness)/255; //0~255 \n //if  pwm_period is divided by brightness, then compilation takes a long long time\n\n  //software pw,\n  if(elapsed < ontime){\n    digitalWrite(led, HIGH);\n  }\n  else{\n    digitalWrite(led, LOW);\n  }\n}"
+            },
+            {
+              "name": "task3_sonar_reader.ino",
+              "content": "const byte trig_pin = 7;\nconst byte echo_pin = 2;\n\nvolatile unsigned long echostart = 0;\nvolatile unsigned long echoDuration = 0;\nvolatile bool measurementReady = false;\n\nvoid echo_changed(){\n\n  if(digitalRead(echo_pin)==HIGH){\n    echostart = micros();\n  }\n  \n\n  else{\n    echoDuration = micros() - echostart;\n    measurementReady = true;\n  }\n}\n\n\n\nvoid setup() {\n  Serial.begin(9600);\n\n\n  pinMode(trig_pin, OUTPUT);\n  pinMode(echo_pin, INPUT);\n\n  digitalWrite(trig_pin,LOW);\n\n  attachInterrupt(\n    digitalPinToInterrupt(echo_pin),\n    echo_changed,\n    CHANGE\n  );\n}\n\nvoid loop() {\n  \n  static unsigned long previoustrigger = 0;\n  unsigned long now = millis();\n\n  if(now - previoustrigger >=100){\n\n    previoustrigger = now;\n\n    digitalWrite(trig_pin, LOW);\n    delayMicroseconds(2);\n\n    digitalWrite(trig_pin, HIGH);\n    delayMicroseconds(10);\n\n    digitalWrite(trig_pin, LOW);\n\n\n  }\n\n  if(measurementReady){\n    noInterrupts();\n\n    unsigned long duration = echoDuration;\n    measurementReady = false;\n\n    interrupts();\n\n    static unsigned long lastprint = 0;\n\n    if(duration > 0 && millis() - lastprint >= 500){\n\n      lastprint = millis();\n\n      float distance =duration /58.0;\n\n      Serial.print(\"Echo: \");\n      Serial.print(duration);\n      Serial.print(\" microsecend | Distance: \");\n\n      Serial.print(distance, 1);\n      Serial.println(\" cm\");\n\n\n\n    }\n  }\n\n}"
+            }
+          ]
+        }
+      ],
+      "classes": []
+    },
+    {
+      "id": "52509016",
+      "roll": "52509016",
+      "batch": "2k25",
+      "assignments": [
+        {
+          "assignmentId": "a1",
+          "status": "Evaluated",
+          "submissionTime": "2026-10-18 17:13:35",
+          "onTime": true,
+          "driveLink": "https://drive.google.com/drive/folders/1xyJHSYD2oKnjit01qkjnDEu-SLTS4gU2?usp=drive_link",
+          "instructorTransparencyNote": "Full marks on non-blocking Task 1 and 500Hz software PWM Task 2. 1/4 marks on Task 3 due to blocking pulseIn() usage.",
+          "studentComment": "I think it would be more beneficial for us if the classes are taken virtually by demonstrating and practically showing all the related things at the same time and also more guideline sessions should be taken as we are beginners.",
+          "auditReport": "# Objective Technical Evaluation Report: 52509016\n\n## 1. Submission Information & Files Present\n- **Student Roll**: `52509016`\n- **Submission Timestamp**: 10/18/2026 17:13:35\n- **On-Time Status**: Late (Submitted on 10/18/2026 17:13:35, 17 days after the 10/01/2026 11:59:00 PM deadline)\n- **Drive Link**: [Google Drive Submission](https://drive.google.com/drive/folders/1xyJHSYD2oKnjit01qkjnDEu-SLTS4gU2?usp=drive_link)\n- **Files Received & Inspected**:\n  - [`Task-1 LED blinking.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52509016/Task-1%20LED%20blinking.ino)\n  - [`Task-1 Screenshot.png`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52509016/Task-1%20Screenshot.png)\n  - [`Task-2 PWM.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52509016/Task-2%20PWM.ino)\n  - [`Task-2 Screenshot.png`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52509016/Task-2%20Screenshot.png)\n  - [`Task-3 Sonar reader.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52509016/Task-3%20Sonar%20reader.ino)\n  - [`Task-3 Screenshot.png`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52509016/Task-3%20Screenshot.png)\n- **Student Note**: *\"I think it would be more beneficial for us if the classes are taken virtually by demonstrating and practically showing all the related things at the same time and also more guideline sessions should be taken as we are beginners.\"*\n\n---\n\n## 2. Hybrid Score Summary Table\n\nFormula applied:\n$$\\text{Combined Final Mark} = (\\text{Instructor Mark} \\times 0.6) + (\\text{LLM Subagent Mark} \\times 0.4)$$\n\n| Category | Component | Max Marks | Instructor Mark | LLM Mark | Combined Final Mark | Remarks |\n| :--- | :--- | :---: | :---: | :---: | :---: | :--- |\n| **Commitment** | Participation | 55 | 55.00 | 55.00 | **55.00** | Full marks for submitting an authentic attempt across all 3 mandatory tasks. |\n| | In-Time Submission | 15 | 0.00 | 0.00 | **0.00** | Submitted on 10/18/2026 (17 days past the 10/01/2026 11:59 PM deadline). |\n| **Mandatory Tasks (75 pts)** | Task 1: Dual LED Blinker | 25 | 25.00 | 25.00 | **25.00** | Full marks for clean non-blocking `millis()` independent dual blinking ($X=1\\text{s}, Y=3\\text{s}$). |\n| | Task 2: Software PWM | 25 | 25.00 | 25.00 | **25.00** | Full marks. Implemented custom `pwm(pin, value)` via microsecond phase modulation with breathing LED demo. |\n| | Task 3: Sonar Reader | 25 | 6.25 | 6.25 | **6.25** | 1/4 mark awarded; used blocking `pulseIn()` rather than non-blocking or interrupt-driven hardware acceleration. |\n| **Deliverables (5 pts)** | Inline Code Comments & Clarity | 5 | 4.50 | 4.50 | **4.50** | Clean, well-structured sketches with `#define` pin constants and descriptive comments. |\n| **SUBTOTAL (BASE)** | | **150** | **115.75** | **115.75** | **115.75** | **Base Mandatory Score (77.2%)** |\n| **Bonus Tasks (+75 pts Pool)** | i.b.1 (Generic N-LEDs) | 10 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | i.b.2 (Hardware Optimization) | 15 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | i.b.3 (Multitasking Systems) | 10 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | ii.b.1 (Hardware PWM Acceleration) | 15 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | ii.b.2 (Custom PWM Servo Control) | 10 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| | iii.b (Smart Dustbin Simulation) | 15 | 0.00 | 0.00 | **0.00** | Not attempted. |\n| **SUBTOTAL (BONUS)** | | **75** | **0.00** | **0.00** | **0.00** | No bonus implementations provided. |\n| **TOTAL SCORE** | | **225** | **115.75** | **115.75** | **115.75** | **Final Combined Total Score: 115.75 / 225** |\n\n---\n\n## 3. Detailed Technical Analysis of Submissions\n\n### Task 1: Dual LED Blinker ([`Task-1 LED blinking.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52509016/Task-1%20LED%20blinking.ino))\n- **Implementation**:\n  ```cpp\n  #define LED1_PIN 8 // LED 1 connected to digital pin 8\n  #define LED2_PIN 9 // LED 2 connected to digital pin 9\n\n  // Change these values: blink intervals in seconds\n  const unsigned long X_SECONDS = 1; // LED 1 toggles every x seconds\n  const unsigned long Y_SECONDS = 3; // LED 2 toggles every y seconds\n\n  const unsigned long xInterval = X_SECONDS * 1000UL; // convert to ms\n  const unsigned long yInterval = Y_SECONDS * 1000UL;\n\n  unsigned long previousMillis1 = 0;\n  unsigned long previousMillis2 = 0;\n\n  int led1State = LOW;\n  int led2State = LOW;\n\n  void setup() {\n    pinMode(LED1_PIN, OUTPUT);\n    pinMode(LED2_PIN, OUTPUT);\n  }\n\n  void loop() {\n    unsigned long currentMillis = millis();\n\n    // LED 1: toggle every x seconds\n    if (currentMillis - previousMillis1 >= xInterval) {\n      previousMillis1 = currentMillis;\n      led1State = (led1State == LOW) ? HIGH : LOW;\n      digitalWrite(LED1_PIN, led1State);\n    }\n\n    // LED 2: toggle every y seconds\n    if (currentMillis - previousMillis2 >= yInterval) {\n      previousMillis2 = currentMillis;\n      led2State = (led2State == LOW) ? HIGH : LOW;\n      digitalWrite(LED2_PIN, led2State);\n    }\n  }\n  ```\n- **Merits**:\n  - Clean non-blocking execution using `millis()`.\n  - Independent intervals ($1\\text{s}$ and $3\\text{s}$) executing concurrently.\n  - Proper use of `unsigned long` for timestamp comparisons avoiding rollover issues.\n- **Score**: **25.00 / 25**\n\n---\n\n### Task 2: Software PWM ([`Task-2 PWM.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52509016/Task-2%20PWM.ino))\n- **Implementation**:\n  ```cpp\n  #define PWM_PERIOD_US 2000UL\n  #define LED_PIN 9\n\n  void pwm(uint8_t pin, uint8_t value) {\n    unsigned long pos = micros() % PWM_PERIOD_US;\n    unsigned long onTime = (unsigned long)value * PWM_PERIOD_US / 255;\n    digitalWrite(pin, (pos < onTime) ? HIGH : LOW);\n  }\n\n  uint8_t brightness = 0;\n  int step = 1;\n  unsigned long lastUpdate = 0;\n\n  void setup() {\n    pinMode(LED_PIN, OUTPUT);\n  }\n\n  void loop() {\n    if (millis() - lastUpdate >= 10) {\n      lastUpdate = millis();\n      brightness += step;\n      if (brightness == 0 || brightness == 255) step = -step;\n    }\n\n    pwm(LED_PIN, brightness);\n  }\n  ```\n- **Merits**:\n  - Implemented custom `pwm(pin, value)` without `analogWrite()`.\n  - High frequency period ($2000\\,\\mu\\text{s} = 500\\text{ Hz}$) resulting in flicker-free illumination.\n  - Proper cast `(unsigned long)value` prevents 16-bit AVR integer overflow during multiplication ($255 \\times 2000 = 510,000$).\n  - Built a non-blocking triangle wave breathing animation in `loop()`.\n- **Score**: **25.00 / 25**\n\n---\n\n### Task 3: Sonar Reader ([`Task-3 Sonar reader.ino`](file:///home/user/Projects/HACK%20Evaluation/batches/2k25/assignment-1/submissions/52509016/Task-3%20Sonar%20reader.ino))\n- **Implementation**:\n  ```cpp\n  const uint8_t TRIG = 3;\n  const uint8_t ECHO = 2;\n\n  void setup() {\n    Serial.begin(9600);\n    pinMode(TRIG, OUTPUT);\n    pinMode(ECHO, INPUT);\n    digitalWrite(TRIG, LOW);\n  }\n\n  void loop() {\n    // send trigger pulse\n    digitalWrite(TRIG, LOW);\n    delayMicroseconds(2);\n    digitalWrite(TRIG, HIGH);\n    delayMicroseconds(10);\n    digitalWrite(TRIG, LOW);\n\n    // Measure echo duration\n    unsigned long duration = pulseIn(ECHO, HIGH, 30000);\n\n    if (duration > 0) {\n      float cm = duration * 0.0343 / 2.0;\n      Serial.print(\"Distance: \");\n      Serial.print(cm);\n      Serial.println(\" cm\");\n      digitalWrite(LED_BUILTIN, cm < 20 ? HIGH : LOW);\n    } else {\n      Serial.println(\"No echo received\");\n    }\n    delay(100);\n  }\n  ```\n- **Evaluation & Issues**:\n  - The problem statement explicitly required: *\"make a hardware accelerated sonar reader, that does not wait for pulseIn()\"*.\n  - The student used `pulseIn(ECHO, HIGH, 30000)`, which halts CPU execution for up to $30\\text{ ms}$ per cycle.\n  - Partial credit (1/4 mark = $6.25$) is awarded for establishing the sensor hardware wiring, sending the correct $10\\,\\mu\\text{s}$ trigger pulse, calculating distance accurately in cm, and actuating the LED indicator below the $20\\text{ cm}$ threshold.\n- **Score**: **6.25 / 25**\n\n---\n\n## 4. Overall Technical Feedback\n\n### Strengths:\n1. **Clean Software PWM**: Excellent implementation of `pwm(pin, value)` at 500Hz with robust 32-bit math and a dynamic fading animation.\n2. **Solid Non-Blocking Fundamentals**: Task 1 correctly employs `millis()` with zero blocking delays.\n3. **Good Coding Standards**: Consistent variable naming, `#define` pin mappings, and clear comments.\n\n### Recommended Next Steps:\n1. **Eliminate `pulseIn()`**: Learn to measure echo pulses asynchronously using external pin interrupts (`attachInterrupt(digitalPinToInterrupt(ECHO), isr, CHANGE)`).\n2. **Explore Bonus Tasks**: Attempt generic data structures (e.g. array of structs for $N$ LEDs) and bare-metal AVR port manipulation.\n3. **Submission Timeliness**: Submit before the deadline to earn the 15-mark In-Time credit.\n",
+          "scores": {
+            "participation": {
+              "max": 55.0,
+              "inst": 55.0,
+              "llm": 55.0,
+              "note": "Full marks for submitting an authentic attempt across all 3 mandatory tasks.",
+              "llmReasoning": "Full marks for submitting an authentic attempt across all 3 mandatory tasks."
+            },
+            "inTime": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Submitted on 10/18/2026 (17 days past the 10/01/2026 11:59 PM deadline).",
+              "llmReasoning": "Submitted on 10/18/2026 (17 days past the 10/01/2026 11:59 PM deadline)."
+            },
+            "task1": {
+              "max": 25.0,
+              "inst": 25.0,
+              "llm": 25.0,
+              "note": "Full marks for clean non-blocking `millis()` independent dual blinking ($X=1\\text{s}, Y=3\\text{s}$).",
+              "llmReasoning": "Full marks for clean non-blocking `millis()` independent dual blinking ($X=1\\text{s}, Y=3\\text{s}$)."
+            },
+            "task2": {
+              "max": 25.0,
+              "inst": 25.0,
+              "llm": 25.0,
+              "note": "Full marks. Implemented custom `pwm(pin, value)` via microsecond phase modulation with breathing LED demo.",
+              "llmReasoning": "Full marks. Implemented custom `pwm(pin, value)` via microsecond phase modulation with breathing LED demo."
+            },
+            "task3": {
+              "max": 25.0,
+              "inst": 6.25,
+              "llm": 6.25,
+              "note": "1/4 mark awarded; used blocking `pulseIn()` rather than non-blocking or interrupt-driven hardware acceleration.",
+              "llmReasoning": "1/4 mark awarded; used blocking `pulseIn()` rather than non-blocking or interrupt-driven hardware acceleration."
+            },
+            "documentation": {
+              "max": 5.0,
+              "inst": 4.5,
+              "llm": 4.5,
+              "note": "Clean, well-structured sketches with `#define` pin constants and descriptive comments.",
+              "llmReasoning": "Clean, well-structured sketches with `#define` pin constants and descriptive comments."
+            },
+            "bonus": {
+              "max": 75,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Bonus pool evaluation.",
+              "llmReasoning": "Bonus pool evaluation."
+            },
+            "bonus_ib1": {
+              "max": 10.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_ib2": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_ib3": {
+              "max": 10.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iib1": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iib2": {
+              "max": 10.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            },
+            "bonus_iiib": {
+              "max": 15.0,
+              "inst": 0.0,
+              "llm": 0.0,
+              "note": "Not attempted.",
+              "llmReasoning": "Not attempted."
+            }
+          },
+          "codeFiles": [
+            {
+              "name": "Task-1 LED blinking.ino",
+              "content": "#define LED1_PIN 8 // LED 1 connected to digital pin 8\n#define LED2_PIN 9 // LED 2 connected to digital pin 9\n\n// Change these values: blink intervals in seconds\nconst unsigned long X_SECONDS = 1; // LED 1 toggles every x seconds\nconst unsigned long Y_SECONDS = 3; // LED 2 toggles every y seconds\n\nconst unsigned long xInterval = X_SECONDS * 1000UL; // convert to ms\nconst unsigned long yInterval = Y_SECONDS * 1000UL;\n\nunsigned long previousMillis1 = 0;\nunsigned long previousMillis2 = 0;\n\nint led1State = LOW;\nint led2State = LOW;\n\nvoid setup() {\n  pinMode(LED1_PIN, OUTPUT);\n  pinMode(LED2_PIN, OUTPUT);\n}\n\nvoid loop() {\n  unsigned long currentMillis = millis();\n\n  // LED 1: toggle every x seconds\n  if (currentMillis - previousMillis1 >= xInterval) {\n    previousMillis1 = currentMillis;\n    led1State = (led1State == LOW) ? HIGH : LOW;\n    digitalWrite(LED1_PIN, led1State);\n  }\n\n  // LED 2: toggle every y seconds\n  if (currentMillis - previousMillis2 >= yInterval) {\n    previousMillis2 = currentMillis;\n    led2State = (led2State == LOW) ? HIGH : LOW;\n    digitalWrite(LED2_PIN, led2State);\n  }\n}\n"
+            },
+            {
+              "name": "Task-1 Screenshot.png",
+              "content": "// [Binary File / Document: Task-1 Screenshot.png]\n// File is stored locally in submissions directory."
+            },
+            {
+              "name": "Task-2 PWM.ino",
+              "content": "#define PWM_PERIOD_US 2000UL\n#define LED_PIN 9\n\nvoid pwm(uint8_t pin, uint8_t value) {\n  unsigned long pos = micros() % PWM_PERIOD_US;\n  unsigned long onTime = (unsigned long)value * PWM_PERIOD_US / 255;\n  digitalWrite(pin, (pos < onTime) ? HIGH : LOW);\n}\n\nuint8_t brightness = 0;\nint step = 1;\nunsigned long lastUpdate = 0;\n\nvoid setup() {\n  pinMode(LED_PIN, OUTPUT);\n}\n\nvoid loop() {\n  if (millis() - lastUpdate >= 10) {\n    lastUpdate = millis();\n    brightness += step;\n    if (brightness == 0 || brightness == 255) step = -step;\n  }\n\n  pwm(LED_PIN, brightness);\n}\n"
+            },
+            {
+              "name": "Task-2 Screenshot.png",
+              "content": "// [Binary File / Document: Task-2 Screenshot.png]\n// File is stored locally in submissions directory."
+            },
+            {
+              "name": "Task-3 Screenshot.png",
+              "content": "// [Binary File / Document: Task-3 Screenshot.png]\n// File is stored locally in submissions directory."
+            },
+            {
+              "name": "Task-3 Sonar reader.ino",
+              "content": "const uint8_t TRIG = 3;\nconst uint8_t ECHO = 2;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(TRIG, OUTPUT);\n  pinMode(ECHO, INPUT);\n  digitalWrite(TRIG, LOW);\n}\n\nvoid loop() {\n  // send trigger pulse\n  digitalWrite(TRIG, LOW);\n  delayMicroseconds(2);\n  digitalWrite(TRIG, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(TRIG, LOW);\n\n  // Measure echo duration\n  unsigned long duration = pulseIn(ECHO, HIGH, 30000);\n\n  if (duration > 0) {\n    float cm = duration * 0.0343 / 2.0;\n    Serial.print(\"Distance: \");\n    Serial.print(cm);\n    Serial.println(\" cm\");\n    digitalWrite(LED_BUILTIN, cm < 20 ? HIGH : LOW);\n  } else {\n    Serial.println(\"No echo received\");\n  }\n  delay(100);\n}\n"
+            }
+          ]
+        }
+      ],
+      "classes": []
+    },
+    {
       "id": "2401073",
       "roll": "2401073",
       "batch": "2k24",
