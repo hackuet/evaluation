@@ -1484,6 +1484,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === detailModal) detailModal.style.display = 'none';
   });
 
+  if (modalFileTabs) {
+    modalFileTabs.addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        modalFileTabs.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+  }
+
   profileModalCloseBtn.addEventListener('click', () => profileModal.style.display = 'none');
   profileModal.addEventListener('click', (e) => {
     if (e.target === profileModal) profileModal.style.display = 'none';

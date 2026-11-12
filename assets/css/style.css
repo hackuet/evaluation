@@ -764,9 +764,28 @@ details.transparency-block[open] summary::before {
   display: flex;
   gap: 4px;
   margin-bottom: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+
+.file-select-btns::-webkit-scrollbar {
+  height: 6px;
+}
+
+.file-select-btns::-webkit-scrollbar-track {
+  background: var(--bg-subtle, #f1f1f1);
+}
+
+.file-select-btns::-webkit-scrollbar-thumb {
+  background: var(--border, #888);
 }
 
 .f-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
   background: #ffffff;
   border: 1px solid var(--border);
   font-family: var(--font-mono);
